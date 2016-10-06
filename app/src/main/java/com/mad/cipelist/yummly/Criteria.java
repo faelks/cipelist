@@ -15,8 +15,6 @@ public class Criteria
 
     private String[] allowedIngredients;
 
-    private AttributeRanges attributeRanges;
-
     private String requirePictures;
 
     private String[] excludedIngredients;
@@ -26,8 +24,6 @@ public class Criteria
     private String[] facetFields;
 
     private String maxResults;
-
-    private NutritionRestrictions nutritionRestrictions;
 
     public String getResultsToSkip ()
     {
@@ -77,16 +73,6 @@ public class Criteria
     public void setAllowedIngredients (String[] allowedIngredients)
     {
         this.allowedIngredients = allowedIngredients;
-    }
-
-    public AttributeRanges getAttributeRanges ()
-    {
-        return attributeRanges;
-    }
-
-    public void setAttributeRanges (AttributeRanges attributeRanges)
-    {
-        this.attributeRanges = attributeRanges;
     }
 
     public String getRequirePictures ()
@@ -139,19 +125,9 @@ public class Criteria
         this.maxResults = maxResults;
     }
 
-    public NutritionRestrictions getNutritionRestrictions ()
-    {
-        return nutritionRestrictions;
-    }
-
-    public void setNutritionRestrictions (NutritionRestrictions nutritionRestrictions)
-    {
-        this.nutritionRestrictions = nutritionRestrictions;
-    }
-
     @Override
     public String toString()
     {
-        return "Criteria [resultsToSkip = "+resultsToSkip+", allowedDiets = "+allowedDiets+", excludedAttributes = "+excludedAttributes+", terms = "+terms+", allowedIngredients = "+allowedIngredients+", attributeRanges = "+attributeRanges+", requirePictures = "+requirePictures+", excludedIngredients = "+excludedIngredients+", allowedAttributes = "+allowedAttributes+", facetFields = "+facetFields+", maxResults = "+maxResults+", nutritionRestrictions = "+nutritionRestrictions+"]";
+        return "Criteria [resultsToSkip = "+resultsToSkip+", allowedDiets = "+allowedDiets+", excludedAttributes = "+excludedAttributes+", terms = "+terms+", allowedIngredients = "+allowedIngredients+", requirePictures = "+requirePictures+", excludedIngredients = "+excludedIngredients+", allowedAttributes = "+allowedAttributes+", facetFields = "+facetFields+", maxResults = "+maxResults+"]";
     }
 }
