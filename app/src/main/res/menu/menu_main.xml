@@ -22,4 +22,9 @@
         android:orderInCategory="102"
         android:title="@string/new_search"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_add_item"
+        android:orderInCategory="104"
+        android:title="@string/add_item"
+        app:showAsAction="never" />
 </menu>

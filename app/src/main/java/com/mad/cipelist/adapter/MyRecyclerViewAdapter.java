@@ -6,8 +6,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.mad.cipelist.R;
 import com.mad.cipelist.model.Search;
 
@@ -41,6 +43,7 @@ public class MyRecyclerViewAdapter extends RecyclerView
             .OnClickListener {
         TextView label;
         TextView dateTime;
+        ImageView image;
 
         /**
          * Constructor for new view holders.
@@ -50,6 +53,7 @@ public class MyRecyclerViewAdapter extends RecyclerView
             super(itemView);
             label = (TextView) itemView.findViewById(R.id.textView);
             dateTime = (TextView) itemView.findViewById(R.id.textView2);
+            image = (ImageView) itemView.findViewById(R.id.cardImage);
             Log.i(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);
         }
@@ -102,6 +106,10 @@ public class MyRecyclerViewAdapter extends RecyclerView
     public void deleteItem(int index) {
         mDataset.remove(index);
         notifyItemRemoved(index);
+    }
+
+    public void updateImage(int index) {
+        mDataset.get(index).setmText1("Hello");
     }
 
     @Override

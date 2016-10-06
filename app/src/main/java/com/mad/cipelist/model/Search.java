@@ -1,5 +1,7 @@
 package com.mad.cipelist.model;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -33,5 +35,9 @@ public class Search {
 
     public void setmText2(String mText2) {
         this.mText2 = mText2;
+    }
+
+    public String getFirstImgUrl() {
+        return "http://creationview.com/image/Birds4F.jpg";
     }
 }

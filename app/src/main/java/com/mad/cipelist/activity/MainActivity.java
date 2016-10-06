@@ -87,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent newSearchIntent = new Intent(this, SwiperActivity.class);
                 startActivity(newSearchIntent);
                 return true;
+            case R.id.action_add_item:
+                mSearches.add(new Search("Example x", "This is an example"));
+                mAdapter.notifyDataSetChanged();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -95,11 +99,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ((MyRecyclerViewAdapter) mAdapter).setOnItemClickListener(new MyRecyclerViewAdapter
+        mAdapter.setOnItemClickListener(new MyRecyclerViewAdapter
                 .MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                Log.i(LOG_TAG, " Clicked on Item " + position);
+                Log.i(LOG_TAG, " Clicked on Item " + (position+1));
+                mAdapter.updateImage(position);
+                mAdapter.notifyDataSetChanged();
+
             }
         });
     }
