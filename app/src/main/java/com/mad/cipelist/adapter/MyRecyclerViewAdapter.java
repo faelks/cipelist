@@ -9,9 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.mad.cipelist.R;
-import com.mad.cipelist.model.Search;
+import com.mad.cipelist.yummly.SearchResult;
 
 import java.util.ArrayList;
 
@@ -27,7 +26,7 @@ public class MyRecyclerViewAdapter extends RecyclerView
     // Tag for log statements, has the name of the class
     private static String LOG_TAG = "MyRecyclerViewAdapter";
     // The model which is intitialised in the constructor
-    private ArrayList<Search> mDataset;
+    private ArrayList<SearchResult> mDataset;
     // A listener that handles clicks on the items in the view
     private static MyClickListener myClickListener;
     // The context of the parent activity, useless?
@@ -77,7 +76,7 @@ public class MyRecyclerViewAdapter extends RecyclerView
      * @param context
      * @param myDataset
      */
-    public MyRecyclerViewAdapter(Context context, ArrayList<Search> myDataset) {
+    public MyRecyclerViewAdapter(Context context, ArrayList<SearchResult> myDataset) {
         mContext = context;
         mDataset = myDataset;
     }
@@ -94,11 +93,11 @@ public class MyRecyclerViewAdapter extends RecyclerView
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
-        holder.label.setText(mDataset.get(position).getmText1());
-        holder.dateTime.setText(mDataset.get(position).getmText2());
+        holder.label.setText(mDataset.get(position).getMatch().getRecipeName());
+        holder.dateTime.setText(mDataset.get(position).getTotalMatchCount());
     }
 
-    public void addItem(Search dataObj, int index) {
+    public void addItem(SearchResult dataObj, int index) {
         mDataset.add(index, dataObj);
         notifyItemInserted(index);
     }
@@ -109,7 +108,7 @@ public class MyRecyclerViewAdapter extends RecyclerView
     }
 
     public void updateImage(int index) {
-        mDataset.get(index).setmText1("Hello");
+        mDataset.get(index).setTotalMatchCount("0");
     }
 
     @Override

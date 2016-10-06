@@ -5,22 +5,30 @@ package com.mad.cipelist.yummly;
  */
 public class SearchResult
 {
-    private Matches[] matches;
-
+    private Match[] matches;
     private Criteria criteria;
-
     private String facetCounts;
-
     private String totalMatchCount;
-
     private Attribution attribution;
 
-    public Matches[] getMatches ()
+    public SearchResult(Match[] matches, Criteria cri, String facetCount, String matchCount, Attribution attr) {
+        this.matches = matches;
+        this.criteria = cri;
+        this.facetCounts = facetCount;
+        this.totalMatchCount = matchCount;
+        this.attribution = attr;
+    }
+
+    public Match getMatch() {
+        return matches[0];
+    }
+
+    public Match[] getMatches ()
     {
         return matches;
     }
 
-    public void setMatches (Matches[] matches)
+    public void setMatches (Match[] matches)
     {
         this.matches = matches;
     }

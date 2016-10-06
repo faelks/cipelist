@@ -17,6 +17,15 @@ public class Flavors
 
     private String meaty;
 
+    public Flavors(String salty, String sour, String sweet, String bitter, String piquant, String meaty) {
+        this.salty = salty;
+        this.sour = sour;
+        this.sweet = sweet;
+        this.bitter = bitter;
+        this.piquant = piquant;
+        this.meaty = meaty;
+    }
+
     public String getSalty ()
     {
         return salty;

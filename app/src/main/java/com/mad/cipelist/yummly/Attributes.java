@@ -9,6 +9,11 @@ public class Attributes
 
     private String[] cuisine;
 
+    public Attributes(String[] course, String[] cuisine) {
+        this.course = course;
+        this.cuisine = cuisine;
+    }
+
     public String[] getCourse ()
     {
         return course;

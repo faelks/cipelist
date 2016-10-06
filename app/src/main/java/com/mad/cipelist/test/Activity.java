@@ -13,7 +13,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.mad.cipelist.R;
+import com.mad.cipelist.yummly.SearchResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +28,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * Created by Felix on 21/09/16.
  *
@@ -35,11 +43,25 @@ import java.net.URL;
  */
 public class Activity extends android.app.Activity {
     EditText userNameEt, passEt, passConEt;
-    Button registerBtn, deleteUserBtn, downloadRecipeBtn;
+    Button registerBtn, deleteUserBtn, downloadRecipeBtn, doSearchBtn;
     String usrString, passStr, passConStr;
-    Context ctx = this;
-    DatabaseOperations mDatabaseHelper;
-    Cursor cr;
+    Context context = this;
+    DatabaseHelper mDatabaseHelper;
+    Cursor cursor;
+
+    static final String JSONLOGTAG = "JSON";
+    static final String RETROFITLOGTAG = "RETROFIT";
+
+    // For GSON
+    // A custom gson parser can also be defined
+    public static final String BASE_URL = "http://api.yummly.com/v1/api/";
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+
+    YummlyEndpointInterface apiService =
+            retrofit.create(YummlyEndpointInterface.class);
 
 
     @Override
@@ -53,9 +75,10 @@ public class Activity extends android.app.Activity {
         registerBtn = (Button) findViewById(R.id.registerBtn);
         deleteUserBtn = (Button) findViewById(R.id.deleteUserBtn);
         downloadRecipeBtn = (Button) findViewById(R.id.downloadRecipeBtn);
+        doSearchBtn = (Button) findViewById(R.id.doSearchBtn);
 
-        mDatabaseHelper = new DatabaseOperations(ctx);
-        cr = mDatabaseHelper.getInformation(mDatabaseHelper);
+        mDatabaseHelper = new DatabaseHelper(context);
+        cursor = mDatabaseHelper.getInformation(mDatabaseHelper);
 
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,16 +87,16 @@ public class Activity extends android.app.Activity {
                 passStr = passEt.getText().toString();
                 passConStr = passConEt.getText().toString();
 
-                cr.moveToFirst();
+                cursor.moveToFirst();
 
                 boolean userExists = false;
                 do {
-                    if(usrString.equals(cr.getString(0))) {
+                    if(usrString.equals(cursor.getString(0))) {
                         Toast.makeText(getBaseContext(), "User already exists", Toast.LENGTH_SHORT).show();
                         userNameEt.setText("");
                         userExists = true;
                     }
-                } while (cr.moveToNext());
+                } while (cursor.moveToNext());
 
                 if (!userExists) {
                     if (!passStr.equals(passConStr)) {
@@ -102,6 +125,26 @@ public class Activity extends android.app.Activity {
             @Override
             public void onClick(View view) {
                 new DownloadRecipesAsyncTask().execute();
+            }
+        });
+
+        doSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Call<SearchResult> call = apiService.getSearch("pasta", "3");
+                call.enqueue(new Callback<SearchResult>() {
+                    @Override
+                    public void onResponse(Call<SearchResult> call, Response<SearchResult> response) {
+                        int statusCode = response.code();
+                        SearchResult result = response.body();
+                        Log.d(RETROFITLOGTAG, result.toString());
+                    }
+
+                    @Override
+                    public void onFailure(Call<SearchResult> call, Throwable t) {
+                        Log.d(RETROFITLOGTAG, "Download failed");
+                    }
+                });
             }
         });
     }
@@ -208,7 +251,7 @@ public class Activity extends android.app.Activity {
 
         String jsonString = sb.toString();
 
-        Log.d("JSON", "Downloaded JSON Object");
+        Log.d(JSONLOGTAG, "Downloaded JSON Object");
 
         return new JSONObject(jsonString);
     }

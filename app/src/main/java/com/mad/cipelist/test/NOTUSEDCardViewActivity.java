@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
-import com.mad.cipelist.model.Search;
 import com.mad.cipelist.adapter.MyRecyclerViewAdapter;
 import com.mad.cipelist.R;
 
@@ -55,13 +54,4 @@ public class NOTUSEDCardViewActivity extends ActionBarActivity {
         });
     }
 
-    private ArrayList<Search> getDataSet() {
-        ArrayList results = new ArrayList<Search>();
-        for (int index = 0; index < 20; index++) {
-            /*Search obj = new Search("Some Primary Text " + index,
-                    "Secondary " + index);
-            results.add(index, obj); */
-        }
-        return results;
-    }
 }

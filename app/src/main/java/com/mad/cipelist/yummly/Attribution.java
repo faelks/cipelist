@@ -13,6 +13,13 @@ public class Attribution
 
     private String url;
 
+    public Attribution(String logo, String text, String html, String url) {
+        this.logo = logo;
+        this.text = text;
+        this.html = html;
+        this.url = url;
+    }
+
     public String getLogo ()
     {
         return logo;

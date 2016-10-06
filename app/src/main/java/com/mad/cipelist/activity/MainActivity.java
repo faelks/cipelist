@@ -14,8 +14,9 @@ import android.view.MenuItem;
 
 import com.mad.cipelist.adapter.MyRecyclerViewAdapter;
 import com.mad.cipelist.R;
-import com.mad.cipelist.model.Search;
 import com.mad.cipelist.test.Activity;
+import com.mad.cipelist.yummly.Match;
+import com.mad.cipelist.yummly.SearchResult;
 
 import java.util.ArrayList;
 
@@ -23,13 +24,13 @@ import java.util.ArrayList;
  * Displays the initial landing page with previous searches.
  * This method needs to load all searches associated with the
  * user and display them in the recycler view. Currently the
- * view is populated with defualt items.
+ * view is populated with default items.
  */
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mSearchRecyclerView;
     private MyRecyclerViewAdapter mAdapter;
-    private ArrayList<Search> mSearches = new ArrayList<>();
+    private ArrayList<SearchResult> mSearches = new ArrayList<>();
     private static String LOG_TAG = "MainActivity";
 
     @Override
@@ -42,12 +43,11 @@ public class MainActivity extends AppCompatActivity {
         mSearchRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        mSearches.add(new Search("Example 1", "This is an example"));
-        mSearches.add(new Search("Example 2", "This is an example"));
-        mSearches.add(new Search("Example 3", "This is an example"));
-        mSearches.add(new Search("Example 4", "This is an example"));
-        mSearches.add(new Search("Example 5", "This is an example"));
-        mSearches.add(new Search("Example 6", "This is an example"));
+        String [] images = {"http://creationview.com/image/Birds4F.jpg", null};
+        Match m1 = new Match(null, "1", "Pasta", "3600", images, null, null, "5", null);
+        Match [] matches = {m1};
+        SearchResult sr = new SearchResult(matches, null, null, "1", null);
+        mSearches.add(sr);
 
         mAdapter = new MyRecyclerViewAdapter(this, mSearches);
         mSearchRecyclerView.setAdapter(mAdapter);
@@ -84,11 +84,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.action_new_search:
-                Intent newSearchIntent = new Intent(this, SwiperActivity.class);
-                startActivity(newSearchIntent);
+                Intent swipeIntent = new Intent(this, SwiperActivity.class);
+                startActivity(swipeIntent);
                 return true;
             case R.id.action_add_item:
-                mSearches.add(new Search("Example x", "This is an example"));
                 mAdapter.notifyDataSetChanged();
                 return true;
         }

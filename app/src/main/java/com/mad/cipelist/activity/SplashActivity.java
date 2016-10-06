@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 /**
- * Created by Felix on 29/09/16.
+ * Displays the app logo on startup before the application is fully loaded
  */
 public class SplashActivity extends AppCompatActivity {
 

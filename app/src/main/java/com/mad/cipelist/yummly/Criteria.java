@@ -25,6 +25,19 @@ public class Criteria
 
     private String maxResults;
 
+    public Criteria(String resultsToSkip, String[] allowedDiets, String[] excludedAttributes, String[] terms, String[] allowedIngredients, String requirePictures, String[] excludedIngredients, String[] allowedAttributes, String[] facetFields, String maxResults) {
+        this.resultsToSkip = resultsToSkip;
+        this.allowedDiets = allowedDiets;
+        this.excludedAttributes = excludedAttributes;
+        this.terms = terms;
+        this.allowedIngredients = allowedIngredients;
+        this.requirePictures = requirePictures;
+        this.excludedIngredients = excludedIngredients;
+        this.allowedAttributes = allowedAttributes;
+        this.facetFields = facetFields;
+        this.maxResults = maxResults;
+    }
+
     public String getResultsToSkip ()
     {
         return resultsToSkip;
