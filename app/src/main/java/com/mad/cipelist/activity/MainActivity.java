@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.action_new_search:
-                Intent swipeIntent = new Intent(this, SwiperActivity.class);
-                startActivity(swipeIntent);
+                Intent swiperIntent = new Intent(this, SwiperActivity.class);
+                startActivity(swiperIntent);
                 return true;
             case R.id.action_add_item:
                 mAdapter.notifyDataSetChanged();
