@@ -15,8 +15,8 @@ import android.view.MenuItem;
 import com.mad.cipelist.adapter.MyRecyclerViewAdapter;
 import com.mad.cipelist.R;
 import com.mad.cipelist.test.Activity;
-import com.mad.cipelist.yummly.Match;
-import com.mad.cipelist.yummly.SearchResult;
+import com.mad.cipelist.yummly.model.Match;
+import com.mad.cipelist.yummly.model.SearchResult;
 
 import java.util.ArrayList;
 

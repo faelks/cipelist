@@ -1,4 +1,4 @@
-package com.mad.cipelist.yummly;
+package com.mad.cipelist.yummly.model;
 
 /**
  * Created by Felix on 6/10/16.
@@ -7,11 +7,11 @@ public class SearchResult
 {
     private Match[] matches;
     private Criteria criteria;
-    private String facetCounts;
+    private FacetCounts facetCounts;
     private String totalMatchCount;
     private Attribution attribution;
 
-    public SearchResult(Match[] matches, Criteria cri, String facetCount, String matchCount, Attribution attr) {
+    public SearchResult(Match[] matches, Criteria cri, FacetCounts facetCount, String matchCount, Attribution attr) {
         this.matches = matches;
         this.criteria = cri;
         this.facetCounts = facetCount;
@@ -43,12 +43,12 @@ public class SearchResult
         this.criteria = criteria;
     }
 
-    public String getFacetCounts ()
+    public FacetCounts getFacetCounts ()
     {
         return facetCounts;
     }
 
-    public void setFacetCounts (String facetCounts)
+    public void setFacetCounts (FacetCounts facetCounts)
     {
         this.facetCounts = facetCounts;
     }

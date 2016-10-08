@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mad.cipelist.R;
-import com.mad.cipelist.yummly.SearchResult;
+import com.mad.cipelist.yummly.model.SearchResult;
 
 import java.util.ArrayList;
 

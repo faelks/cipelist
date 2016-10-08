@@ -13,9 +13,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.mad.cipelist.R;
-import com.mad.cipelist.yummly.SearchResult;
+import com.mad.cipelist.yummly.YummlyEndpointInterface;
+import com.mad.cipelist.yummly.model.SearchResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -131,7 +131,7 @@ public class Activity extends android.app.Activity {
         doSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Call<SearchResult> call = apiService.getSearch("pasta", "3");
+                Call<SearchResult> call = apiService.getSearch("pasta" );
                 call.enqueue(new Callback<SearchResult>() {
                     @Override
                     public void onResponse(Call<SearchResult> call, Response<SearchResult> response) {
