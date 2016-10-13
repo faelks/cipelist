@@ -15,9 +15,10 @@ import android.view.MenuItem;
 import com.mad.cipelist.adapter.MyRecyclerViewAdapter;
 import com.mad.cipelist.R;
 import com.mad.cipelist.test.Activity;
-import com.mad.cipelist.yummly.model.Match;
+import com.mad.cipelist.yummly.model.Recipe;
 import com.mad.cipelist.yummly.model.SearchResult;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -44,13 +45,14 @@ public class MainActivity extends AppCompatActivity {
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         String [] images = {"http://creationview.com/image/Birds4F.jpg", null};
-        Match m1 = new Match(null, "1", "Pasta", "3600", images, null, null, "5", null);
-        Match [] matches = {m1};
-        SearchResult sr = new SearchResult(matches, null, null, "1", null);
+        Recipe m1 = new Recipe(null, "1", "Pasta", "3600", images, null, null, "5", null);
+        Recipe[] recipes = {m1};
+        SearchResult sr = new SearchResult(recipes, null, null, "1", null);
         mSearches.add(sr);
 
         mAdapter = new MyRecyclerViewAdapter(this, mSearches);
         mSearchRecyclerView.setAdapter(mAdapter);
+
 
         // For the findviewbyID methods = initialize();
     }
@@ -79,17 +81,11 @@ public class MainActivity extends AppCompatActivity {
                         "About Selected", Snackbar.LENGTH_LONG )
                         .setAction("Action", null).show();
                 return true;
-            case R.id.action_test:
-                Intent intent = new Intent(this, Activity.class);
+            case R.id.action_swipe:
+                Intent intent = new Intent(this, SwiperActivity.class);
                 startActivity(intent);
                 return true;
-            case R.id.action_new_search:
-                Intent swiperIntent = new Intent(this, SwiperActivity.class);
-                startActivity(swiperIntent);
-                return true;
-            case R.id.action_add_item:
-                mAdapter.notifyDataSetChanged();
-                return true;
+
         }
 
         return super.onOptionsItemSelected(item);

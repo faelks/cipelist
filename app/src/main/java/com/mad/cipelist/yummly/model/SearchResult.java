@@ -1,17 +1,31 @@
 package com.mad.cipelist.yummly.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import com.orm.SugarRecord;
+
 /**
  * Created by Felix on 6/10/16.
  */
+
 public class SearchResult
 {
-    private Match[] matches;
+    @Expose
+    private Recipe[] matches;
+
+    @Expose
     private Criteria criteria;
+
+    @Expose
     private FacetCounts facetCounts;
+
+    @Expose
     private String totalMatchCount;
+
+    @Expose
     private Attribution attribution;
 
-    public SearchResult(Match[] matches, Criteria cri, FacetCounts facetCount, String matchCount, Attribution attr) {
+    public SearchResult(Recipe[] matches, Criteria cri, FacetCounts facetCount, String matchCount, Attribution attr) {
         this.matches = matches;
         this.criteria = cri;
         this.facetCounts = facetCount;
@@ -19,16 +33,16 @@ public class SearchResult
         this.attribution = attr;
     }
 
-    public Match getMatch() {
+    public Recipe getMatch() {
         return matches[0];
     }
 
-    public Match[] getMatches ()
+    public Recipe[] getRecipes()
     {
         return matches;
     }
 
-    public void setMatches (Match[] matches)
+    public void setRecipes(Recipe[] matches)
     {
         this.matches = matches;
     }
@@ -76,6 +90,6 @@ public class SearchResult
     @Override
     public String toString()
     {
-        return "ClassPojo [matches = "+matches+", criteria = "+criteria+", facetCounts = "+facetCounts+", totalMatchCount = "+totalMatchCount+", attribution = "+attribution+"]";
+        return "ClassPojo [recipes = "+ matches +", criteria = "+criteria+", facetCounts = "+facetCounts+", totalMatchCount = "+totalMatchCount+", attribution = "+attribution+"]";
     }
 }

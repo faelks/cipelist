@@ -63,4 +63,5 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="new_search">New Search</string>
     <string name="add_item">Add Item</string>
+    <string name="action_swipe">Swipe</string>
 </resources>

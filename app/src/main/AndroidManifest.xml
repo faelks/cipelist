@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.mad.cipelist">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -10,7 +11,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon"
+        android:name="com.orm.SugarApp">
+
+        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.mad.cipelist" />
+
         <activity
             android:name=".activity.SplashActivity"
             android:label="@string/app_name"

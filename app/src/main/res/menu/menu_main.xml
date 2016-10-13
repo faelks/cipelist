@@ -13,18 +13,9 @@
         android:title="@string/action_about"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_test"
-        android:orderInCategory="103"
-        android:title="test"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_new_search"
+        android:id="@+id/action_swipe"
         android:orderInCategory="102"
-        android:title="@string/new_search"
+        android:title="@string/action_swipe"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_add_item"
-        android:orderInCategory="104"
-        android:title="@string/add_item"
-        app:showAsAction="never" />
+
 </menu>
