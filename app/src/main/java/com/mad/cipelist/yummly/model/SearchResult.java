@@ -10,19 +10,16 @@ import com.orm.SugarRecord;
 
 public class SearchResult
 {
-    @Expose
     private Recipe[] matches;
 
-    @Expose
+
     private Criteria criteria;
 
-    @Expose
+
     private FacetCounts facetCounts;
 
-    @Expose
     private String totalMatchCount;
 
-    @Expose
     private Attribution attribution;
 
     public SearchResult(Recipe[] matches, Criteria cri, FacetCounts facetCount, String matchCount, Attribution attr) {

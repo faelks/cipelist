@@ -9,7 +9,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.mad.cipelist.R;
 import com.mad.cipelist.yummly.model.Recipe;
-import com.mad.cipelist.yummly.model.SearchResult;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
@@ -66,11 +65,14 @@ public class RecipeCard {
 
     @SwipeIn
     private void onSwipeIn(){
-        /*mRecipe.save();
-        List<Recipe> likedRecipes = Recipe.findWithQuery(Recipe.class, "Select * from Recipe");
+        LocalRecipe recipe = new LocalRecipe(mRecipe.getRecipeName(), mRecipe.getRating(), mRecipe.getTotalTimeInSeconds(), mRecipe.getSmallImageUrls()[0]);
+        recipe.save();
+        List<LocalRecipe> likedRecipes = LocalRecipe.listAll(LocalRecipe.class);
         if (likedRecipes.size() >= 7) {
             Toast.makeText(mContext, "We have 7 recipes!", Toast.LENGTH_LONG).show();
-        } */
+        }
+
+
         Log.d("EVENT", "onSwipedIn");
     }
 

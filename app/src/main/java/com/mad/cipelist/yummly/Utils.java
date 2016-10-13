@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.mad.cipelist.yummly.model.Recipe;
 import com.mad.cipelist.yummly.model.SearchResult;
 
@@ -23,10 +24,20 @@ public class Utils {
             Gson gson = new Gson();
             String jsonString = loadJSONFromAsset(context, "recipes.json");
             SearchResult sr = gson.fromJson(jsonString, SearchResult.class);
-            List<Recipe> recipeList = new ArrayList<>();
+
+            ArrayList<Recipe> recipeList = new ArrayList<>();
+            //List<LocalRecipe> recipeList = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().<ArrayList<LocalRecipe>>fromJson(jsonString, new TypeToken<ArrayList<LocalRecipe>>() {}.getType());
+
+            /* productResult.setResults(new Gson().<ArrayList<Markets>>fromJson(response.toString(),
+                    new TypeToken<ArrayList<Markets>>() {
+                    }.getType()));
+
+            productResult.setResults((new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()).<ArrayList<Markets>> */
+
+
             for (Recipe r : sr.getRecipes()) {
                 recipeList.add(r);
-                Log.d("Recipe", r.getRecipeName());
+                Log.d("LocalRecipe", r.getRecipeName());
             }
             return recipeList;
         }catch (Exception e){

@@ -15,7 +15,11 @@
         tools:replace="android:icon"
         android:name="com.orm.SugarApp">
 
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.mad.cipelist" />
+        <meta-data android:name="DATABASE" android:value="recipes.db" />
+        <meta-data android:name="VERSION" android:value="4" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="com.mad.cipelist.activity" />
 
         <activity
             android:name=".activity.SplashActivity"

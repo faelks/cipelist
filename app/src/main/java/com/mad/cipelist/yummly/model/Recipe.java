@@ -5,38 +5,37 @@ import com.google.gson.annotations.SerializedName;
 import com.orm.SugarApp;
 import com.orm.SugarRecord;
 import com.orm.dsl.Ignore;
+import com.orm.dsl.Table;
 
 /**
  * Created by Felix on 6/10/16.
  */
-public class Recipe{
+public class Recipe {
 
-    @Expose
     private String[] ingredients;
 
-    @Expose
-    @SerializedName("id")
-    private String id;
-    @Expose
+    private String mId;
+
     private String recipeName;
-    @Expose
+
     private String totalTimeInSeconds;
-    @Expose
+
     private String[] smallImageUrls;
-    @Expose
+
     private String sourceDisplayName;
     private Flavors flavors;
-    @Expose
+
     private String rating;
+
     private Attributes attributes;
 
     public Recipe() {
 
     }
 
-    public Recipe(String[] ingredients, String mid, String recipeName, String totalTimeInSeconds, String[] smallImageUrls, String sourceDisplayName, Flavors flavors, String rating, Attributes attributes) {
+    public Recipe(String[] ingredients, String id,  String recipeName, String totalTimeInSeconds, String[] smallImageUrls, String sourceDisplayName, Flavors flavors, String rating, Attributes attributes) {
         this.ingredients = ingredients;
-        this.id = id;
+        this.mId = id;
         this.recipeName = recipeName;
         this.totalTimeInSeconds = totalTimeInSeconds;
         this.smallImageUrls = smallImageUrls;
@@ -54,12 +53,12 @@ public class Recipe{
         this.ingredients = ingredients;
     }
 
-    public String getid() {
-        return id;
+    public String getmId() {
+        return mId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setmId(String id) {
+        this.mId = id;
     }
 
     public String getRecipeName() {
@@ -124,6 +123,6 @@ public class Recipe{
 
     @Override
     public String toString() {
-        return "ClassPojo [ingredients = " + ingredients + ", id = " + id + ", recipeName = " + recipeName + ", totalTimeInSeconds = " + totalTimeInSeconds + ", smallImageUrls = " + smallImageUrls + ", sourceDisplayName = " + sourceDisplayName + ", flavors = " + flavors + ", rating = " + rating + ", attributes = " + attributes + "]";
+        return "ClassPojo [ingredients = " + ingredients + ", mId = " + mId + ", recipeName = " + recipeName + ", totalTimeInSeconds = " + totalTimeInSeconds + ", smallImageUrls = " + smallImageUrls + ", sourceDisplayName = " + sourceDisplayName + ", flavors = " + flavors + ", rating = " + rating + ", attributes = " + attributes + "]";
     }
 }
