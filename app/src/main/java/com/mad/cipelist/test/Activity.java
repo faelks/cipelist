@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.mad.cipelist.R;
 import com.mad.cipelist.yummly.YummlyEndpointInterface;
-import com.mad.cipelist.yummly.model.SearchResult;
+import com.mad.cipelist.yummly.search.model.SearchResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;

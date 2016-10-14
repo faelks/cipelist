@@ -64,4 +64,5 @@
     <string name="new_search">New Search</string>
     <string name="add_item">Add Item</string>
     <string name="action_swipe">Swipe</string>
+    <string name="generating_shopping_list">Generating Shopping List</string>
 </resources>

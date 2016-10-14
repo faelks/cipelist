@@ -1,8 +1,4 @@
-package com.mad.cipelist.yummly.model;
-
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-import com.orm.SugarRecord;
+package com.mad.cipelist.yummly.search.model;
 
 /**
  * Created by Felix on 6/10/16.

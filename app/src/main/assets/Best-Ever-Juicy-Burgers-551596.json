@@ -1,0 +1,56 @@
+{
+  "yield":null,
+  "nutritionEstimates":[
+
+  ],
+  "prepTimeInSeconds":600,
+  "totalTime":"20 min",
+  "images":[
+    {
+      "hostedSmallUrl":"http://lh6.ggpht.com/TQVW_TgIFoWkexiUIiSO5q72qE3vdv0DITIECMIBUSFE3vKfITfn2FztoCqMvAgOWv7pR9m7LdVh5ngZiRsPYg=s90",
+      "hostedMediumUrl":"http://lh6.ggpht.com/TQVW_TgIFoWkexiUIiSO5q72qE3vdv0DITIECMIBUSFE3vKfITfn2FztoCqMvAgOWv7pR9m7LdVh5ngZiRsPYg=s180",
+      "hostedLargeUrl":"http://lh6.ggpht.com/TQVW_TgIFoWkexiUIiSO5q72qE3vdv0DITIECMIBUSFE3vKfITfn2FztoCqMvAgOWv7pR9m7LdVh5ngZiRsPYg=s360",
+      "imageUrlsBySize":{
+        "90":"http://lh6.ggpht.com/o4AgNdgWtgTzNHuHH3Nc8Kbsd3e_tVB7iv_FKV_F7eahtCASBX8HlJXjM0pB574Mm3YwdYLKFKaQOSff92qTblY=s90-c",
+        "360":"http://lh6.ggpht.com/o4AgNdgWtgTzNHuHH3Nc8Kbsd3e_tVB7iv_FKV_F7eahtCASBX8HlJXjM0pB574Mm3YwdYLKFKaQOSff92qTblY=s360-c"
+      }
+    }
+  ],
+  "name":"Best Ever Juicy Burgers",
+  "source":{
+    "sourceDisplayName":"Unilever North America",
+    "sourceSiteUrl":"http://www.yummly.com/unilever",
+    "sourceRecipeUrl":"http://www.yummly.com/recipe/Best-Ever-Juicy-Burgers-551596"
+  },
+  "prepTime":"10 Min",
+  "id":"Best-Ever-Juicy-Burgers-551596",
+  "ingredientLines":[
+    "1/2 cup Hellmann's® or Best Foods® Real Mayonnaise",
+    "1/2 cup plain dry bread crumbs",
+    "1 envelope Lipton® Recipe Secrets® Onion Soup Mix",
+    "2 lbs. ground beef [or ground turkey]",
+    "8 hamburger buns"
+  ],
+  "attribution":{
+    "html":"<a href='http://www.yummly.com/recipe/Best-Ever-Juicy-Burgers-551596'>Best Ever Juicy Burgers recipe</a> information powered by <img alt='Yummly' src='http://static.yummly.com/api-logo.png'/>",
+    "url":"http://www.yummly.com/recipe/Best-Ever-Juicy-Burgers-551596",
+    "text":"Best Ever Juicy Burgers recipes: information powered by Yummly",
+    "logo":"http://static.yummly.com/api-logo.png"
+  },
+  "numberOfServings":8,
+  "totalTimeInSeconds":1200,
+  "attributes":{
+    "cuisine":[
+      "Kid-Friendly",
+      "Barbecue"
+    ],
+    "course":[
+      "Lunch",
+      "Main Dishes"
+    ]
+  },
+  "flavors":{
+
+  },
+  "rating":4
+}

@@ -1,4 +1,4 @@
-package com.mad.cipelist.yummly.model;
+package com.mad.cipelist.yummly.search.model;
 
 /**
  * Created by Felix on 9/10/16.

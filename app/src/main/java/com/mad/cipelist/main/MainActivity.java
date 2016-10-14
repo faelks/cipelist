@@ -16,8 +16,8 @@ import com.mad.cipelist.settings.SettingsActivity;
 import com.mad.cipelist.swiper.SwiperActivity;
 import com.mad.cipelist.main.adapter.MyRecyclerViewAdapter;
 import com.mad.cipelist.R;
-import com.mad.cipelist.yummly.model.Recipe;
-import com.mad.cipelist.yummly.model.SearchResult;
+import com.mad.cipelist.yummly.search.model.Recipe;
+import com.mad.cipelist.yummly.search.model.SearchResult;
 
 import java.util.ArrayList;
 

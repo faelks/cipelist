@@ -5,10 +5,9 @@ import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.mad.cipelist.yummly.model.Recipe;
-import com.mad.cipelist.yummly.model.SearchResult;
+import com.mad.cipelist.yummly.get.model.IndividualRecipe;
+import com.mad.cipelist.yummly.search.model.Recipe;
+import com.mad.cipelist.yummly.search.model.SearchResult;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +36,19 @@ public class Utils {
             }
             return recipeList;
         }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static IndividualRecipe loadRecipe(Context context, String fileName) {
+        try {
+            Gson gson = new Gson();
+            String jsonString = loadJSONFromAsset(context, fileName);
+            IndividualRecipe recipe = gson.fromJson(jsonString, IndividualRecipe.class);
+            return recipe;
+
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
