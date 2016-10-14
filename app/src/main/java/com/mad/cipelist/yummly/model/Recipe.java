@@ -45,7 +45,7 @@ public class Recipe {
         this.attributes = attributes;
     }
 
-    public String[] getIngredients() {
+    public String [] getIngredients() {
         return ingredients;
     }
 

@@ -1,4 +1,4 @@
-package com.mad.cipelist.adapter;
+package com.mad.cipelist.main.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

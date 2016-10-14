@@ -1,13 +1,17 @@
-package com.mad.cipelist.activity;
+package com.mad.cipelist.swiper;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.mad.cipelist.R;
+import com.mad.cipelist.common.LocalRecipe;
 import com.mad.cipelist.yummly.model.Recipe;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 import com.mindorks.placeholderview.annotations.Layout;
@@ -65,15 +69,29 @@ public class RecipeCard {
 
     @SwipeIn
     private void onSwipeIn(){
-        LocalRecipe recipe = new LocalRecipe(mRecipe.getRecipeName(), mRecipe.getRating(), mRecipe.getTotalTimeInSeconds(), mRecipe.getSmallImageUrls()[0]);
+
+        // Small hack to get an array stored by Sugar ORM
+        String [] ingredients = mRecipe.getIngredients();
+        String jsonIngredients = new Gson().toJson(ingredients);
+
+        // Local Recipe class is used since SugarORM dislikes the id attribute of the original class
+        LocalRecipe recipe = new LocalRecipe(mRecipe.getRecipeName(), mRecipe.getRating(), mRecipe.getTotalTimeInSeconds(), mRecipe.getSmallImageUrls()[0], jsonIngredients);
         recipe.save();
         List<LocalRecipe> likedRecipes = LocalRecipe.listAll(LocalRecipe.class);
         if (likedRecipes.size() >= 7) {
             Toast.makeText(mContext, "We have 7 recipes!", Toast.LENGTH_LONG).show();
+            sendNumberReached(likedRecipes.size());
         }
 
 
         Log.d("EVENT", "onSwipedIn");
+    }
+
+    private void sendNumberReached(int recipeAmount) {
+        Log.d("Sender", "Broadcasting Number Reached");
+        Intent intent = new Intent("swiper_amount_reached");
+        intent.putExtra("recipeAmount", recipeAmount);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }
 
     @SwipeInState

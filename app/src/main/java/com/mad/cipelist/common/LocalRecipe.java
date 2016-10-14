@@ -1,4 +1,4 @@
-package com.mad.cipelist.activity;
+package com.mad.cipelist.common;
 
 import com.orm.SugarRecord;
 
@@ -9,10 +9,7 @@ import java.util.List;
  */
 public class LocalRecipe extends SugarRecord {
     //Ingredient, Name, Rating, ImageUrl, cookingTime, constructor
-
-    List<Ingredient> getIngredients() {
-        return Ingredient.find(Ingredient.class, "localRecipe = ?", String.valueOf(this.getId()));
-    }
+    String ingredients;
 
     String recipeName;
 
@@ -24,11 +21,12 @@ public class LocalRecipe extends SugarRecord {
 
     public LocalRecipe() {}
 
-    public LocalRecipe(String name, String rating, String cookingTime, String imageUrl) {
+    public LocalRecipe(String name, String rating, String cookingTime, String imageUrl, String ingredients) {
         this.recipeName = name;
         this.rating = rating;
         this.cookingTime = cookingTime;
         this.imageUrl = imageUrl;
+        this.ingredients = ingredients;
 
     }
 

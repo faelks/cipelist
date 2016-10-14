@@ -1,23 +1,25 @@
-package com.mad.cipelist.activity;
+package com.mad.cipelist.swiper;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 
 
 import com.mad.cipelist.R;
+import com.mad.cipelist.shoppinglist.ShoppingListActivity;
 import com.mad.cipelist.yummly.Utils;
 import com.mad.cipelist.yummly.model.Recipe;
-import com.mad.cipelist.yummly.model.SearchResult;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
+import com.orm.SchemaGenerator;
+import com.orm.SugarContext;
+import com.orm.SugarDb;
 
 import java.util.List;
 
@@ -37,6 +39,13 @@ public class SwiperActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swiper);
+
+        // Snippet that deletes the ORM tables and creates new ones.
+        SugarContext.terminate();
+        SchemaGenerator schemaGenerator = new SchemaGenerator(getApplicationContext());
+        schemaGenerator.deleteTables(new SugarDb(getApplicationContext()).getDB());
+        SugarContext.init(getApplicationContext());
+        schemaGenerator.createDatabase(new SugarDb(getApplicationContext()).getDB());
 
         mSwipeView = (SwipePlaceHolderView)findViewById(R.id.swipeView);
         mContext = getApplicationContext();
@@ -59,10 +68,6 @@ public class SwiperActivity extends Activity {
             Log.d("Err", "SwiperActivity could not retrieve json data, null pointer exception");
         }
 
-
-
-
-
         findViewById(R.id.rejectBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,5 +82,28 @@ public class SwiperActivity extends Activity {
             }
         });
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("swiper_amount_reached"));
+
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            int recipeAmount = intent.getIntExtra("recipeAmount", 0);
+            Log.d("receiver", "Got message: " + recipeAmount);
+
+            Intent shoppingList = new Intent(getApplicationContext(), ShoppingListActivity.class);
+            shoppingList.putExtra("recipeAmount", recipeAmount);
+            startActivity(shoppingList);
+            finish();
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
     }
 }

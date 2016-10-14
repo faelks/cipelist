@@ -1,4 +1,4 @@
-package com.mad.cipelist.activity;
+package com.mad.cipelist.settings;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

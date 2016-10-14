@@ -1,8 +1,10 @@
-package com.mad.cipelist.activity;
+package com.mad.cipelist.main;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import com.mad.cipelist.main.MainActivity;
 
 /**
  * Displays the app logo on startup before the application is fully loaded

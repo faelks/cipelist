@@ -1,4 +1,4 @@
-package com.mad.cipelist.activity;
+package com.mad.cipelist.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,13 +12,13 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.mad.cipelist.adapter.MyRecyclerViewAdapter;
+import com.mad.cipelist.settings.SettingsActivity;
+import com.mad.cipelist.swiper.SwiperActivity;
+import com.mad.cipelist.main.adapter.MyRecyclerViewAdapter;
 import com.mad.cipelist.R;
-import com.mad.cipelist.test.Activity;
 import com.mad.cipelist.yummly.model.Recipe;
 import com.mad.cipelist.yummly.model.SearchResult;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**

@@ -15,6 +15,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Temporary class used to load from json file.
+ */
 public class Utils {
 
     private static final String TAG = "Utils";
@@ -26,18 +30,10 @@ public class Utils {
             SearchResult sr = gson.fromJson(jsonString, SearchResult.class);
 
             ArrayList<Recipe> recipeList = new ArrayList<>();
-            //List<LocalRecipe> recipeList = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().<ArrayList<LocalRecipe>>fromJson(jsonString, new TypeToken<ArrayList<LocalRecipe>>() {}.getType());
-
-            /* productResult.setResults(new Gson().<ArrayList<Markets>>fromJson(response.toString(),
-                    new TypeToken<ArrayList<Markets>>() {
-                    }.getType()));
-
-            productResult.setResults((new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()).<ArrayList<Markets>> */
-
 
             for (Recipe r : sr.getRecipes()) {
                 recipeList.add(r);
-                Log.d("LocalRecipe", r.getRecipeName());
+                //Log.d("LocalRecipe", r.getRecipeName());
             }
             return recipeList;
         }catch (Exception e){

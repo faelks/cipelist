@@ -7,10 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
-import com.mad.cipelist.adapter.MyRecyclerViewAdapter;
+import com.mad.cipelist.main.adapter.MyRecyclerViewAdapter;
 import com.mad.cipelist.R;
-
-import java.util.ArrayList;
 
 /**
  * A card view class that is saved for future reference
