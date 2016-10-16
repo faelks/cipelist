@@ -10,9 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mad.cipelist.R;
+import com.mad.cipelist.common.LocalSearch;
 import com.mad.cipelist.yummly.search.model.SearchResult;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Adapter for managing the searches and displaying them.
@@ -26,7 +28,7 @@ public class MyRecyclerViewAdapter extends RecyclerView
     // Tag for log statements, has the name of the class
     private static String LOG_TAG = "MyRecyclerViewAdapter";
     // The model which is intitialised in the constructor
-    private ArrayList<SearchResult> mDataset;
+    private List<LocalSearch> mDataset;
     // A listener that handles clicks on the items in the view
     private static MyClickListener myClickListener;
     // The context of the parent activity, useless?
@@ -76,7 +78,7 @@ public class MyRecyclerViewAdapter extends RecyclerView
      * @param context
      * @param myDataset
      */
-    public MyRecyclerViewAdapter(Context context, ArrayList<SearchResult> myDataset) {
+    public MyRecyclerViewAdapter(Context context, List<LocalSearch> myDataset) {
         mContext = context;
         mDataset = myDataset;
     }
@@ -93,11 +95,11 @@ public class MyRecyclerViewAdapter extends RecyclerView
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
-        holder.label.setText(mDataset.get(position).getMatch().getRecipeName());
-        holder.dateTime.setText(mDataset.get(position).getTotalMatchCount());
+        holder.label.setText(mDataset.get(0).searchId);
+        //holder.dateTime.setText(mDataset.get(position).getTotalMatchCount());
     }
 
-    public void addItem(SearchResult dataObj, int index) {
+    public void addItem(LocalSearch dataObj, int index) {
         mDataset.add(index, dataObj);
         notifyItemInserted(index);
     }
@@ -105,10 +107,6 @@ public class MyRecyclerViewAdapter extends RecyclerView
     public void deleteItem(int index) {
         mDataset.remove(index);
         notifyItemRemoved(index);
-    }
-
-    public void updateImage(int index) {
-        mDataset.get(index).setTotalMatchCount("0");
     }
 
     @Override

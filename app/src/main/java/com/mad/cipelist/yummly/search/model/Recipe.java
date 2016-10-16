@@ -7,7 +7,7 @@ public class Recipe {
 
     private String[] ingredients;
 
-    private String mId;
+    private String id;
 
     private String recipeName;
 
@@ -28,7 +28,7 @@ public class Recipe {
 
     public Recipe(String[] ingredients, String id,  String recipeName, String totalTimeInSeconds, String[] smallImageUrls, String sourceDisplayName, Flavors flavors, String rating, Attributes attributes) {
         this.ingredients = ingredients;
-        this.mId = id;
+        this.id = id;
         this.recipeName = recipeName;
         this.totalTimeInSeconds = totalTimeInSeconds;
         this.smallImageUrls = smallImageUrls;
@@ -46,12 +46,12 @@ public class Recipe {
         this.ingredients = ingredients;
     }
 
-    public String getmId() {
-        return mId;
+    public String getId() {
+        return id;
     }
 
-    public void setmId(String id) {
-        this.mId = id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getRecipeName() {
@@ -116,6 +116,6 @@ public class Recipe {
 
     @Override
     public String toString() {
-        return "ClassPojo [ingredients = " + ingredients + ", mId = " + mId + ", recipeName = " + recipeName + ", totalTimeInSeconds = " + totalTimeInSeconds + ", smallImageUrls = " + smallImageUrls + ", sourceDisplayName = " + sourceDisplayName + ", flavors = " + flavors + ", rating = " + rating + ", attributes = " + attributes + "]";
+        return "ClassPojo [ingredients = " + ingredients + ", mId = " + id + ", recipeName = " + recipeName + ", totalTimeInSeconds = " + totalTimeInSeconds + ", smallImageUrls = " + smallImageUrls + ", sourceDisplayName = " + sourceDisplayName + ", flavors = " + flavors + ", rating = " + rating + ", attributes = " + attributes + "]";
     }
 }

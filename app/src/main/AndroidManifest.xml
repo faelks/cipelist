@@ -16,7 +16,7 @@
         android:name="com.orm.SugarApp">
 
         <meta-data android:name="DATABASE" android:value="recipes.db" />
-        <meta-data android:name="VERSION" android:value="6" />
+        <meta-data android:name="VERSION" android:value="8" />
         <meta-data
             android:name="DOMAIN_PACKAGE_NAME"
             android:value="com.mad.cipelist.common" />

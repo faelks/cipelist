@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalRecipe;
+import com.mad.cipelist.common.LocalSearch;
 import com.mad.cipelist.shoppinglist.ShoppingListActivity;
 import com.mad.cipelist.yummly.Utils;
 import com.mad.cipelist.yummly.search.model.Recipe;
@@ -22,15 +23,19 @@ import com.orm.SugarContext;
 import com.orm.SugarDb;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * Displays a swiper that the used can use to select recipes they like
  */
 public class SwiperActivity extends Activity {
 
+    public static final String SWIPER_LOGTAG = "Swiper";
     public static final String RECIPE_AMOUNT = "recipeAmount";
     private SwipePlaceHolderView mSwipeView;
     private Context mContext;
+    private String mSearchId;
+    private LocalSearch mSearch;
 
     /* For GSON
     // A custom gson parser can also be defined
@@ -46,6 +51,14 @@ public class SwiperActivity extends Activity {
 
         mSwipeView = (SwipePlaceHolderView) findViewById(R.id.swipeView);
         mContext = this.getApplicationContext();
+        // This string should be unique for the search and be dependant on the
+        // id of the user/timestamp/searchparameters.
+        int randomSeed = new Random().nextInt(1000);
+        mSearchId = "default" + randomSeed;
+        mSearch = new LocalSearch();
+        mSearch.searchId = mSearchId;
+        mSearch.save();
+
 
         mSwipeView.getBuilder()
                 .setDisplayViewCount(3)
@@ -66,8 +79,10 @@ public class SwiperActivity extends Activity {
                         String [] ingredients = recipe.getIngredients();
                         String jsonIngredients = new Gson().toJson(ingredients);
 
+
+
                         // Local instance of recipe class is initialized with relevant recipe data
-                        LocalRecipe localRecipe = new LocalRecipe(recipe.getRecipeName(), recipe.getRating(), recipe.getTotalTimeInSeconds(), recipe.getSmallImageUrls()[0], jsonIngredients);
+                        LocalRecipe localRecipe = getLocalRecipe(recipe.getRecipeName(), recipe.getRating(), recipe.getTotalTimeInSeconds(), recipe.getSmallImageUrls()[0], jsonIngredients, recipe.getId());
                         // Save the local recipe object with SugarORM
                         localRecipe.save();
                         // Get all the stored recipes from the database
@@ -83,7 +98,7 @@ public class SwiperActivity extends Activity {
                 }));
             }
         } catch (NullPointerException n) {
-            Log.d("Swiper", "SwiperActivity could not retrieve json data, a null pointer exception was thrown");
+            Log.d(SWIPER_LOGTAG, "SwiperActivity could not retrieve json data, a null pointer exception was thrown");
         }
 
         // Programatically call the doSwipe function on reject button click
@@ -101,6 +116,10 @@ public class SwiperActivity extends Activity {
                 mSwipeView.doSwipe(true);
             }
         });
+    }
+
+    public LocalRecipe getLocalRecipe(String name, String rating, String time, String imageUrl, String ingredients, String id) {
+        return new LocalRecipe(name, rating, time, imageUrl, ingredients, id, mSearchId);
     }
 
     /**

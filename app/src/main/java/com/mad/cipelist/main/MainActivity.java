@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.mad.cipelist.common.LocalSearch;
 import com.mad.cipelist.settings.SettingsActivity;
 import com.mad.cipelist.swiper.SwiperActivity;
 import com.mad.cipelist.main.adapter.MyRecyclerViewAdapter;
@@ -20,6 +21,9 @@ import com.mad.cipelist.yummly.search.model.Recipe;
 import com.mad.cipelist.yummly.search.model.SearchResult;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Displays the initial landing page with previous searches.
@@ -31,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mSearchRecyclerView;
     private MyRecyclerViewAdapter mAdapter;
-    private ArrayList<SearchResult> mSearches = new ArrayList<>();
     private static String LOG_TAG = "MainActivity";
+    private List<LocalSearch> mLocalSearches;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +48,10 @@ public class MainActivity extends AppCompatActivity {
         mSearchRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        String [] images = {"http://creationview.com/image/Birds4F.jpg", null};
-        Recipe m1 = new Recipe(null, "1", "Pasta", "3600", images, null, null, "5", null);
-        Recipe[] recipes = {m1};
-        SearchResult sr = new SearchResult(recipes, null, null, "1", null);
-        mSearches.add(sr);
-
-        mAdapter = new MyRecyclerViewAdapter(this, mSearches);
-        mSearchRecyclerView.setAdapter(mAdapter);
-
-
+        if (mAdapter == null) {
+            mAdapter = new MyRecyclerViewAdapter(this, mLocalSearches);
+            mSearchRecyclerView.setAdapter(mAdapter);
+        }
         // For the findviewbyID methods = initialize();
     }
 
@@ -88,6 +86,12 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        try {
+            mLocalSearches = getLocalSearches();
+        } catch (Exception e) {
+            Log.d("ERROR", "Couldn't load local searches, could be empty");
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -99,10 +103,32 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(int position, View v) {
                 Log.i(LOG_TAG, " Clicked on Item " + (position+1));
-                mAdapter.updateImage(position);
                 mAdapter.notifyDataSetChanged();
 
             }
         });
+
+        try {
+            mLocalSearches = getLocalSearches();
+            Log.d("Success!", "Loaded a local search into memory");
+        } catch (Exception e) {
+            Log.d("ERROR", "Couldn't load local searches, could be empty");
+        }
+
+        if (mLocalSearches != null) {
+            mAdapter = new MyRecyclerViewAdapter(this, mLocalSearches);
+            mSearchRecyclerView.setAdapter(mAdapter);
+        }
+
+    }
+
+    public List<String> removeDuplicates(List<String> ingredients) {
+        Set<String> noDups = new HashSet<>();
+        noDups.addAll(ingredients);
+        return new ArrayList<>(noDups);
+    }
+
+    public List<LocalSearch> getLocalSearches() {
+        return LocalSearch.listAll(LocalSearch.class);
     }
 }
