@@ -2,6 +2,7 @@ package com.mad.cipelist.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +12,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.common.LocalSearch;
 import com.mad.cipelist.settings.SettingsActivity;
 import com.mad.cipelist.swiper.SwiperActivity;
@@ -37,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private MyRecyclerViewAdapter mAdapter;
     private static String LOG_TAG = "MainActivity";
     private List<LocalSearch> mLocalSearches;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         mSearchRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -53,6 +63,22 @@ public class MainActivity extends AppCompatActivity {
             mSearchRecyclerView.setAdapter(mAdapter);
         }
         // For the findviewbyID methods = initialize();
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user!= null) {
+                    // User is signed in
+                    Log.d(LOG_TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(LOG_TAG, "onAuthStateChanged:signed_out");
+                }
+            }
+        };
+
+
     }
 
     @Override
@@ -81,7 +107,29 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_swipe:
                 Intent intent = new Intent(this, SwiperActivity.class);
+                Log.d(LOG_TAG, "Starting swiper for 7 recipes");
+                intent.putExtra("recipeAmount", 7);
                 startActivity(intent);
+                return true;
+            case R.id.action_anon_login:
+                mAuth.signInAnonymously()
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                Log.d(LOG_TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
+
+                                // If sign in fails, display a message to the user. If sign in succeeds
+                                // the auth state listener will be notified and logic to handle the
+                                // signed in user can be handled in the listener.
+                                if (!task.isSuccessful()) {
+                                    Log.w(LOG_TAG, "signInAnonymously", task.getException());
+                                    Toast.makeText(MainActivity.this, "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+
+                                // ...
+                            }
+                        });
                 return true;
 
         }
@@ -120,6 +168,20 @@ public class MainActivity extends AppCompatActivity {
             mSearchRecyclerView.setAdapter(mAdapter);
         }
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 
     public List<String> removeDuplicates(List<String> ingredients) {

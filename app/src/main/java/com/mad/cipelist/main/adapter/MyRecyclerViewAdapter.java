@@ -95,7 +95,7 @@ public class MyRecyclerViewAdapter extends RecyclerView
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
-        holder.label.setText(mDataset.get(0).searchId);
+        holder.label.setText(mDataset.get(position).searchId);
         //holder.dateTime.setText(mDataset.get(position).getTotalMatchCount());
     }
 
@@ -115,7 +115,7 @@ public class MyRecyclerViewAdapter extends RecyclerView
     }
 
     /**
-     * Interface for the click listener which currently does nothing?
+     * Interface for the click listener
      */
     public interface MyClickListener {
         public void onItemClick(int position, View v);

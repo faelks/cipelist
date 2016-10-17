@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "765629090549",
+    "firebase_url": "https://cipelist.firebaseio.com",
+    "project_id": "cipelist",
+    "storage_bucket": "cipelist.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:765629090549:android:ae99be49dbbc9a99",
+        "android_client_info": {
+          "package_name": "com.mad.cipelist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "765629090549-0si1h505cq8a2opht0vphclfd6p262dd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mad.cipelist",
+            "certificate_hash": "A22C169173393E481B332DD0F57F52610CBE6417"
+          }
+        },
+        {
+          "client_id": "765629090549-1cm94ambhlt2id8e339cvtmefcr8frbl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpRALpqJ6coduqWgB9cOpKKjTeplpdHV0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "765629090549-1cm94ambhlt2id8e339cvtmefcr8frbl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

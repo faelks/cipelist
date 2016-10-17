@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Toast;
 
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalRecipe;
@@ -36,6 +38,9 @@ public class SwiperActivity extends Activity {
     private Context mContext;
     private String mSearchId;
     private LocalSearch mSearch;
+    private FirebaseAuth mAuth;
+    private int mCurrentCount;
+    private int mRecipeAmount;
 
     /* For GSON
     // A custom gson parser can also be defined
@@ -47,14 +52,19 @@ public class SwiperActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swiper);
 
-        resetDatabase();
+        //resetDatabase();
+
+        mAuth = FirebaseAuth.getInstance();
 
         mSwipeView = (SwipePlaceHolderView) findViewById(R.id.swipeView);
         mContext = this.getApplicationContext();
         // This string should be unique for the search and be dependant on the
         // id of the user/timestamp/searchparameters.
-        int randomSeed = new Random().nextInt(1000);
-        mSearchId = "default" + randomSeed;
+
+        mCurrentCount = 0;
+        mRecipeAmount = getIntent().getIntExtra("recipeAmount", 0);
+        setSearchId();
+
         mSearch = new LocalSearch();
         mSearch.searchId = mSearchId;
         mSearch.save();
@@ -80,18 +90,19 @@ public class SwiperActivity extends Activity {
                         String jsonIngredients = new Gson().toJson(ingredients);
 
 
-
                         // Local instance of recipe class is initialized with relevant recipe data
                         LocalRecipe localRecipe = getLocalRecipe(recipe.getRecipeName(), recipe.getRating(), recipe.getTotalTimeInSeconds(), recipe.getSmallImageUrls()[0], jsonIngredients, recipe.getId());
                         // Save the local recipe object with SugarORM
                         localRecipe.save();
                         // Get all the stored recipes from the database
-                        List<LocalRecipe> likedRecipes = LocalRecipe.listAll(LocalRecipe.class);
+                        // List<LocalRecipe> likedRecipes = LocalRecipe.listAll(LocalRecipe.class);
                         // If the amount of recipes stored are now equal to the requested amount, launch the shopping list
-                        int recipeAmount = likedRecipes.size();
-                        if (recipeAmount >= 7) {
-                            Toast.makeText(mContext, "We have " + recipeAmount + " recipes!", Toast.LENGTH_LONG).show();
-                            onSwipeLimitReached(recipeAmount);
+
+                        ++mCurrentCount;
+
+                        if (mCurrentCount >= mRecipeAmount) {
+                            Toast.makeText(mContext, "We have " + mCurrentCount + " recipes!", Toast.LENGTH_LONG).show();
+                            onSwipeLimitReached(mCurrentCount);
                         }
                         //Log.d("EVENT", "onSwipedIn");
                     }
@@ -116,6 +127,15 @@ public class SwiperActivity extends Activity {
                 mSwipeView.doSwipe(true);
             }
         });
+    }
+
+    private void setSearchId() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            mSearchId = user.getUid() + new Random().nextInt(1000);
+        } else {
+            mSearchId = "default";
+        }
     }
 
     public LocalRecipe getLocalRecipe(String name, String rating, String time, String imageUrl, String ingredients, String id) {
@@ -146,7 +166,24 @@ public class SwiperActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mSearchId == null) {
+            setSearchId();
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mSearchId = null;
+        Log.d(SWIPER_LOGTAG, "onPause()");
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(SWIPER_LOGTAG, "onDestroy()");
     }
 }
