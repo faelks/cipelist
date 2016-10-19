@@ -1,18 +1,22 @@
 package com.mad.cipelist.shoppinglist;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalRecipe;
-import com.mad.cipelist.yummly.Utils;
+import com.mad.cipelist.common.LocalSearch;
+import com.mad.cipelist.shoppinglist.adapter.MyResultAdapter;
+import com.mad.cipelist.shoppinglist.asynctasks.LoadRecipesAsyncTask;
+import com.mad.cipelist.swiper.SwiperActivity;
 import com.mad.cipelist.yummly.get.model.IndividualRecipe;
 import com.mindorks.placeholderview.ExpandablePlaceHolderView;
+import com.viewpagerindicator.TitlePageIndicator;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
@@ -21,15 +25,18 @@ import java.util.List;
 /**
  * Created by Felix on 14/10/16.
  */
-public class ShoppingListActivity extends Activity {
+public class ShoppingListActivity extends AppCompatActivity {
 
     public static String SHOPPINGL_LOGTAG = "ShoppingList";
 
+    private FragmentPagerAdapter adapterViewPager;
     private ExpandablePlaceHolderView mExpandableView;
     private Context mContext;
     private List<IndividualRecipe> mRecipes;
     private AVLoadingIndicatorView mAvi;
     private TextView mLoadTxt;
+    private String mSearchId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +46,32 @@ public class ShoppingListActivity extends Activity {
 
         mAvi = (AVLoadingIndicatorView) findViewById(R.id.avi);
         mLoadTxt = (TextView) findViewById(R.id.loadText);
+        mSearchId = getIntent().getStringExtra(SwiperActivity.SEARCH_ID);
 
-        loadIngredients();
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        adapterViewPager = new MyResultAdapter(getSupportFragmentManager(), mSearchId);
+        viewPager.setAdapter(adapterViewPager);
+
+        TitlePageIndicator titleIndicator = (TitlePageIndicator) findViewById(R.id.titles);
+        titleIndicator.setViewPager(viewPager);
+
+
+        // Customises the title indicator
+        final float density = getResources().getDisplayMetrics().density;
+        titleIndicator.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        //titleIndicator.setFooterColor(R.color.colorPrimary);
+        titleIndicator.setFooterLineHeight(2 * density); //1dp
+        titleIndicator.setFooterIndicatorHeight(3 * density); //3dp
+        titleIndicator.setFooterIndicatorStyle(TitlePageIndicator.IndicatorStyle.Underline);
+        //titleIndicator.setTextColor(R.color.default_title_indicator_text_color);
+        //titleIndicator.setSelectedColor(R.color.default_title_indicator_selected_color);
+        titleIndicator.setSelectedBold(true);
+
+
+        stopLoadAnim();
+
+        //loadIngredients();
+
         /*
         mExpandableView = (ExpandablePlaceHolderView) findViewById(R.id.expandableView);
         for (String i : mIngredients) {
@@ -62,57 +93,29 @@ public class ShoppingListActivity extends Activity {
 
     public void loadIngredients() {
         //int amount = getIntent().getIntExtra(SwiperActivity.RECIPE_AMOUNT, 0);
-        new loadRecipeAsyncTask(mContext, null, retrieveRecipeIds()).execute();
+        new LoadRecipesAsyncTask(mContext, null, retrieveRecipeIds(), this).execute();
         //Log.d(SHOPPINGL_LOGTAG, mIngredients.toString());
     }
 
-    private class loadRecipeAsyncTask extends AsyncTask<Void, Void, List<IndividualRecipe>> {
-
-        private Context mContext;
-        private String identifier;
-        private List<String> recipeIds;
-
-        private loadRecipeAsyncTask(Context context, String identifier, List<String> recipeIds) {
-            super();
-            this.identifier=identifier;
-            this.recipeIds=recipeIds;
-            this.mContext=context;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            startLoadAnim();
-        }
-
-        @Override
-        protected List<IndividualRecipe> doInBackground(Void... voids) {
-            List<IndividualRecipe> recipes = new ArrayList<>();
-            for (String id : recipeIds) {
-                IndividualRecipe recipe = Utils.loadRecipe(mContext, id+".json");
-                recipes.add(recipe);
-                Log.d(SHOPPINGL_LOGTAG, "Loaded recipe " + id);
-            }
-            return recipes;
-        }
-
-        @Override
-        protected void onPostExecute(List<IndividualRecipe> results) {
-            super.onPostExecute(results);
-            mRecipes = results;
-            stopLoadAnim();
-        }
+    public void setRecipes(List<IndividualRecipe> recipes) {
+        this.mRecipes = recipes;
     }
 
     private List<String> retrieveRecipeIds() {
-        List<LocalRecipe> recipes = LocalRecipe.listAll(LocalRecipe.class);
-        List<String> recipeIds = new ArrayList<>();
-        for (LocalRecipe r : recipes) {
-            if (r.mId != null) {
-                recipeIds.add(r.mId);
+        List<LocalSearch> search = LocalSearch.find(LocalSearch.class, "search_id = ?", mSearchId);
+        List<LocalRecipe> recipes;
+        if (search.get(0) != null) {
+            recipes = search.get(0).getRecipes();
+            List<String> recipeIds = new ArrayList<>();
+            for (LocalRecipe r : recipes) {
+                if (r.mId != null) {
+                    recipeIds.add(r.mId);
+                }
             }
+            return recipeIds;
         }
-        return recipeIds;
+
+        return null;
     }
 
     //Pseudo Code

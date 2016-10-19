@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
@@ -16,24 +15,24 @@ import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalRecipe;
 import com.mad.cipelist.common.LocalSearch;
 import com.mad.cipelist.shoppinglist.ShoppingListActivity;
-import com.mad.cipelist.yummly.Utils;
+import com.mad.cipelist.yummly.YummlyUtils;
 import com.mad.cipelist.yummly.search.model.Recipe;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
-import com.orm.SchemaGenerator;
-import com.orm.SugarContext;
-import com.orm.SugarDb;
 
 import java.util.List;
 import java.util.Random;
 
 /**
  * Displays a swiper that the used can use to select recipes they like
+ * Searches should only be saved if the swiping session completes
  */
 public class SwiperActivity extends Activity {
 
     public static final String SWIPER_LOGTAG = "Swiper";
     public static final String RECIPE_AMOUNT = "recipeAmount";
+    public static final String SEARCH_ID = "searchId";
+
     private SwipePlaceHolderView mSwipeView;
     private Context mContext;
     private String mSearchId;
@@ -52,7 +51,7 @@ public class SwiperActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swiper);
 
-        //resetDatabase();
+
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -80,7 +79,7 @@ public class SwiperActivity extends Activity {
 
         try {
             // Loader should be an interface "RecipeLoader" that can be substituted for actual API calls
-            List<Recipe> recipes = Utils.loadRecipes(mContext);
+            List<Recipe> recipes = YummlyUtils.loadRecipes(mContext);
             for (final Recipe recipe : recipes) {
                 mSwipeView.addView(new RecipeCard(mContext, recipe, new RecipeCard.SwipeHandler() {
                     @Override
@@ -131,8 +130,14 @@ public class SwiperActivity extends Activity {
 
     private void setSearchId() {
         FirebaseUser user = mAuth.getCurrentUser();
+        String username;
         if (user != null) {
-            mSearchId = user.getUid() + new Random().nextInt(1000);
+            if (user.isAnonymous()) {
+                username = "Anonymous";
+            } else {
+                username = user.getDisplayName();
+            }
+            mSearchId = username + "'s search number: " + new Random().nextInt(1000);
         } else {
             mSearchId = "default";
         }
@@ -142,26 +147,16 @@ public class SwiperActivity extends Activity {
         return new LocalRecipe(name, rating, time, imageUrl, ingredients, id, mSearchId);
     }
 
-    /**
-     * Removes the old database and replaces it with a fresh, new one.
-     */
-    private void resetDatabase() {
-        // Snippet that deletes the ORM tables and creates new ones.
-        SugarContext.terminate();
-        SchemaGenerator schemaGenerator = new SchemaGenerator(getApplicationContext());
-        schemaGenerator.deleteTables(new SugarDb(getApplicationContext()).getDB());
-        SugarContext.init(getApplicationContext());
-        schemaGenerator.createDatabase(new SugarDb(getApplicationContext()).getDB());
-    }
 
     /**
      * Initializes the shopping list activity and finishes the current activity
      * @param recipeAmount The amount of recipes stored in the database
      */
     private void onSwipeLimitReached(int recipeAmount) {
-        Intent shoppingList = new Intent(getApplicationContext(), ShoppingListActivity.class);
-        shoppingList.putExtra(RECIPE_AMOUNT, recipeAmount);
-        startActivity(shoppingList);
+        Intent shoppingListIntent = new Intent(getApplicationContext(), ShoppingListActivity.class);
+        shoppingListIntent.putExtra(RECIPE_AMOUNT, recipeAmount);
+        shoppingListIntent.putExtra(SEARCH_ID, mSearchId);
+        startActivity(shoppingListIntent);
         finish();
     }
 

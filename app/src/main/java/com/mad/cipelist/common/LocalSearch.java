@@ -10,7 +10,10 @@ import java.util.List;
 public class LocalSearch extends SugarRecord{
     public String searchId;
 
+    public LocalSearch() {
+    }
+
     public List<LocalRecipe> getRecipes(){
-        return LocalRecipe.find(LocalRecipe.class, "searchId = ?", searchId);
+        return LocalRecipe.find(LocalRecipe.class, "search_id = ?", searchId);
     }
 }

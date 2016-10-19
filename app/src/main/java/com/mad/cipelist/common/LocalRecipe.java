@@ -2,18 +2,16 @@ package com.mad.cipelist.common;
 
 import com.orm.SugarRecord;
 
-import java.util.List;
-
 /**
  * Stores the necessary data from the Recipe response.
  */
 public class LocalRecipe extends SugarRecord{
+    public String mId;
     String ingredients;
     String recipeName;
     String rating;
     String cookingTime;
     String imageUrl;
-    public String mId;
     String searchId;
 
     public LocalRecipe() {}
@@ -27,6 +25,10 @@ public class LocalRecipe extends SugarRecord{
         this.mId = mId;
         this.searchId = searchId;
 
+    }
+
+    public String getRecipeName() {
+        return recipeName;
     }
 
 }

@@ -9,9 +9,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,13 +19,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalSearch;
+import com.mad.cipelist.common.Utils;
+import com.mad.cipelist.main.adapter.MyRecyclerViewAdapter;
 import com.mad.cipelist.settings.SettingsActivity;
 import com.mad.cipelist.swiper.SwiperActivity;
-import com.mad.cipelist.main.adapter.MyRecyclerViewAdapter;
-import com.mad.cipelist.R;
-import com.mad.cipelist.yummly.search.model.Recipe;
-import com.mad.cipelist.yummly.search.model.SearchResult;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,9 +39,9 @@ import java.util.Set;
  */
 public class MainActivity extends AppCompatActivity {
 
+    private static String LOG_TAG = "MainActivity";
     private RecyclerView mSearchRecyclerView;
     private MyRecyclerViewAdapter mAdapter;
-    private static String LOG_TAG = "MainActivity";
     private List<LocalSearch> mLocalSearches;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        Utils.resetDatabase(this.getApplicationContext());
         mSearchRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -117,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 Log.d(LOG_TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
+                                Toast.makeText(MainActivity.this, "Logged in as Anonymous",
+                                        Toast.LENGTH_SHORT).show();
 
                                 // If sign in fails, display a message to the user. If sign in succeeds
                                 // the auth state listener will be notified and logic to handle the
@@ -192,5 +193,11 @@ public class MainActivity extends AppCompatActivity {
 
     public List<LocalSearch> getLocalSearches() {
         return LocalSearch.listAll(LocalSearch.class);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAuth.signOut();
     }
 }

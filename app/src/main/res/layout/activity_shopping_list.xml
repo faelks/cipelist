@@ -5,12 +5,15 @@
     android:layout_height="match_parent"
     android:background="@color/grey">
 
-    <com.mindorks.placeholderview.ExpandablePlaceHolderView
-        android:id="@+id/expandableView"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        android:visibility="gone"/>
+        android:layout_height="wrap_content"></android.support.v4.view.ViewPager>
+
+    <com.viewpagerindicator.TitlePageIndicator
+        android:id="@+id/titles"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -19,13 +22,13 @@
         android:orientation="vertical">
         <com.wang.avi.AVLoadingIndicatorView
             android:id="@+id/avi"
+            style="@style/AVLoadingIndicatorView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/AVLoadingIndicatorView"
-            android:visibility="visible"
-            app:indicatorName="BallPulseIndicator"
-            app:indicatorColor="@color/white"
             android:layout_gravity="center"
+            android:visibility="visible"
+            app:indicatorColor="@color/white"
+            app:indicatorName="BallPulseIndicator"
             />
         <TextView
             android:id="@+id/loadText"

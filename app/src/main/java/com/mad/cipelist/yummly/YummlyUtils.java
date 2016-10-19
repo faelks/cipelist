@@ -18,9 +18,9 @@ import java.util.List;
 /**
  * Temporary class used to load from json file.
  */
-public class Utils {
+public class YummlyUtils {
 
-    private static final String TAG = "Utils";
+    private static final String TAG = "YummlyUtils";
 
     public static List<Recipe> loadRecipes(Context context){
         try{
