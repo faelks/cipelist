@@ -22,7 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalSearch;
 import com.mad.cipelist.common.Utils;
-import com.mad.cipelist.main.adapter.MyRecyclerViewAdapter;
+import com.mad.cipelist.main.adapter.MainRecyclerViewAdapter;
 import com.mad.cipelist.settings.SettingsActivity;
 import com.mad.cipelist.swiper.SwiperActivity;
 
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static String LOG_TAG = "MainActivity";
     private RecyclerView mSearchRecyclerView;
-    private MyRecyclerViewAdapter mAdapter;
+    private MainRecyclerViewAdapter mAdapter;
     private List<LocalSearch> mLocalSearches;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         if (mAdapter == null) {
-            mAdapter = new MyRecyclerViewAdapter(this, mLocalSearches);
+            mAdapter = new MainRecyclerViewAdapter(this, mLocalSearches);
             mSearchRecyclerView.setAdapter(mAdapter);
         }
         // For the findviewbyID methods = initialize();
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mAdapter.setOnItemClickListener(new MyRecyclerViewAdapter
+        mAdapter.setOnItemClickListener(new MainRecyclerViewAdapter
                 .MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (mLocalSearches != null) {
-            mAdapter = new MyRecyclerViewAdapter(this, mLocalSearches);
+            mAdapter = new MainRecyclerViewAdapter(this, mLocalSearches);
             mSearchRecyclerView.setAdapter(mAdapter);
         }
 

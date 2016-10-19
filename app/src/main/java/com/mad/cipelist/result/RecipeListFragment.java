@@ -1,4 +1,4 @@
-package com.mad.cipelist.shoppinglist;
+package com.mad.cipelist.result;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalRecipe;
-import com.mad.cipelist.shoppinglist.adapter.RecipeRecyclerViewAdapter;
+import com.mad.cipelist.result.adapter.RecipeRecyclerViewAdapter;
 
 import java.util.List;
 
@@ -48,11 +48,17 @@ public class RecipeListFragment extends Fragment {
 
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
+
     // Inflate the view for the fragment based on layout XML
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recipe_list, container, false);
+        View view = inflater.inflate(R.layout.recipe_list_frag, container, false);
         TextView tvLabel = (TextView) view.findViewById(R.id.tvLabel);
         //tvLabel.setText(page + " -- " + title);
 

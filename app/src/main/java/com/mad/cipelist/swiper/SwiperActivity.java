@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalRecipe;
 import com.mad.cipelist.common.LocalSearch;
-import com.mad.cipelist.shoppinglist.ShoppingListActivity;
+import com.mad.cipelist.result.ResultActivity;
 import com.mad.cipelist.yummly.YummlyUtils;
 import com.mad.cipelist.yummly.search.model.Recipe;
 import com.mindorks.placeholderview.SwipeDecor;
@@ -153,7 +153,7 @@ public class SwiperActivity extends Activity {
      * @param recipeAmount The amount of recipes stored in the database
      */
     private void onSwipeLimitReached(int recipeAmount) {
-        Intent shoppingListIntent = new Intent(getApplicationContext(), ShoppingListActivity.class);
+        Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
         shoppingListIntent.putExtra(RECIPE_AMOUNT, recipeAmount);
         shoppingListIntent.putExtra(SEARCH_ID, mSearchId);
         startActivity(shoppingListIntent);

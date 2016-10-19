@@ -1,4 +1,4 @@
-package com.mad.cipelist.shoppinglist.adapter;
+package com.mad.cipelist.main.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,63 +10,63 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mad.cipelist.R;
-import com.mad.cipelist.common.LocalRecipe;
+import com.mad.cipelist.common.LocalSearch;
 
 import java.util.List;
 
 /**
- * Created by Felix on 19/10/2016.
+ * Adapter for managing the searches and displaying them.
+ * The class initialises new view holders and adds new or
+ * removes items on request.
  */
-
-public class RecipeRecyclerViewAdapter extends RecyclerView
-        .Adapter<RecipeRecyclerViewAdapter
-        .RecipeHolder> {
+public class MainRecyclerViewAdapter extends RecyclerView
+        .Adapter<MainRecyclerViewAdapter
+        .DataObjectHolder> {
 
     // Tag for log statements, has the name of the class
-    private static String LOG_TAG = "RecipeRVAdapter";
+    private static String LOG_TAG = "MainRecyclerViewAdapter";
     // A listener that handles clicks on the items in the view
-    private static RecipeClickListener mRecipeClickListener;
+    private static MyClickListener myClickListener;
     // The model which is intitialised in the constructor
-    private List<LocalRecipe> mDataset;
+    private List<LocalSearch> mDataset;
     // The context of the parent activity, useless?
     private Context mContext;
 
     /**
      * Constructor that sets the context and data to be displayed
-     *
      * @param context
      * @param myDataset
      */
-    public RecipeRecyclerViewAdapter(Context context, List<LocalRecipe> myDataset) {
+    public MainRecyclerViewAdapter(Context context, List<LocalSearch> myDataset) {
         mContext = context;
         mDataset = myDataset;
     }
 
     /**
      * Binds a click listener to the adapter.
+     * @param myClickListener
      */
-    public void setOnItemClickListener(RecipeClickListener mRecipeClickListener) {
-        RecipeRecyclerViewAdapter.mRecipeClickListener = mRecipeClickListener;
+    public void setOnItemClickListener(MyClickListener myClickListener) {
+        MainRecyclerViewAdapter.myClickListener = myClickListener;
     }
 
     @Override
-    public RecipeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public DataObjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_view_row, parent, false);
 
-        RecipeHolder recipeHolder = new RecipeHolder(view);
-        return recipeHolder;
+        DataObjectHolder dataObjectHolder = new DataObjectHolder(view);
+        return dataObjectHolder;
     }
 
     @Override
-    public void onBindViewHolder(RecipeHolder holder, int position) {
-        holder.label.setText(mDataset.get(position).getRecipeName());
-        //holder.label.setText(mDataset.get(position).searchId);
+    public void onBindViewHolder(DataObjectHolder holder, int position) {
+        holder.label.setText(mDataset.get(position).searchId);
         //holder.dateTime.setText(mDataset.get(position).getTotalMatchCount());
     }
 
-    public void addItem(LocalRecipe dataObj, int index) {
+    public void addItem(LocalSearch dataObj, int index) {
         mDataset.add(index, dataObj);
         notifyItemInserted(index);
     }
@@ -84,7 +84,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
     /**
      * Interface for the click listener
      */
-    public interface RecipeClickListener {
+    public interface MyClickListener {
         void onItemClick(int position, View v);
     }
 
@@ -93,7 +93,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
      * Rows are created and populated with data from
      * the model
      */
-    public static class RecipeHolder extends RecyclerView.ViewHolder
+    public static class DataObjectHolder extends RecyclerView.ViewHolder
             implements View
             .OnClickListener {
         TextView label;
@@ -105,7 +105,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
          *
          * @param itemView
          */
-        public RecipeHolder(View itemView) {
+        public DataObjectHolder(View itemView) {
             super(itemView);
             label = (TextView) itemView.findViewById(R.id.textView);
             dateTime = (TextView) itemView.findViewById(R.id.textView2);
@@ -116,7 +116,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
 
         @Override
         public void onClick(View v) {
-            mRecipeClickListener.onItemClick(getAdapterPosition(), v);
+            myClickListener.onItemClick(getAdapterPosition(), v);
         }
     }
 }

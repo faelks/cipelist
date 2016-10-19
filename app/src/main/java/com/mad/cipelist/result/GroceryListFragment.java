@@ -1,4 +1,4 @@
-package com.mad.cipelist.shoppinglist;
+package com.mad.cipelist.result;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,7 +40,7 @@ public class GroceryListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_grocery_list, container, false);
+        View view = inflater.inflate(R.layout.grocery_list_frag, container, false);
         TextView tvLabel = (TextView) view.findViewById(R.id.tvLabel);
         //tvLabel.setText(page + " -- " + title);
         return view;

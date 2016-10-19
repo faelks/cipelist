@@ -1,4 +1,4 @@
-package com.mad.cipelist.shoppinglist;
+package com.mad.cipelist.result;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,8 +11,8 @@ import android.widget.TextView;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalRecipe;
 import com.mad.cipelist.common.LocalSearch;
-import com.mad.cipelist.shoppinglist.adapter.MyResultAdapter;
-import com.mad.cipelist.shoppinglist.asynctasks.LoadRecipesAsyncTask;
+import com.mad.cipelist.result.adapter.MyResultAdapter;
+import com.mad.cipelist.result.asynctasks.LoadRecipesAsyncTask;
 import com.mad.cipelist.swiper.SwiperActivity;
 import com.mad.cipelist.yummly.get.model.IndividualRecipe;
 import com.mindorks.placeholderview.ExpandablePlaceHolderView;
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Created by Felix on 14/10/16.
  */
-public class ShoppingListActivity extends AppCompatActivity {
+public class ResultActivity extends AppCompatActivity {
 
     public static String SHOPPINGL_LOGTAG = "ShoppingList";
 
@@ -54,7 +54,6 @@ public class ShoppingListActivity extends AppCompatActivity {
 
         TitlePageIndicator titleIndicator = (TitlePageIndicator) findViewById(R.id.titles);
         titleIndicator.setViewPager(viewPager);
-
 
         // Customises the title indicator
         final float density = getResources().getDisplayMetrics().density;

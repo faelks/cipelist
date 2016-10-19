@@ -1,11 +1,11 @@
-package com.mad.cipelist.shoppinglist.adapter;
+package com.mad.cipelist.result.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.mad.cipelist.shoppinglist.GroceryListFragment;
-import com.mad.cipelist.shoppinglist.RecipeListFragment;
+import com.mad.cipelist.result.GroceryListFragment;
+import com.mad.cipelist.result.RecipeListFragment;
 
 /**
  * Created by Felix on 19/10/2016.
@@ -18,7 +18,6 @@ public class MyResultAdapter extends FragmentPagerAdapter {
     public MyResultAdapter(FragmentManager fragmentManager, String searchId) {
         super(fragmentManager);
         this.mSearchId = searchId;
-
     }
 
     @Override

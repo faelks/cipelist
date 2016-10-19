@@ -1,9 +1,9 @@
-package com.mad.cipelist.shoppinglist.asynctasks;
+package com.mad.cipelist.result.asynctasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.mad.cipelist.shoppinglist.ShoppingListActivity;
+import com.mad.cipelist.result.ResultActivity;
 import com.mad.cipelist.yummly.YummlyUtils;
 import com.mad.cipelist.yummly.get.model.IndividualRecipe;
 
@@ -19,9 +19,9 @@ public class LoadRecipesAsyncTask extends AsyncTask<Void, Void, List<IndividualR
     private Context mContext;
     private String identifier;
     private List<String> recipeIds;
-    private ShoppingListActivity mParent;
+    private ResultActivity mParent;
 
-    public LoadRecipesAsyncTask(Context context, String identifier, List<String> recipeIds, ShoppingListActivity parent) {
+    public LoadRecipesAsyncTask(Context context, String identifier, List<String> recipeIds, ResultActivity parent) {
         super();
         this.identifier = identifier;
         this.recipeIds = recipeIds;

@@ -61,7 +61,7 @@
         </activity>
 
         <activity
-            android:name=".shoppinglist.ShoppingListActivity"
+            android:name=".result.ResultActivity"
             android:label="Search Results"
             android:screenOrientation="portrait">
             <meta-data
