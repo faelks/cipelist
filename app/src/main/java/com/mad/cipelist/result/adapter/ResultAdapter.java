@@ -1,5 +1,6 @@
 package com.mad.cipelist.result.adapter;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -8,16 +9,19 @@ import com.mad.cipelist.result.GroceryListFragment;
 import com.mad.cipelist.result.RecipeListFragment;
 
 /**
- * Created by Felix on 19/10/2016.
+ * Manages the two fragment classes for groceries and recipes
+ * and adds them to the view pager.
  */
 
-public class MyResultAdapter extends FragmentPagerAdapter {
+public class ResultAdapter extends FragmentPagerAdapter {
     private static int NUM_ITEMS = 2;
     private String mSearchId;
+    private Context mContext;
 
-    public MyResultAdapter(FragmentManager fragmentManager, String searchId) {
+    public ResultAdapter(FragmentManager fragmentManager, Context context, String searchId) {
         super(fragmentManager);
         this.mSearchId = searchId;
+        this.mContext = context;
     }
 
     @Override

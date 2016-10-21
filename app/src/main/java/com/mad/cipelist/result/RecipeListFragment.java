@@ -2,56 +2,76 @@ package com.mad.cipelist.result;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalRecipe;
 import com.mad.cipelist.result.adapter.RecipeRecyclerViewAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Felix on 19/10/2016.
+ * Displays the liked recipes in a recycler view
+ * and allows the user to acces the recipe detail mPage
  */
 
 public class RecipeListFragment extends Fragment {
 
-    private String title;
-    private int page;
-    private RecyclerView mRecipeRecyclerView;
-    private RecipeRecyclerViewAdapter mAdapter;
-    private List<LocalRecipe> mRecipes;
+    private static final String TAG = "RecipeListFragment";
+    private static final String KEY_LAYOUT_MANAGER = "layoutManager";
+    private static final int SPAN_COUNT = 2;
+
+    protected RecyclerView mRecyclerView;
+    protected RecipeRecyclerViewAdapter mAdapter;
+    protected RecyclerView.LayoutManager mLayoutManager;
+    protected ArrayList<LocalRecipe> mDataset;
+
+
+    private int mPage;
+    private String mTitle;
     private String mSearchId;
 
     // newInstance constructor for creating fragment with arguments
     public static RecipeListFragment newInstance(int page, String title, String searchId) {
-        RecipeListFragment fragmentFirst = new RecipeListFragment();
+        RecipeListFragment recipeListFragment = new RecipeListFragment();
+
         Bundle args = new Bundle();
-        args.putInt("someInt", page);
-        args.putString("someTitle", title);
+        args.putInt("pageNumber", page);
+        args.putString("title", title);
         args.putString("searchId", searchId);
-        fragmentFirst.setArguments(args);
-        return fragmentFirst;
+        recipeListFragment.setArguments(args);
+
+        Log.d(TAG, "newInstance with args: page=" + page + ", title=" + title + ", searchId=" + searchId);
+        return recipeListFragment;
+
     }
 
     // Store instance variables based on arguments passed
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mPage = getArguments() != null ? getArguments().getInt("pageNumber") : 0;
+        mTitle = getArguments().getString("title");
         mSearchId = getArguments().getString("searchId");
-        title = getArguments().getString("someTitle");
 
-
+        if (mSearchId == null) {
+            mSearchId = "default";
+        }
+        Log.d(TAG, "OnCreate called, initiating dataset...");
+        initDataset();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        Log.d(TAG, "onActivityCreated called");
     }
 
     // Inflate the view for the fragment based on layout XML
@@ -59,19 +79,45 @@ public class RecipeListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recipe_list_frag, container, false);
-        TextView tvLabel = (TextView) view.findViewById(R.id.tvLabel);
-        //tvLabel.setText(page + " -- " + title);
+        view.setTag(TAG);
 
-        /*mRecipes = LocalRecipe.find(LocalRecipe.class, "search_id = ?", mSearchId);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recipeRv);
+        mRecyclerView.setHasFixedSize(true);
 
-        mRecipeRecyclerView = (RecyclerView) getView().findViewById(R.id.my_recycler_view);
-        mRecipeRecyclerView.setLayoutManager(new LinearLayoutManager(getView().getContext()));
+        mAdapter = new RecipeRecyclerViewAdapter(mDataset, new RecipeRecyclerViewAdapter.OnRecipeClickListener() {
+            @Override
+            public void onItemClick(LocalRecipe recipe) {
+                Log.d(TAG, "This is recipe: " + recipe.getRecipeName());
+            }
+        });
+        mRecyclerView.setAdapter(mAdapter);
 
-        if (mAdapter == null) {
-            mAdapter = new RecipeRecyclerViewAdapter(getView().getContext(), mRecipes);
-            mRecipeRecyclerView.setAdapter(mAdapter);
-        } */
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        Log.d(TAG, "onCreateView called");
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    private void initDataset() {
+        List<LocalRecipe> recipes = LocalRecipe.find(LocalRecipe.class, "search_id = ?", mSearchId);
+        mDataset = new ArrayList<>();
+        for (LocalRecipe r : recipes) {
+            mDataset.add(r);
+        }
+
+        if (mDataset == null) {
+            Log.d(TAG, "Dataset null after querying with " + mSearchId);
+        } else {
+            for (LocalRecipe r : mDataset) {
+                Log.d("LocalRecipe", "Loaded recipe " + r.getRecipeName());
+            }
+        }
     }
 }

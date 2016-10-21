@@ -5,25 +5,25 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.mad.cipelist.R;
 
 /**
- * Created by Felix on 19/10/2016.
+ * Displays a list of groceries and their amount. A user is able to click
+ * on individual grocery items to check them off.
  */
 
 public class GroceryListFragment extends Fragment {
 
-    private String title;
-    private int page;
+    private String mTitle;
+    private int mPage;
 
     // newInstance constructor for creating fragment with arguments
-    public static RecipeListFragment newInstance(int page, String title) {
-        RecipeListFragment fragmentFirst = new RecipeListFragment();
+    public static GroceryListFragment newInstance(int page, String title) {
+        GroceryListFragment fragmentFirst = new GroceryListFragment();
         Bundle args = new Bundle();
-        args.putInt("someInt", page);
-        args.putString("someTitle", title);
+        args.putInt("pageNumber", page);
+        args.putString("title", title);
         fragmentFirst.setArguments(args);
         return fragmentFirst;
     }
@@ -32,8 +32,8 @@ public class GroceryListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        page = getArguments().getInt("someInt", 0);
-        title = getArguments().getString("someTitle");
+        mPage = getArguments().getInt("pageNumber", 0);
+        mTitle = getArguments().getString("title");
     }
 
     // Inflate the view for the fragment based on layout XML
@@ -41,13 +41,7 @@ public class GroceryListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.grocery_list_frag, container, false);
-        TextView tvLabel = (TextView) view.findViewById(R.id.tvLabel);
-        //tvLabel.setText(page + " -- " + title);
         return view;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
 }

@@ -31,4 +31,8 @@ public class LocalRecipe extends SugarRecord{
         return recipeName;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
 }

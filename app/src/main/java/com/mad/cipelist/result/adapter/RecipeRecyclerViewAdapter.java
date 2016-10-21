@@ -1,18 +1,17 @@
 package com.mad.cipelist.result.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalRecipe;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by Felix on 19/10/2016.
@@ -22,58 +21,29 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
         .Adapter<RecipeRecyclerViewAdapter
         .RecipeHolder> {
 
-    // Tag for log statements, has the name of the class
-    private static String LOG_TAG = "RecipeRVAdapter";
-    // A listener that handles clicks on the items in the view
-    private static RecipeClickListener mRecipeClickListener;
-    // The model which is intitialised in the constructor
-    private List<LocalRecipe> mDataset;
-    // The context of the parent activity, useless?
-    private Context mContext;
+    private static final String LOG_TAG = "RecipeRvAdapter";
+    private final ArrayList<LocalRecipe> mDataset;
+    private final OnRecipeClickListener mListener;
 
     /**
      * Constructor that sets the context and data to be displayed
-     *
-     * @param context
-     * @param myDataset
+     * @param dataset
      */
-    public RecipeRecyclerViewAdapter(Context context, List<LocalRecipe> myDataset) {
-        mContext = context;
-        mDataset = myDataset;
-    }
-
-    /**
-     * Binds a click listener to the adapter.
-     */
-    public void setOnItemClickListener(RecipeClickListener mRecipeClickListener) {
-        RecipeRecyclerViewAdapter.mRecipeClickListener = mRecipeClickListener;
+    public RecipeRecyclerViewAdapter(ArrayList<LocalRecipe> dataset, OnRecipeClickListener listener) {
+        this.mDataset = dataset;
+        this.mListener = listener;
     }
 
     @Override
     public RecipeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.card_view_row, parent, false);
-
-        RecipeHolder recipeHolder = new RecipeHolder(view);
-        return recipeHolder;
+                .inflate(R.layout.card_recipe_row, parent, false);
+        return new RecipeHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecipeHolder holder, int position) {
-        holder.label.setText(mDataset.get(position).getRecipeName());
-        //holder.label.setText(mDataset.get(position).searchId);
-        //holder.dateTime.setText(mDataset.get(position).getTotalMatchCount());
-    }
-
-    public void addItem(LocalRecipe dataObj, int index) {
-        mDataset.add(index, dataObj);
-        notifyItemInserted(index);
-    }
-
-    public void deleteItem(int index) {
-        mDataset.remove(index);
-        notifyItemRemoved(index);
+        holder.bind(mDataset.get(position), mListener);
     }
 
     @Override
@@ -81,11 +51,8 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
         return mDataset.size();
     }
 
-    /**
-     * Interface for the click listener
-     */
-    public interface RecipeClickListener {
-        void onItemClick(int position, View v);
+    public interface OnRecipeClickListener {
+        void onItemClick(LocalRecipe recipe);
     }
 
     /**
@@ -93,12 +60,12 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
      * Rows are created and populated with data from
      * the model
      */
-    public static class RecipeHolder extends RecyclerView.ViewHolder
-            implements View
-            .OnClickListener {
-        TextView label;
-        TextView dateTime;
-        ImageView image;
+    public static class RecipeHolder extends RecyclerView.ViewHolder {
+
+
+        private TextView label;
+        private ImageView image;
+
 
         /**
          * Constructor for new view holders.
@@ -107,16 +74,19 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
          */
         public RecipeHolder(View itemView) {
             super(itemView);
-            label = (TextView) itemView.findViewById(R.id.textView);
-            dateTime = (TextView) itemView.findViewById(R.id.textView2);
-            image = (ImageView) itemView.findViewById(R.id.cardImage);
-            Log.i(LOG_TAG, "Adding Listener");
-            itemView.setOnClickListener(this);
+            label = (TextView) itemView.findViewById(R.id.recipeLbl);
+            image = (ImageView) itemView.findViewById(R.id.recipeImg);
         }
 
-        @Override
-        public void onClick(View v) {
-            mRecipeClickListener.onItemClick(getAdapterPosition(), v);
+        public void bind(final LocalRecipe item, final OnRecipeClickListener listener) {
+            label.setText(item.getRecipeName());
+            Glide.with(itemView.getContext()).load(item.getImageUrl()).into(image);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(item);
+                }
+            });
         }
     }
 }

@@ -130,14 +130,8 @@ public class SwiperActivity extends Activity {
 
     private void setSearchId() {
         FirebaseUser user = mAuth.getCurrentUser();
-        String username;
         if (user != null) {
-            if (user.isAnonymous()) {
-                username = "Anonymous";
-            } else {
-                username = user.getDisplayName();
-            }
-            mSearchId = username + "'s search number: " + new Random().nextInt(1000);
+            mSearchId = user.getUid() + new Random().nextInt(1000);
         } else {
             mSearchId = "default";
         }

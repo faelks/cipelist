@@ -2,20 +2,20 @@ package com.mad.cipelist.result;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalRecipe;
 import com.mad.cipelist.common.LocalSearch;
-import com.mad.cipelist.result.adapter.MyResultAdapter;
+import com.mad.cipelist.result.adapter.ResultAdapter;
 import com.mad.cipelist.result.asynctasks.LoadRecipesAsyncTask;
 import com.mad.cipelist.swiper.SwiperActivity;
 import com.mad.cipelist.yummly.get.model.IndividualRecipe;
-import com.mindorks.placeholderview.ExpandablePlaceHolderView;
 import com.viewpagerindicator.TitlePageIndicator;
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -25,35 +25,36 @@ import java.util.List;
 /**
  * Created by Felix on 14/10/16.
  */
-public class ResultActivity extends AppCompatActivity {
+public class ResultActivity extends FragmentActivity {
 
-    public static String SHOPPINGL_LOGTAG = "ShoppingList";
+    public static String RESULT_LOGTAG = "ShoppingList";
 
     private FragmentPagerAdapter adapterViewPager;
-    private ExpandablePlaceHolderView mExpandableView;
+    private ViewPager mPager;
+
     private Context mContext;
     private List<IndividualRecipe> mRecipes;
     private AVLoadingIndicatorView mAvi;
     private TextView mLoadTxt;
     private String mSearchId;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shopping_list);
+        setContentView(R.layout.activity_result);
         mContext = this.getApplicationContext();
 
         mAvi = (AVLoadingIndicatorView) findViewById(R.id.avi);
         mLoadTxt = (TextView) findViewById(R.id.loadText);
         mSearchId = getIntent().getStringExtra(SwiperActivity.SEARCH_ID);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
-        adapterViewPager = new MyResultAdapter(getSupportFragmentManager(), mSearchId);
-        viewPager.setAdapter(adapterViewPager);
+        adapterViewPager = new ResultAdapter(getSupportFragmentManager(), mContext, mSearchId);
+
+        mPager = (ViewPager) findViewById(R.id.viewPager);
+        mPager.setAdapter(adapterViewPager);
 
         TitlePageIndicator titleIndicator = (TitlePageIndicator) findViewById(R.id.titles);
-        titleIndicator.setViewPager(viewPager);
+        titleIndicator.setViewPager(mPager);
 
         // Customises the title indicator
         final float density = getResources().getDisplayMetrics().density;
@@ -69,18 +70,32 @@ public class ResultActivity extends AppCompatActivity {
 
         stopLoadAnim();
 
-        //loadIngredients();
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
-        /*
-        mExpandableView = (ExpandablePlaceHolderView) findViewById(R.id.expandableView);
-        for (String i : mIngredients) {
-            mExpandableView.addView(new ShoppingFeedHeadingView(mContext, i));
-            mExpandableView.addView(new IngredientView(mContext, i));
-        }
-        mExpandableView.setVisibility(View.VISIBLE);
-        */
+            // This method will be invoked when the current page is scrolled
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            // This method will be invoked when a new page becomes selected.
+            @Override
+            public void onPageSelected(int position) {
+                Toast.makeText(ResultActivity.this,
+                        "Selected page position: " + position, Toast.LENGTH_SHORT).show();
+            }
+
+            // Called when the scroll state changes:
+            // SCROLL_STATE_IDLE, SCROLL_STATE_DRAGGING, SCROLL_STATE_SETTLING
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
     }
+
+
     public void startLoadAnim() {
         mAvi.smoothToShow();
         mLoadTxt.setVisibility(View.VISIBLE);
@@ -116,12 +131,5 @@ public class ResultActivity extends AppCompatActivity {
 
         return null;
     }
-
-    //Pseudo Code
-    //1. init loading screen
-    //2. retrieve the local recipes id
-    //3. call the apiinterface/json loader
-    //4. store the relevant data in activity eg ingredient amounts
-
 
 }
