@@ -13,16 +13,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalSearch;
 import com.mad.cipelist.common.Utils;
+import com.mad.cipelist.login.LoginActivity;
 import com.mad.cipelist.main.adapter.MainRecyclerViewAdapter;
 import com.mad.cipelist.settings.SettingsActivity;
 import com.mad.cipelist.swiper.SwiperActivity;
@@ -128,30 +125,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_swipe:
                 startNewSwiper(7);
                 return true;
-            case R.id.action_anon_login:
-                mAuth.signInAnonymously()
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                Log.d(LOG_TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
-                                Toast.makeText(MainActivity.this, "Logged in as Anonymous",
-                                        Toast.LENGTH_SHORT).show();
-
-                                // If sign in fails, display a message to the user. If sign in succeeds
-                                // the auth state listener will be notified and logic to handle the
-                                // signed in user can be handled in the listener.
-                                if (!task.isSuccessful()) {
-                                    Log.w(LOG_TAG, "signInAnonymously", task.getException());
-                                    Toast.makeText(MainActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-
-                                // ...
-                            }
-                        });
-                return true;
             case R.id.action_logout:
                 mAuth.signOut();
+                Intent loginIntent = new Intent(this, LoginActivity.class);
+                startActivity(loginIntent);
+                finish();
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 
         }
 

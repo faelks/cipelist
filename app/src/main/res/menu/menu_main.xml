@@ -18,11 +18,6 @@
         android:title="@string/action_swipe"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_anon_login"
-        android:orderInCategory="103"
-        android:title="@string/anonymous_login"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/action_logout"
         android:orderInCategory="103"
         android:title="@string/logout"

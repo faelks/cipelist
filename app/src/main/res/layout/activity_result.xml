@@ -8,7 +8,9 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></android.support.v4.view.ViewPager>
+        android:layout_height="wrap_content">
+
+    </android.support.v4.view.ViewPager>
 
     <com.viewpagerindicator.TitlePageIndicator
         android:id="@+id/titles"

@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:text="@string/my_searches"
-            android:textColor="@color/white" />
+            android:textColor="@color/grey" />
     </LinearLayout>
 
 

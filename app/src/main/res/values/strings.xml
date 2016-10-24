@@ -68,4 +68,10 @@
     <string name="anonymous_login">Anonymous Login</string>
     <string name="my_searches">My Searches</string>
     <string name="logout">Logout</string>
+    <string name="cipelist_logo">Cipelist Logo</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="signup">Signup</string>
+    <string name="anon_login">Don\'t want to sign up? Log in anonymously!</string>
 </resources>
