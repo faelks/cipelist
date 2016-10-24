@@ -3,6 +3,7 @@ package com.mad.cipelist.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -77,14 +78,34 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-
+        FloatingActionButton addRecipeFab = (FloatingActionButton) findViewById(R.id.addRecipeFab);
+        addRecipeFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startNewSwiper(7);
+            }
+        });
     }
+
+    public void startNewSwiper(int amount) {
+        Intent intent = new Intent(this, SwiperActivity.class);
+        Log.d("NewActivity", "Starting swiper for " + amount + " recipes");
+        intent.putExtra("recipeAmount", amount);
+        startActivity(intent);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Disable going back to the MainActivity
+        moveTaskToBack(true);
     }
 
     @Override
@@ -105,10 +126,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 return true;
             case R.id.action_swipe:
-                Intent intent = new Intent(this, SwiperActivity.class);
-                Log.d(LOG_TAG, "Starting swiper for 7 recipes");
-                intent.putExtra("recipeAmount", 7);
-                startActivity(intent);
+                startNewSwiper(7);
                 return true;
             case R.id.action_anon_login:
                 mAuth.signInAnonymously()
@@ -132,6 +150,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                 return true;
+            case R.id.action_logout:
+                mAuth.signOut();
 
         }
 

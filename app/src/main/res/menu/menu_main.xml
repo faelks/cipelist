@@ -22,5 +22,10 @@
         android:orderInCategory="103"
         android:title="@string/anonymous_login"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="103"
+        android:title="@string/logout"
+        app:showAsAction="never" />
 
 </menu>

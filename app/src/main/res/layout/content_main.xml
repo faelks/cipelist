@@ -13,17 +13,28 @@
     tools:context=".main.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
+        android:id="@+id/searchesHeader"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".test.NOTUSEDCardViewActivity">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/my_recycler_view"
+        <TextView
+            android:id="@+id/mSearchesTv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical"/>
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/my_searches"
+            android:textColor="@color/white" />
+    </LinearLayout>
 
-    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/my_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/searchesHeader"
+        android:scrollbars="vertical" />
+
 </RelativeLayout>

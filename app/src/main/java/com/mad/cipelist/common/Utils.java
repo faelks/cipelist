@@ -23,4 +23,5 @@ public class Utils {
         SugarContext.init(context);
         schemaGenerator.createDatabase(new SugarDb(context).getDB());
     }
+
 }

@@ -66,4 +66,6 @@
     <string name="action_swipe">Swipe</string>
     <string name="generating_shopping_list">Generating Shopping List</string>
     <string name="anonymous_login">Anonymous Login</string>
+    <string name="my_searches">My Searches</string>
+    <string name="logout">Logout</string>
 </resources>
