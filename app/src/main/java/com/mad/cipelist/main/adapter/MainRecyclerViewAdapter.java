@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.LocalSearch;
 
@@ -31,15 +32,19 @@ public class MainRecyclerViewAdapter extends RecyclerView
     private List<LocalSearch> mDataset;
     // The context of the parent activity, useless?
     private Context mContext;
+    private String mUserId;
+    private String mUserEmail;
 
     /**
      * Constructor that sets the context and data to be displayed
      * @param context
-     * @param myDataset
+     * @param dataset
      */
-    public MainRecyclerViewAdapter(Context context, List<LocalSearch> myDataset) {
+    public MainRecyclerViewAdapter(Context context, List<LocalSearch> dataset, String id, String email) {
         mContext = context;
-        mDataset = myDataset;
+        mDataset = dataset;
+        mUserId = id;
+        mUserEmail = email;
     }
 
     /**
@@ -54,7 +59,7 @@ public class MainRecyclerViewAdapter extends RecyclerView
     public DataObjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.card_view_row, parent, false);
+                .inflate(R.layout.square_card_main, parent, false);
 
         DataObjectHolder dataObjectHolder = new DataObjectHolder(view);
         return dataObjectHolder;
@@ -62,7 +67,11 @@ public class MainRecyclerViewAdapter extends RecyclerView
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
-        holder.label.setText(mDataset.get(position).searchId);
+        //String searchLabel = mUserEmail + (position+1);
+        //holder.label.setText(searchLabel);
+        String url = mDataset.get(position).getRecipes().get(0).getImageUrl();
+        url = url.substring(0, url.length() - 4);
+        Glide.with(holder.itemView.getContext()).load(url).into(holder.image);
         //holder.dateTime.setText(mDataset.get(position).getTotalMatchCount());
     }
 
@@ -81,6 +90,10 @@ public class MainRecyclerViewAdapter extends RecyclerView
         return mDataset.size();
     }
 
+    public String getSearchId(int position) {
+        return mDataset.get(position).searchId;
+    }
+
     /**
      * Interface for the click listener
      */
@@ -97,7 +110,7 @@ public class MainRecyclerViewAdapter extends RecyclerView
             implements View
             .OnClickListener {
         TextView label;
-        TextView dateTime;
+        //TextView dateTime;
         ImageView image;
 
         /**
@@ -107,9 +120,9 @@ public class MainRecyclerViewAdapter extends RecyclerView
          */
         public DataObjectHolder(View itemView) {
             super(itemView);
-            label = (TextView) itemView.findViewById(R.id.textView);
-            dateTime = (TextView) itemView.findViewById(R.id.textView2);
-            image = (ImageView) itemView.findViewById(R.id.cardImage);
+            //label = (TextView) itemView.findViewById(R.id.square_card_label);
+            //dateTime = (TextView) itemView.findViewById(R.id.textView2);
+            image = (ImageView) itemView.findViewById(R.id.searchIv);
             Log.i(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);
         }

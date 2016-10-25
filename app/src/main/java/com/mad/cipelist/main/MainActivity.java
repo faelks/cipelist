@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,17 +15,15 @@ import android.view.View;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
+import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.common.LocalSearch;
-import com.mad.cipelist.common.Utils;
 import com.mad.cipelist.login.LoginActivity;
 import com.mad.cipelist.main.adapter.MainRecyclerViewAdapter;
+import com.mad.cipelist.result.ResultActivity;
 import com.mad.cipelist.settings.SettingsActivity;
 import com.mad.cipelist.swiper.SwiperActivity;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Displays the initial landing page with previous searches.
@@ -35,12 +31,16 @@ import java.util.Set;
  * user and display them in the recycler view. Currently the
  * view is populated with default items.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private static String LOG_TAG = "MainActivity";
+
     private RecyclerView mSearchRecyclerView;
     private MainRecyclerViewAdapter mAdapter;
+
     private List<LocalSearch> mLocalSearches;
+    private String mCurrentUserId;
+
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -51,14 +51,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Utils.resetDatabase(this.getApplicationContext());
-        mSearchRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        if (mAdapter == null) {
-            mAdapter = new MainRecyclerViewAdapter(this, mLocalSearches);
-            mSearchRecyclerView.setAdapter(mAdapter);
-        }
         // For the findviewbyID methods = initialize();
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -75,6 +68,24 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        if (mAuth.getCurrentUser() != null) {
+            mCurrentUserId = mAuth.getCurrentUser().getUid();
+        } else {
+            mCurrentUserId = "default";
+        }
+
+        // View that holds the current searches that are unique to the user
+        mSearchRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mSearchRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+
+        if (mAdapter == null) {
+            mAdapter = new MainRecyclerViewAdapter(this, mLocalSearches, mCurrentUserId, getUserEmail());
+            mSearchRecyclerView.setAdapter(mAdapter);
+        }
+
+
+
+
         FloatingActionButton addRecipeFab = (FloatingActionButton) findViewById(R.id.addRecipeFab);
         addRecipeFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
     public void startNewSwiper(int amount) {
         Intent intent = new Intent(this, SwiperActivity.class);
         Log.d("NewActivity", "Starting swiper for " + amount + " recipes");
+        // The amount sets the number of recipes the swiper needs to find
         intent.putExtra("recipeAmount", amount);
         startActivity(intent);
     }
@@ -101,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Disable going back to the MainActivity
+        // Disable going back to the LoginActivity
         moveTaskToBack(true);
     }
 
@@ -118,12 +130,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(settingsIntent);
                 return true;
             case R.id.action_about:
-                Snackbar.make(findViewById(R.id.mainLayout),
-                        "About Selected", Snackbar.LENGTH_LONG )
-                        .setAction("Action", null).show();
+                showToast("About Selected");
                 return true;
             case R.id.action_swipe:
                 startNewSwiper(7);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 return true;
             case R.id.action_logout:
                 mAuth.signOut();
@@ -131,12 +142,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(loginIntent);
                 finish();
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-
         }
 
         try {
-            mLocalSearches = getLocalSearches();
-        } catch (Exception e) {
+            mLocalSearches = getLocalSearches(mCurrentUserId);
+        } catch (NullPointerException e) {
             Log.d("ERROR", "Couldn't load local searches, could be empty");
         }
 
@@ -151,23 +161,40 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(int position, View v) {
                 Log.i(LOG_TAG, " Clicked on Item " + (position+1));
-                mAdapter.notifyDataSetChanged();
+                Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
+                shoppingListIntent.putExtra(SwiperActivity.RECIPE_AMOUNT, 7);
+                shoppingListIntent.putExtra(SwiperActivity.SEARCH_ID, mAdapter.getSearchId(position));
+                startActivity(shoppingListIntent);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 
             }
         });
 
         try {
-            mLocalSearches = getLocalSearches();
-            Log.d("Success!", "Loaded a local search into memory");
-        } catch (Exception e) {
-            Log.d("ERROR", "Couldn't load local searches, could be empty");
+            mLocalSearches = getLocalSearches(mCurrentUserId);
+            Log.d("Success!", "Loaded a local search into memory with " + mLocalSearches.size() + " items");
+        } catch (NullPointerException e) {
+            Log.d("ERROR", "Could not load local searches, could be empty");
         }
 
         if (mLocalSearches != null) {
-            mAdapter = new MainRecyclerViewAdapter(this, mLocalSearches);
+            mAdapter = new MainRecyclerViewAdapter(this, mLocalSearches, mCurrentUserId, getUserEmail());
             mSearchRecyclerView.setAdapter(mAdapter);
         }
 
+    }
+
+    public String getUserEmail() {
+        if (mAuth.getCurrentUser() == null) {
+            return "Anonymous";
+        } else {
+            return mAuth.getCurrentUser().getEmail();
+        }
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
     }
 
     @Override
@@ -184,14 +211,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public List<String> removeDuplicates(List<String> ingredients) {
-        Set<String> noDups = new HashSet<>();
-        noDups.addAll(ingredients);
-        return new ArrayList<>(noDups);
-    }
-
-    public List<LocalSearch> getLocalSearches() {
-        return LocalSearch.listAll(LocalSearch.class);
+    public List<LocalSearch> getLocalSearches(String id) {
+        Log.d(LOG_TAG, "Current UserID: " + id);
+        return LocalSearch.find(LocalSearch.class, "user_id = ?", id);
     }
 
     @Override

@@ -7,12 +7,12 @@ import com.orm.SugarRecord;
  */
 public class LocalRecipe extends SugarRecord{
     public String mId;
-    String ingredients;
-    String recipeName;
-    String rating;
-    String cookingTime;
-    String imageUrl;
-    String searchId;
+    private String ingredients;
+    private String recipeName;
+    private String rating;
+    private String cookingTime;
+    private String imageUrl;
+    private String searchId;
 
     public LocalRecipe() {}
 

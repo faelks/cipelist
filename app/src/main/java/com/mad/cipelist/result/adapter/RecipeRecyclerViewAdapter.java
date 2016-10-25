@@ -1,6 +1,7 @@
 package com.mad.cipelist.result.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,7 @@ import com.mad.cipelist.common.LocalRecipe;
 import java.util.ArrayList;
 
 /**
- * Created by Felix on 19/10/2016.
+ * Binds the selected recipes to the fragments recyclerview.
  */
 
 public class RecipeRecyclerViewAdapter extends RecyclerView
@@ -27,11 +28,12 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
 
     /**
      * Constructor that sets the context and data to be displayed
-     * @param dataset
+     * @param dataset A set of recipes that the user has selected
      */
     public RecipeRecyclerViewAdapter(ArrayList<LocalRecipe> dataset, OnRecipeClickListener listener) {
         this.mDataset = dataset;
         this.mListener = listener;
+        Log.d(LOG_TAG, "Initialising Adapter");
     }
 
     @Override
@@ -60,7 +62,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
      * Rows are created and populated with data from
      * the model
      */
-    public static class RecipeHolder extends RecyclerView.ViewHolder {
+    static class RecipeHolder extends RecyclerView.ViewHolder {
 
 
         private TextView label;
@@ -70,15 +72,15 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
         /**
          * Constructor for new view holders.
          *
-         * @param itemView
+         * @param itemView Presents the model data in a view
          */
-        public RecipeHolder(View itemView) {
+        RecipeHolder(View itemView) {
             super(itemView);
             label = (TextView) itemView.findViewById(R.id.recipeLbl);
             image = (ImageView) itemView.findViewById(R.id.recipeImg);
         }
 
-        public void bind(final LocalRecipe item, final OnRecipeClickListener listener) {
+        void bind(final LocalRecipe item, final OnRecipeClickListener listener) {
             label.setText(item.getRecipeName());
             Glide.with(itemView.getContext()).load(item.getImageUrl()).into(image);
             itemView.setOnClickListener(new View.OnClickListener() {

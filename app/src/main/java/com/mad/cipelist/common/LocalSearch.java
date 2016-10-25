@@ -5,10 +5,11 @@ import com.orm.SugarRecord;
 import java.util.List;
 
 /**
- * Created by Felix on 17/10/16.
+ * Contains a list of recipes and a unique id that identifies the search and results.
  */
 public class LocalSearch extends SugarRecord{
     public String searchId;
+    public String userId;
 
     public LocalSearch() {
     }

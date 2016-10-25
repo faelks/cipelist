@@ -1,17 +1,16 @@
 package com.mad.cipelist.swiper;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.mad.cipelist.R;
+import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.common.LocalRecipe;
 import com.mad.cipelist.common.LocalSearch;
 import com.mad.cipelist.result.ResultActivity;
@@ -21,13 +20,12 @@ import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 
 import java.util.List;
-import java.util.Random;
 
 /**
  * Displays a swiper that the used can use to select recipes they like
  * Searches should only be saved if the swiping session completes
  */
-public class SwiperActivity extends Activity {
+public class SwiperActivity extends BaseActivity {
 
     public static final String SWIPER_LOGTAG = "Swiper";
     public static final String RECIPE_AMOUNT = "recipeAmount";
@@ -35,11 +33,11 @@ public class SwiperActivity extends Activity {
 
     private SwipePlaceHolderView mSwipeView;
     private Context mContext;
-    private String mSearchId;
-    private LocalSearch mSearch;
     private FirebaseAuth mAuth;
     private int mCurrentCount;
     private int mRecipeAmount;
+    private String mSearchId;
+    private String mCurrentUserId;
 
     /* For GSON
     // A custom gson parser can also be defined
@@ -50,8 +48,6 @@ public class SwiperActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swiper);
-
-
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -64,8 +60,9 @@ public class SwiperActivity extends Activity {
         mRecipeAmount = getIntent().getIntExtra("recipeAmount", 0);
         setSearchId();
 
-        mSearch = new LocalSearch();
+        LocalSearch mSearch = new LocalSearch();
         mSearch.searchId = mSearchId;
+        mSearch.userId = mCurrentUserId;
         mSearch.save();
 
 
@@ -80,11 +77,12 @@ public class SwiperActivity extends Activity {
         try {
             // Loader should be an interface "RecipeLoader" that can be substituted for actual API calls
             List<Recipe> recipes = YummlyUtils.loadRecipes(mContext);
+            assert recipes != null;
             for (final Recipe recipe : recipes) {
                 mSwipeView.addView(new RecipeCard(mContext, recipe, new RecipeCard.SwipeHandler() {
                     @Override
                     public void onSwipeIn() {
-                        // Small hack to get an array stored by Sugar ORM
+                        // Small hack to get an array of strings stored by Sugar ORM
                         String [] ingredients = recipe.getIngredients();
                         String jsonIngredients = new Gson().toJson(ingredients);
 
@@ -93,6 +91,7 @@ public class SwiperActivity extends Activity {
                         LocalRecipe localRecipe = getLocalRecipe(recipe.getRecipeName(), recipe.getRating(), recipe.getTotalTimeInSeconds(), recipe.getSmallImageUrls()[0], jsonIngredients, recipe.getId());
                         // Save the local recipe object with SugarORM
                         localRecipe.save();
+
                         // Get all the stored recipes from the database
                         // List<LocalRecipe> likedRecipes = LocalRecipe.listAll(LocalRecipe.class);
                         // If the amount of recipes stored are now equal to the requested amount, launch the shopping list
@@ -100,7 +99,7 @@ public class SwiperActivity extends Activity {
                         ++mCurrentCount;
 
                         if (mCurrentCount >= mRecipeAmount) {
-                            Toast.makeText(mContext, "We have " + mCurrentCount + " recipes!", Toast.LENGTH_LONG).show();
+                            showToast("We have " + mCurrentCount + " recipes!");
                             onSwipeLimitReached(mCurrentCount);
                         }
                         //Log.d("EVENT", "onSwipedIn");
@@ -131,9 +130,11 @@ public class SwiperActivity extends Activity {
     private void setSearchId() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            mSearchId = user.getUid() + new Random().nextInt(1000);
+            mCurrentUserId = user.getUid();
+            mSearchId = mCurrentUserId + System.currentTimeMillis();
         } else {
             mSearchId = "default";
+            mCurrentUserId = "default";
         }
     }
 
@@ -152,21 +153,18 @@ public class SwiperActivity extends Activity {
         shoppingListIntent.putExtra(SEARCH_ID, mSearchId);
         startActivity(shoppingListIntent);
         finish();
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mSearchId == null) {
-            setSearchId();
-        }
-
+        Log.d(SWIPER_LOGTAG, "onResume()");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mSearchId = null;
         Log.d(SWIPER_LOGTAG, "onPause()");
     }
 

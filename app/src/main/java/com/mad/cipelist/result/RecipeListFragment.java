@@ -24,8 +24,6 @@ import java.util.List;
 public class RecipeListFragment extends Fragment {
 
     private static final String TAG = "RecipeListFragment";
-    private static final String KEY_LAYOUT_MANAGER = "layoutManager";
-    private static final int SPAN_COUNT = 2;
 
     protected RecyclerView mRecyclerView;
     protected RecipeRecyclerViewAdapter mAdapter;
@@ -33,8 +31,6 @@ public class RecipeListFragment extends Fragment {
     protected ArrayList<LocalRecipe> mDataset;
 
 
-    private int mPage;
-    private String mTitle;
     private String mSearchId;
 
     // newInstance constructor for creating fragment with arguments
@@ -57,8 +53,8 @@ public class RecipeListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPage = getArguments() != null ? getArguments().getInt("pageNumber") : 0;
-        mTitle = getArguments().getString("title");
+        //int mPage = getArguments() != null ? getArguments().getInt("pageNumber") : 0;
+        //String mTitle = getArguments().getString("title");
         mSearchId = getArguments().getString("searchId");
 
         if (mSearchId == null) {

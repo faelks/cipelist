@@ -18,7 +18,7 @@
         <meta-data android:name="DATABASE" android:value="recipes.db" />
         <meta-data
             android:name="VERSION"
-            android:value="9" />
+            android:value="10" />
         <meta-data
             android:name="DOMAIN_PACKAGE_NAME"
             android:value="com.mad.cipelist.common" />
@@ -32,6 +32,18 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter android:label="cipelist">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
+                <data
+                    android:host="www.mad.com"
+                    android:pathPrefix="/cipelist"
+                    android:scheme="http" />
+                <!-- note that the leading "/" is required for pathPrefix-->
             </intent-filter>
         </activity>
 
@@ -60,10 +72,8 @@
         <activity
             android:name=".swiper.SwiperActivity"
             android:label="Swiper"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main.MainActivity" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity

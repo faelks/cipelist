@@ -2,7 +2,6 @@ package com.mad.cipelist.common;
 
 import android.app.Activity;
 import android.content.Context;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.orm.SchemaGenerator;
@@ -12,7 +11,7 @@ import com.orm.SugarDb;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
- * Created by Felix on 19/10/2016.
+ * Provides general utility functions that can be accessed from anywhere in the application.
  */
 
 public class Utils {
@@ -41,11 +40,21 @@ public class Utils {
 
     /**
      * Shows the soft keyboard
-     */
+
     public static void showSoftKeyboard(View view, Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(INPUT_METHOD_SERVICE);
         view.requestFocus();
         inputMethodManager.showSoftInput(view, 0);
     }
+     */
+
+    /**
+     * Removes duplicates from the list
+     public List<String> removeDuplicates(List<String> ingredients) {
+     Set<String> noDups = new HashSet<>();
+     noDups.addAll(ingredients);
+     return new ArrayList<>(noDups);
+     }
+     */
 
 }

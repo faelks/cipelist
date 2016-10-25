@@ -3,11 +3,11 @@ package com.mad.cipelist.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -24,15 +24,15 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 
 /**
- * Created by Felix on 24/10/2016.
+ * Allows the user to login with prerecorded or new details and also provides an anonymous option.
  */
 
 public class LoginActivity extends BaseActivity {
 
     private final static String TAG = "LoginActivity";
 
-    private EditText mInputEmailEt;
-    private EditText mInputPasswordEt;
+    private TextInputEditText mInputEmailEt;
+    private TextInputEditText mInputPasswordEt;
     private ScrollView mLoginContainer;
 
     private Button mLoginBtn;
@@ -49,8 +49,8 @@ public class LoginActivity extends BaseActivity {
 
         // Views
         TextView mAnonymousLoginTv = (TextView) findViewById(R.id.link_anon);
-        mInputEmailEt = (EditText) findViewById(R.id.input_email);
-        mInputPasswordEt = (EditText) findViewById(R.id.input_password);
+        mInputEmailEt = (TextInputEditText) findViewById(R.id.input_email);
+        mInputPasswordEt = (TextInputEditText) findViewById(R.id.input_password);
         mAvi = (AVLoadingIndicatorView) findViewById(R.id.login_avi);
         mLoadTxt = (TextView) findViewById(R.id.login_load_text);
         mLoginContainer = (ScrollView) findViewById(R.id.login_container);
@@ -196,7 +196,7 @@ public class LoginActivity extends BaseActivity {
 
         String email = mInputEmailEt.getText().toString();
         if (TextUtils.isEmpty(email)) {
-            mInputEmailEt.setError("Required.");
+            mInputEmailEt.setError("Required");
             valid = false;
         } else {
             mInputEmailEt.setError(null);
@@ -204,11 +204,13 @@ public class LoginActivity extends BaseActivity {
 
         String password = mInputPasswordEt.getText().toString();
         if (TextUtils.isEmpty(password)) {
-            mInputPasswordEt.setError("Required.");
+            mInputPasswordEt.setError("Required");
             valid = false;
         } else {
             mInputPasswordEt.setError(null);
         }
+
+        // TODO add further validation of input
 
         return valid;
     }

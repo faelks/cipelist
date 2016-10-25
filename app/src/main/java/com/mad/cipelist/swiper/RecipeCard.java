@@ -18,9 +18,9 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutState;
 
 @Layout(R.layout.swiper_card_view)
-public class RecipeCard {
+class RecipeCard {
 
-    public static final String EVENT_LOGTAG = "Event";
+    //public static final String EVENT_LOGTAG = "Event";
 
     @View(R.id.profileImageView)
     private ImageView recipeImageView;
@@ -36,7 +36,7 @@ public class RecipeCard {
     private SwipeHandler mSwipeHandler;
 
 
-    public RecipeCard(Context context, Recipe recipe, @NonNull SwipeHandler handler) {
+    RecipeCard(Context context, Recipe recipe, @NonNull SwipeHandler handler) {
         mContext = context;
         mRecipe = recipe;
         mSwipeHandler = handler;
@@ -45,8 +45,11 @@ public class RecipeCard {
     @Resolve
     private void onResolved(){
         String url = mRecipe.getImageUrl();
+        // Removes the last four characters since they restrict the image size of the url (=90s)
         url = url.substring(0, url.length()-4);
         Glide.with(mContext).load(url).into(recipeImageView);
+
+        // Need additional Customization here
         recipeNameTxt.setText(mRecipe.getRecipeName());
         timeAndRatingTxt.setText((Integer.parseInt(mRecipe.getTotalTimeInSeconds())/60) + " min       Rating: " + mRecipe.getRating() + "/5");
     }

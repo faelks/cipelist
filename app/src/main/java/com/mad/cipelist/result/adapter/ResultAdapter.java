@@ -14,14 +14,11 @@ import com.mad.cipelist.result.RecipeListFragment;
  */
 
 public class ResultAdapter extends FragmentPagerAdapter {
-    private static int NUM_ITEMS = 2;
     private String mSearchId;
-    private Context mContext;
 
     public ResultAdapter(FragmentManager fragmentManager, Context context, String searchId) {
         super(fragmentManager);
         this.mSearchId = searchId;
-        this.mContext = context;
     }
 
     @Override
@@ -39,7 +36,7 @@ public class ResultAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return NUM_ITEMS;
+        return 2;
     }
 
     // Returns the page title for the top indicator
