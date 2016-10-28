@@ -1,14 +1,12 @@
 <resources>
     <string name="app_name">Cipelist</string>
-    <string name="action_settings">Settings</string>
+    <string name="settings">Settings</string>
     <string name="action_about">About</string>
-    <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
-
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
     <string name="pref_description_social_recommendations">Recommendations for people to contact
         based on your message history
@@ -61,17 +59,27 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <!--- Main Activity Settings Menu -->
     <string name="new_search">New Search</string>
     <string name="add_item">Add Item</string>
     <string name="action_swipe">Swipe</string>
-    <string name="generating_shopping_list">Generating Shopping List</string>
     <string name="anonymous_login">Anonymous Login</string>
-    <string name="my_searches">My Searches</string>
     <string name="logout">Logout</string>
+
+    <!-- Loading Strings -->
+    <string name="generating_shopping_list">Generating Shopping List</string>
+
+    <!-- Login Screen -->
     <string name="cipelist_logo">Cipelist Logo</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="signup">Signup</string>
     <string name="anon_login">Don\'t want to sign up? Log in anonymously!</string>
+
+    <!-- Navigation Drawer -->
+    <string name="title_activity_navigation_drawer">NavigationDrawer</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

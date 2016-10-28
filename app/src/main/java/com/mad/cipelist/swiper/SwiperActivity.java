@@ -24,6 +24,7 @@ import java.util.List;
 /**
  * Displays a swiper that the used can use to select recipes they like
  * Searches should only be saved if the swiping session completes
+ * TODO: Currently crashes if no recipes have been saved
  */
 public class SwiperActivity extends BaseActivity {
 
@@ -38,11 +39,6 @@ public class SwiperActivity extends BaseActivity {
     private int mRecipeAmount;
     private String mSearchId;
     private String mCurrentUserId;
-
-    /* For GSON
-    // A custom gson parser can also be defined
-    public static final String BASE_URL = "http://api.yummly.com/v1/api/";
-    */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

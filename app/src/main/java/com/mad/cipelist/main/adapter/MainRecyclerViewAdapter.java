@@ -71,6 +71,8 @@ public class MainRecyclerViewAdapter extends RecyclerView
         //holder.label.setText(searchLabel);
         if (mDataset.size() > 0) {
             String url = mDataset.get(position).getRecipes().get(0).getImageUrl();
+
+            // Looks for a size restriction at the end of the url and removes it if found
             if (url.substring(url.length() - 4, url.length()).equals("=s90")) {
                 url = url.substring(0, url.length() - 4);
             }

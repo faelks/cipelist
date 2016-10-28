@@ -1,9 +1,14 @@
 package com.mad.cipelist.main;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +16,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,6 +31,7 @@ import com.mad.cipelist.result.ResultActivity;
 import com.mad.cipelist.settings.SettingsActivity;
 import com.mad.cipelist.swiper.SwiperActivity;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,11 +40,12 @@ import java.util.List;
  * user and display them in the recycler view. Currently the
  * view is populated with default items.
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static String LOG_TAG = "MainActivity";
 
     private RecyclerView mSearchRecyclerView;
+
     private MainRecyclerViewAdapter mAdapter;
 
     private List<LocalSearch> mLocalSearches;
@@ -52,8 +61,15 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
-        // For the findviewbyID methods = initialize();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -84,9 +100,6 @@ public class MainActivity extends BaseActivity {
             mSearchRecyclerView.setAdapter(mAdapter);
         }
 
-
-
-
         FloatingActionButton addRecipeFab = (FloatingActionButton) findViewById(R.id.addRecipeFab);
         addRecipeFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,7 +117,6 @@ public class MainActivity extends BaseActivity {
         startActivity(intent);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -114,8 +126,37 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        // Disable going back to the LoginActivity
-        moveTaskToBack(true);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            moveTaskToBack(true);
+        }
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+        } else if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     @Override
@@ -170,11 +211,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onItemClick(int position, View v) {
                 Log.i(LOG_TAG, " Clicked on Item " + (position+1));
-                Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
-                shoppingListIntent.putExtra(SwiperActivity.RECIPE_AMOUNT, 7);
-                shoppingListIntent.putExtra(SwiperActivity.SEARCH_ID, mAdapter.getSearchId(position));
-                startActivity(shoppingListIntent);
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                createDialog(v, position);
 
             }
         });
@@ -191,6 +228,35 @@ public class MainActivity extends BaseActivity {
             mSearchRecyclerView.setAdapter(mAdapter);
         }
 
+    }
+
+    public void createDialog(View v, int position) {
+
+        final Dialog dialog = new Dialog(v.getContext());
+        dialog.setContentView(R.layout.search_detail_dialog);
+        dialog.setTitle("Search " + (position + 1));
+
+        TextView searchQuery = (TextView) dialog.findViewById(R.id.searchQueryTv);
+        TextView searchDate = (TextView) dialog.findViewById(R.id.searchDateTv);
+        TextView searchMatches = (TextView) dialog.findViewById(R.id.matchesCountTv);
+        Button viewRecipeBtn = (Button) dialog.findViewById(R.id.viewSearchBtn);
+        Button cancelBtn = (Button) dialog.findViewById(R.id.cancelBtn);
+
+
+        searchQuery.setText("Burgers");
+        searchDate.setText(new Date().toString());
+        searchMatches.setText("7");
+
+        viewRecipeBtn.setOnClickListener(new ViewButtonOnClickListener(dialog, position));
+        assert cancelBtn != null;
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     public String getUserEmail() {
@@ -229,5 +295,26 @@ public class MainActivity extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
         mAuth.signOut();
+    }
+
+    public class ViewButtonOnClickListener implements View.OnClickListener {
+
+        int position;
+        Dialog dialog;
+
+        public ViewButtonOnClickListener(Dialog dialog, int position) {
+            this.position = position;
+            this.dialog = dialog;
+        }
+
+        @Override
+        public void onClick(View view) {
+            Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
+            shoppingListIntent.putExtra(SwiperActivity.RECIPE_AMOUNT, 7);
+            shoppingListIntent.putExtra(SwiperActivity.SEARCH_ID, mAdapter.getSearchId(position));
+            startActivity(shoppingListIntent);
+            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            dialog.dismiss();
+        }
     }
 }
