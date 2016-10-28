@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.mad.cipelist.common.LocalSearch;
 import com.mad.cipelist.result.GroceryListFragment;
 import com.mad.cipelist.result.RecipeListFragment;
 
@@ -15,6 +16,7 @@ import com.mad.cipelist.result.RecipeListFragment;
 
 public class ResultAdapter extends FragmentPagerAdapter {
     private String mSearchId;
+    private LocalSearch mSearch;
 
     public ResultAdapter(FragmentManager fragmentManager, Context context, String searchId) {
         super(fragmentManager);
@@ -25,10 +27,10 @@ public class ResultAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
 
         switch (position) {
-            case 0: // Fragment # 0 - This will show FirstFragment
+            case 0: // Fragment # 0 - This will show RecipeListFragment
                 return RecipeListFragment.newInstance(0, "Recipes", mSearchId);
-            case 1: // Fragment # 0 - This will show FirstFragment different title
-                return GroceryListFragment.newInstance(1, "Groceries");
+            case 1: // Fragment # 0 - This will show GroceryListFragment
+                return GroceryListFragment.newInstance(1, "Groceries", mSearchId);
             default:
                 return null;
         }

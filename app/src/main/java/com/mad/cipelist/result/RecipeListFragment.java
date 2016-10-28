@@ -60,6 +60,7 @@ public class RecipeListFragment extends Fragment {
         if (mSearchId == null) {
             mSearchId = "default";
         }
+
         Log.d(TAG, "OnCreate called, initiating dataset...");
         initDataset();
     }
@@ -101,6 +102,7 @@ public class RecipeListFragment extends Fragment {
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    // Should be rewritten as general function getRecipesWithId(String id){}
     private void initDataset() {
         List<LocalRecipe> recipes = LocalRecipe.find(LocalRecipe.class, "search_id = ?", mSearchId);
         mDataset = new ArrayList<>();

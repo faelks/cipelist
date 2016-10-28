@@ -35,4 +35,8 @@ public class LocalRecipe extends SugarRecord{
         return imageUrl;
     }
 
+    public String getIngredients() {
+        return ingredients;
+    }
+
 }

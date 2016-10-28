@@ -45,7 +45,7 @@ public class ResultActivity extends FragmentActivity {
 
         // Customises the title indicator
         final float density = getResources().getDisplayMetrics().density;
-        //titleIndicator.setFooterColor(R.color.colorPrimary);
+        titleIndicator.setFooterColor(R.color.colorPrimary);
         titleIndicator.setFooterLineHeight(2 * density); //1dp
         titleIndicator.setFooterIndicatorHeight(3 * density); //3dp
         titleIndicator.setFooterIndicatorStyle(TitlePageIndicator.IndicatorStyle.Underline);

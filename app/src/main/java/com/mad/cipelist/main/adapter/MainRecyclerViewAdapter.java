@@ -69,9 +69,14 @@ public class MainRecyclerViewAdapter extends RecyclerView
     public void onBindViewHolder(DataObjectHolder holder, int position) {
         //String searchLabel = mUserEmail + (position+1);
         //holder.label.setText(searchLabel);
-        String url = mDataset.get(position).getRecipes().get(0).getImageUrl();
-        url = url.substring(0, url.length() - 4);
-        Glide.with(holder.itemView.getContext()).load(url).into(holder.image);
+        if (mDataset.size() > 0) {
+            String url = mDataset.get(position).getRecipes().get(0).getImageUrl();
+            if (url.substring(url.length() - 4, url.length()).equals("=s90")) {
+                url = url.substring(0, url.length() - 4);
+            }
+            Log.d(LOG_TAG, "Trying to glide with url " + url);
+            Glide.with(holder.itemView.getContext()).load(url).into(holder.image);
+        }
         //holder.dateTime.setText(mDataset.get(position).getTotalMatchCount());
     }
 

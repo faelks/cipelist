@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.common.LocalSearch;
+import com.mad.cipelist.common.Utils;
 import com.mad.cipelist.login.LoginActivity;
 import com.mad.cipelist.main.adapter.MainRecyclerViewAdapter;
 import com.mad.cipelist.result.ResultActivity;
@@ -142,6 +143,14 @@ public class MainActivity extends BaseActivity {
                 startActivity(loginIntent);
                 finish();
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                return true;
+            case R.id.action_reset_db:
+                Utils.resetDatabase(this.getApplicationContext());
+
+                mLocalSearches = null;
+                mAdapter = new MainRecyclerViewAdapter(this, mLocalSearches, mCurrentUserId, getUserEmail());
+                mSearchRecyclerView.setAdapter(mAdapter);
+                return true;
         }
 
         try {

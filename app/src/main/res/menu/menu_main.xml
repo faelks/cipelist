@@ -22,5 +22,10 @@
         android:orderInCategory="103"
         android:title="@string/logout"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_reset_db"
+        android:orderInCategory="104"
+        android:title="Reset Database"
+        app:showAsAction="never" />
 
 </menu>

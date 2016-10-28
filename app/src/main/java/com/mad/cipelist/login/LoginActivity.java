@@ -126,6 +126,7 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * Called when the login button is pressed. Needs to talk to the firebase setup
+     * TODO: Need to add a timeout on the login
      */
     public void signIn(String email, String password) {
 
@@ -169,7 +170,7 @@ public class LoginActivity extends BaseActivity {
         startLoadAnim("Registering User");
         Utils.hideSoftKeyboard(this);
 
-
+        //TODO: Need to add a timeout on the createUser?
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override

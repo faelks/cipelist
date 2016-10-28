@@ -1,7 +1,6 @@
 package com.mad.cipelist.result.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
     public RecipeRecyclerViewAdapter(ArrayList<LocalRecipe> dataset, OnRecipeClickListener listener) {
         this.mDataset = dataset;
         this.mListener = listener;
-        Log.d(LOG_TAG, "Initialising Adapter");
+        //Log.d(LOG_TAG, "Initialising Adapter");
     }
 
     @Override
