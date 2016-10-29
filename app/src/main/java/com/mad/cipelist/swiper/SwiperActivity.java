@@ -5,26 +5,26 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.gson.Gson;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
-import com.mad.cipelist.common.LocalRecipe;
-import com.mad.cipelist.common.LocalSearch;
 import com.mad.cipelist.result.ResultActivity;
-import com.mad.cipelist.yummly.YummlyUtils;
-import com.mad.cipelist.yummly.search.model.Recipe;
+import com.mad.cipelist.services.yummly.LocalRecipe;
+import com.mad.cipelist.services.yummly.LocalSearch;
+import com.mad.cipelist.services.yummly.MockRecipeLoader;
+import com.mad.cipelist.services.yummly.RecipeLoader;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Displays a swiper that the used can use to select recipes they like
  * Searches should only be saved if the swiping session completes
- * TODO: Currently crashes if no recipes have been saved
  */
 public class SwiperActivity extends BaseActivity {
 
@@ -33,33 +33,35 @@ public class SwiperActivity extends BaseActivity {
     public static final String SEARCH_ID = "searchId";
 
     private SwipePlaceHolderView mSwipeView;
-    private Context mContext;
     private FirebaseAuth mAuth;
-    private int mCurrentCount;
     private int mRecipeAmount;
     private String mSearchId;
     private String mCurrentUserId;
+    private LocalSearch mSearch;
+    private List<LocalRecipe> mSelectedRecipes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_swiper);
+
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.content_swiper, contentFrameLayout);
 
         mAuth = FirebaseAuth.getInstance();
 
-        mSwipeView = (SwipePlaceHolderView) findViewById(R.id.swipeView);
-        mContext = this.getApplicationContext();
+        mSwipeView = (SwipePlaceHolderView) findViewById(R.id.swipe_view);
+        Context mContext = this.getApplicationContext();
         // This string should be unique for the search and be dependant on the
         // id of the user/timestamp/searchparameters.
 
-        mCurrentCount = 0;
         mRecipeAmount = getIntent().getIntExtra("recipeAmount", 0);
         setSearchId();
 
-        LocalSearch mSearch = new LocalSearch();
+        mSearch = new LocalSearch();
         mSearch.searchId = mSearchId;
         mSearch.userId = mCurrentUserId;
-        mSearch.save();
+
+        mSelectedRecipes = new ArrayList<>();
 
 
         mSwipeView.getBuilder()
@@ -71,43 +73,33 @@ public class SwiperActivity extends BaseActivity {
                         .setSwipeOutMsgLayoutId(R.layout.swiper_out_msg));
 
         try {
-            // Loader should be an interface "RecipeLoader" that can be substituted for actual API calls
-            List<Recipe> recipes = YummlyUtils.loadRecipes(mContext);
-            assert recipes != null;
-            for (final Recipe recipe : recipes) {
-                mSwipeView.addView(new RecipeCard(mContext, recipe, new RecipeCard.SwipeHandler() {
-                    @Override
-                    public void onSwipeIn() {
-                        // Small hack to get an array of strings stored by Sugar ORM
-                        String [] ingredients = recipe.getIngredients();
-                        String jsonIngredients = new Gson().toJson(ingredients);
+            // MockLoader that retrieves recipes from a locally saved search
+            RecipeLoader mLoader = new MockRecipeLoader(mContext);
+            LocalSearch newSearch = mLoader.getRecipes(mSearchId);
+            List<LocalRecipe> recipes = newSearch.getRecipes();
 
+            if (recipes != null) {
+                for (final LocalRecipe recipe : recipes) {
+                    mSwipeView.addView(new RecipeCard(mContext, recipe, new RecipeCard.SwipeHandler() {
+                        @Override
+                        public void onSwipeIn() {
 
-                        // Local instance of recipe class is initialized with relevant recipe data
-                        LocalRecipe localRecipe = getLocalRecipe(recipe.getRecipeName(), recipe.getRating(), recipe.getTotalTimeInSeconds(), recipe.getSmallImageUrls()[0], jsonIngredients, recipe.getId());
-                        // Save the local recipe object with SugarORM
-                        localRecipe.save();
+                            mSelectedRecipes.add(recipe);
 
-                        // Get all the stored recipes from the database
-                        // List<LocalRecipe> likedRecipes = LocalRecipe.listAll(LocalRecipe.class);
-                        // If the amount of recipes stored are now equal to the requested amount, launch the shopping list
-
-                        ++mCurrentCount;
-
-                        if (mCurrentCount >= mRecipeAmount) {
-                            showToast("We have " + mCurrentCount + " recipes!");
-                            onSwipeLimitReached(mCurrentCount);
+                            if (mSelectedRecipes.size() >= mRecipeAmount) {
+                                onSwipeLimitReached(mSelectedRecipes.size());
+                            }
+                            //Log.d("EVENT", "onSwipedIn");
                         }
-                        //Log.d("EVENT", "onSwipedIn");
-                    }
-                }));
+                    }));
+                }
             }
         } catch (NullPointerException n) {
             Log.d(SWIPER_LOGTAG, "SwiperActivity could not retrieve json data, a null pointer exception was thrown");
         }
 
         // Programatically call the doSwipe function on reject button click
-        findViewById(R.id.rejectBtn).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.reject_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSwipeView.doSwipe(false);
@@ -115,7 +107,7 @@ public class SwiperActivity extends BaseActivity {
         });
 
         // Programatically call the doSwipe function on accept button click
-        findViewById(R.id.acceptBtn).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.accept_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSwipeView.doSwipe(true);
@@ -129,21 +121,20 @@ public class SwiperActivity extends BaseActivity {
             mCurrentUserId = user.getUid();
             mSearchId = mCurrentUserId + System.currentTimeMillis();
         } else {
-            mSearchId = "default";
-            mCurrentUserId = "default";
+            mSearchId = mCurrentUserId = "default";
         }
     }
-
-    public LocalRecipe getLocalRecipe(String name, String rating, String time, String imageUrl, String ingredients, String id) {
-        return new LocalRecipe(name, rating, time, imageUrl, ingredients, id, mSearchId);
-    }
-
 
     /**
      * Initializes the shopping list activity and finishes the current activity
      * @param recipeAmount The amount of recipes stored in the database
      */
     private void onSwipeLimitReached(int recipeAmount) {
+        mSearch.save();
+        for (LocalRecipe r : mSelectedRecipes) {
+            r.save();
+        }
+
         Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
         shoppingListIntent.putExtra(RECIPE_AMOUNT, recipeAmount);
         shoppingListIntent.putExtra(SEARCH_ID, mSearchId);

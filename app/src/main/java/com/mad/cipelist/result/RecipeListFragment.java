@@ -10,8 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mad.cipelist.R;
-import com.mad.cipelist.common.LocalRecipe;
 import com.mad.cipelist.result.adapter.RecipeRecyclerViewAdapter;
+import com.mad.cipelist.services.yummly.LocalRecipe;
 
 import java.util.ArrayList;
 import java.util.List;

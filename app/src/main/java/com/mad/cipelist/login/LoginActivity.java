@@ -1,5 +1,6 @@
 package com.mad.cipelist.login;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -17,7 +19,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
-import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.common.Utils;
 import com.mad.cipelist.main.MainActivity;
 import com.wang.avi.AVLoadingIndicatorView;
@@ -27,13 +28,16 @@ import com.wang.avi.AVLoadingIndicatorView;
  * Allows the user to login with prerecorded or new details and also provides an anonymous option.
  */
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends Activity {
 
     private final static String TAG = "LoginActivity";
 
     private TextInputEditText mInputEmailEt;
     private TextInputEditText mInputPasswordEt;
     private ScrollView mLoginContainer;
+
+    private AVLoadingIndicatorView mAvi;
+    private TextView mLoadTxt;
 
     private Button mLoginBtn;
     private Button mSignupBtn;
@@ -234,6 +238,21 @@ public class LoginActivity extends BaseActivity {
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    public void startLoadAnim(String msg) {
+        mAvi.smoothToShow();
+        mLoadTxt.setText(msg);
+        mLoadTxt.setVisibility(View.VISIBLE);
+    }
+
+    public void stopLoadAnim() {
+        mAvi.smoothToHide();
+        mLoadTxt.setVisibility(View.GONE);
+    }
+
+    public void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
 }

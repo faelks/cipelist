@@ -12,8 +12,8 @@ import android.widget.ExpandableListView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mad.cipelist.R;
-import com.mad.cipelist.common.LocalRecipe;
 import com.mad.cipelist.result.adapter.GroceriesAdapter;
+import com.mad.cipelist.services.yummly.LocalRecipe;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

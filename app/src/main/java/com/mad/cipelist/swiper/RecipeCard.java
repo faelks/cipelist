@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mad.cipelist.R;
-import com.mad.cipelist.yummly.search.model.Recipe;
+import com.mad.cipelist.services.yummly.LocalRecipe;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
@@ -32,11 +32,11 @@ class RecipeCard {
     private TextView timeAndRatingTxt;
 
     private Context mContext;
-    private Recipe mRecipe;
+    private LocalRecipe mRecipe;
     private SwipeHandler mSwipeHandler;
 
 
-    RecipeCard(Context context, Recipe recipe, @NonNull SwipeHandler handler) {
+    RecipeCard(Context context, LocalRecipe recipe, @NonNull SwipeHandler handler) {
         mContext = context;
         mRecipe = recipe;
         mSwipeHandler = handler;
@@ -51,7 +51,7 @@ class RecipeCard {
 
         // Need additional Customization here
         recipeNameTxt.setText(mRecipe.getRecipeName());
-        timeAndRatingTxt.setText((Integer.parseInt(mRecipe.getTotalTimeInSeconds())/60) + " min       Rating: " + mRecipe.getRating() + "/5");
+        timeAndRatingTxt.setText((Integer.parseInt(mRecipe.getCookingTime()) / 60) + " min       Rating: " + mRecipe.getRating() + "/5");
     }
 
     @SwipeOut

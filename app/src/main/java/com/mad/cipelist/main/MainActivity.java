@@ -5,29 +5,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
-import com.mad.cipelist.common.LocalSearch;
 import com.mad.cipelist.common.Utils;
 import com.mad.cipelist.login.LoginActivity;
 import com.mad.cipelist.main.adapter.MainRecyclerViewAdapter;
 import com.mad.cipelist.result.ResultActivity;
+import com.mad.cipelist.services.yummly.LocalSearch;
 import com.mad.cipelist.settings.SettingsActivity;
 import com.mad.cipelist.swiper.SwiperActivity;
 
@@ -40,7 +38,7 @@ import java.util.List;
  * user and display them in the recycler view. Currently the
  * view is populated with default items.
  */
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity {
 
     private static String LOG_TAG = "MainActivity";
 
@@ -57,18 +55,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.content_main, contentFrameLayout);
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -132,31 +121,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         } else {
             moveTaskToBack(true);
         }
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     @Override

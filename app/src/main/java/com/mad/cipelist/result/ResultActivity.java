@@ -2,14 +2,15 @@ package com.mad.cipelist.result;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mad.cipelist.R;
+import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.result.adapter.ResultAdapter;
 import com.mad.cipelist.swiper.SwiperActivity;
 import com.viewpagerindicator.TitlePageIndicator;
@@ -18,17 +19,17 @@ import com.wang.avi.AVLoadingIndicatorView;
 /**
  * Displays two fragments that contain the general recipes and the grocerylist of the loaded search.
  */
-public class ResultActivity extends FragmentActivity {
+public class ResultActivity extends BaseActivity {
 
     //public static String RESULT_LOGTAG = "ShoppingList";
-
-    private AVLoadingIndicatorView mAvi;
-    private TextView mLoadTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_result);
+
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.content_result, contentFrameLayout);
+
         Context mContext = this.getApplicationContext();
 
         mAvi = (AVLoadingIndicatorView) findViewById(R.id.avi);
