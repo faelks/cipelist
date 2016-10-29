@@ -1,6 +1,6 @@
 package com.mad.cipelist.services.yummly;
 
-import com.mad.cipelist.services.yummly.search.model.SearchResult;
+import com.mad.cipelist.services.yummly.dto.SearchResult;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

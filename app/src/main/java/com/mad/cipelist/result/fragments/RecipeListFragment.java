@@ -1,4 +1,4 @@
-package com.mad.cipelist.result;
+package com.mad.cipelist.result.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.mad.cipelist.R;
 import com.mad.cipelist.result.adapter.RecipeRecyclerViewAdapter;
-import com.mad.cipelist.services.yummly.LocalRecipe;
+import com.mad.cipelist.services.yummly.model.LocalRecipe;
 
 import java.util.ArrayList;
 import java.util.List;

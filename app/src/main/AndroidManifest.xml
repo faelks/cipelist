@@ -19,10 +19,11 @@
             android:value="recipes.db" />
         <meta-data
             android:name="VERSION"
-            android:value="10" />
+            android:value="11" />
         <meta-data
             android:name="DOMAIN_PACKAGE_NAME"
-            android:value="com.mad.cipelist.common" />
+            android:value="com.mad.cipelist.services.yummly.model
+            " />
 
         <activity
             android:name=".main.SplashActivity"
@@ -65,6 +66,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.MainActivity" />
         </activity>
+        <activity
+            android:name=".swiper.SearchFilterActivity"
+            android:label="New Search"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".swiper.SwiperActivity"
             android:label="Swiper"

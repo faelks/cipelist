@@ -1,4 +1,4 @@
-package com.mad.cipelist.services.yummly.get.model;
+package com.mad.cipelist.services.yummly.dto;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

@@ -1,4 +1,4 @@
-package com.mad.cipelist.services.yummly;
+package com.mad.cipelist.services.yummly.model;
 
 import com.orm.SugarRecord;
 
@@ -6,7 +6,7 @@ import com.orm.SugarRecord;
  * Stores the necessary data from the Recipe response.
  */
 public class LocalRecipe extends SugarRecord{
-    public String mId;
+    private String mId;
     private String ingredients;
     private String recipeName;
     private String rating;
@@ -45,6 +45,10 @@ public class LocalRecipe extends SugarRecord{
 
     public String getRating() {
         return rating;
+    }
+
+    public void setSearchId(String searchId) {
+        this.searchId = searchId;
     }
 
 }

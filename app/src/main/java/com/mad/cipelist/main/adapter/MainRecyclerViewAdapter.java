@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mad.cipelist.R;
-import com.mad.cipelist.services.yummly.LocalSearch;
+import com.mad.cipelist.services.yummly.model.LocalSearch;
 
 import java.util.List;
 

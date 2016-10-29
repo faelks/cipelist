@@ -1,4 +1,4 @@
-package com.mad.cipelist.result;
+package com.mad.cipelist.result.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,7 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mad.cipelist.R;
 import com.mad.cipelist.result.adapter.GroceriesAdapter;
-import com.mad.cipelist.services.yummly.LocalRecipe;
+import com.mad.cipelist.services.yummly.model.LocalRecipe;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

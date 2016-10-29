@@ -1,4 +1,4 @@
-package com.mad.cipelist.swiper;
+package com.mad.cipelist.swiper.widget;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mad.cipelist.R;
-import com.mad.cipelist.services.yummly.LocalRecipe;
+import com.mad.cipelist.services.yummly.model.LocalRecipe;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
@@ -18,7 +18,7 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutState;
 
 @Layout(R.layout.swiper_card_view)
-class RecipeCard {
+public class RecipeCard {
 
     //public static final String EVENT_LOGTAG = "Event";
 
@@ -36,7 +36,7 @@ class RecipeCard {
     private SwipeHandler mSwipeHandler;
 
 
-    RecipeCard(Context context, LocalRecipe recipe, @NonNull SwipeHandler handler) {
+    public RecipeCard(Context context, LocalRecipe recipe, @NonNull SwipeHandler handler) {
         mContext = context;
         mRecipe = recipe;
         mSwipeHandler = handler;

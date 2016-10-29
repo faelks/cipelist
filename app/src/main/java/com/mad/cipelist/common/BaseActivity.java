@@ -3,6 +3,7 @@ package com.mad.cipelist.common;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +15,7 @@ import android.widget.Toast;
 
 import com.mad.cipelist.R;
 import com.mad.cipelist.main.MainActivity;
-import com.mad.cipelist.swiper.SwiperActivity;
+import com.mad.cipelist.swiper.SearchFilterActivity;
 import com.wang.avi.AVLoadingIndicatorView;
 
 /**
@@ -48,9 +49,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
 
                     case R.id.nav_swiper:
-                        Intent swiperIntent = new Intent(getApplicationContext(), SwiperActivity.class);
-                        swiperIntent.putExtra("recipeAmount", 7);
-                        startActivity(swiperIntent);
+                        Intent searchIntent = new Intent(getApplicationContext(), SearchFilterActivity.class);
+                        startActivity(searchIntent);
+                        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                         drawerLayout.closeDrawers();
                         break;
                     case R.id.nav_home:
@@ -87,6 +88,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
 
         actionBarDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            finish();
+        }
     }
 
 

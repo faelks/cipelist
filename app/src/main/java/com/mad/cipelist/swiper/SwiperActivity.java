@@ -12,10 +12,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.result.ResultActivity;
-import com.mad.cipelist.services.yummly.LocalRecipe;
-import com.mad.cipelist.services.yummly.LocalSearch;
 import com.mad.cipelist.services.yummly.MockRecipeLoader;
 import com.mad.cipelist.services.yummly.RecipeLoader;
+import com.mad.cipelist.services.yummly.model.LocalRecipe;
+import com.mad.cipelist.services.yummly.model.LocalSearch;
+import com.mad.cipelist.swiper.widget.RecipeCard;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 
@@ -57,10 +58,6 @@ public class SwiperActivity extends BaseActivity {
         mRecipeAmount = getIntent().getIntExtra("recipeAmount", 0);
         setSearchId();
 
-        mSearch = new LocalSearch();
-        mSearch.searchId = mSearchId;
-        mSearch.userId = mCurrentUserId;
-
         mSelectedRecipes = new ArrayList<>();
 
 
@@ -75,8 +72,7 @@ public class SwiperActivity extends BaseActivity {
         try {
             // MockLoader that retrieves recipes from a locally saved search
             RecipeLoader mLoader = new MockRecipeLoader(mContext);
-            LocalSearch newSearch = mLoader.getRecipes(mSearchId);
-            List<LocalRecipe> recipes = newSearch.getRecipes();
+            List<LocalRecipe> recipes = mLoader.getRecipes();
 
             if (recipes != null) {
                 for (final LocalRecipe recipe : recipes) {
@@ -130,10 +126,16 @@ public class SwiperActivity extends BaseActivity {
      * @param recipeAmount The amount of recipes stored in the database
      */
     private void onSwipeLimitReached(int recipeAmount) {
-        mSearch.save();
+
         for (LocalRecipe r : mSelectedRecipes) {
+            r.setSearchId(mSearchId);
             r.save();
         }
+
+        mSearch = new LocalSearch();
+        mSearch.searchId = mSearchId;
+        mSearch.userId = mCurrentUserId;
+        mSearch.save();
 
         Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
         shoppingListIntent.putExtra(RECIPE_AMOUNT, recipeAmount);

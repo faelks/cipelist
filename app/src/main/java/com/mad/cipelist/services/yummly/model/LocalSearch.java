@@ -1,4 +1,4 @@
-package com.mad.cipelist.services.yummly;
+package com.mad.cipelist.services.yummly.model;
 
 import com.orm.SugarRecord;
 

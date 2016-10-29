@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.res.AssetManager;
 
 import com.google.gson.Gson;
-import com.mad.cipelist.services.yummly.get.model.IndividualRecipe;
-import com.mad.cipelist.services.yummly.search.model.Recipe;
-import com.mad.cipelist.services.yummly.search.model.SearchResult;
+import com.mad.cipelist.services.yummly.dto.IndividualRecipe;
+import com.mad.cipelist.services.yummly.dto.Recipe;
+import com.mad.cipelist.services.yummly.dto.SearchResult;
+import com.mad.cipelist.services.yummly.model.LocalRecipe;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -68,8 +70,8 @@ public class MockRecipeLoader implements RecipeLoader {
     }
 
     @Override
-    public LocalSearch getRecipes(String searchId) {
-        LocalSearch search = new LocalSearch(searchId);
+    public List<LocalRecipe> getRecipes() {
+        List<LocalRecipe> recipes = new ArrayList<>();
 
         try {
             Gson gson = new Gson();
@@ -81,10 +83,10 @@ public class MockRecipeLoader implements RecipeLoader {
             for (Recipe r : sr.getRecipes()) {
                 String[] ingredients = r.getIngredients();
                 String jsonIngredients = new Gson().toJson(ingredients);
-                tempRecipe = new LocalRecipe(r.getRecipeName(), r.getRating(), r.getTotalTimeInSeconds(), r.getSmallImageUrls()[0], jsonIngredients, r.getId(), searchId);
-                tempRecipe.save();
+                tempRecipe = new LocalRecipe(r.getRecipeName(), r.getRating(), r.getTotalTimeInSeconds(), r.getSmallImageUrls()[0], jsonIngredients, r.getId(), null);
+                recipes.add(tempRecipe);
             }
-            return search;
+            return recipes;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

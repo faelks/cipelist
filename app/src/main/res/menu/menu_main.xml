@@ -13,19 +13,9 @@
         android:title="@string/action_about"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_swipe"
-        android:orderInCategory="102"
-        android:title="@string/action_swipe"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/action_logout"
         android:orderInCategory="103"
         android:title="@string/logout"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_reset_db"
-        android:orderInCategory="104"
-        android:title="Reset Database"
         app:showAsAction="never" />
 
 </menu>

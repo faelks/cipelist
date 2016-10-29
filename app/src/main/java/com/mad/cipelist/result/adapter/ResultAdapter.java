@@ -5,9 +5,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.mad.cipelist.result.GroceryListFragment;
-import com.mad.cipelist.result.RecipeListFragment;
-import com.mad.cipelist.services.yummly.LocalSearch;
+import com.mad.cipelist.result.fragments.GroceryListFragment;
+import com.mad.cipelist.result.fragments.RecipeListFragment;
+import com.mad.cipelist.services.yummly.model.LocalSearch;
 
 /**
  * Manages the two fragment classes for groceries and recipes

@@ -21,12 +21,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
-import com.mad.cipelist.common.Utils;
 import com.mad.cipelist.login.LoginActivity;
 import com.mad.cipelist.main.adapter.MainRecyclerViewAdapter;
 import com.mad.cipelist.result.ResultActivity;
-import com.mad.cipelist.services.yummly.LocalSearch;
+import com.mad.cipelist.services.yummly.model.LocalSearch;
 import com.mad.cipelist.settings.SettingsActivity;
+import com.mad.cipelist.swiper.SearchFilterActivity;
 import com.mad.cipelist.swiper.SwiperActivity;
 
 import java.util.Date;
@@ -93,17 +93,15 @@ public class MainActivity extends BaseActivity {
         addRecipeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startNewSwiper(7);
+                startNewSearch(7);
             }
         });
     }
 
-    public void startNewSwiper(int amount) {
-        Intent intent = new Intent(this, SwiperActivity.class);
-        Log.d("NewActivity", "Starting swiper for " + amount + " recipes");
-        // The amount sets the number of recipes the swiper needs to find
-        intent.putExtra("recipeAmount", amount);
+    public void startNewSearch(int amount) {
+        Intent intent = new Intent(this, SearchFilterActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
     @Override
@@ -138,23 +136,12 @@ public class MainActivity extends BaseActivity {
             case R.id.action_about:
                 showToast("About Selected");
                 return true;
-            case R.id.action_swipe:
-                startNewSwiper(7);
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                return true;
             case R.id.action_logout:
                 mAuth.signOut();
                 Intent loginIntent = new Intent(this, LoginActivity.class);
                 startActivity(loginIntent);
                 finish();
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                return true;
-            case R.id.action_reset_db:
-                Utils.resetDatabase(this.getApplicationContext());
-
-                mLocalSearches = null;
-                mAdapter = new MainRecyclerViewAdapter(this, mLocalSearches, mCurrentUserId, getUserEmail());
-                mSearchRecyclerView.setAdapter(mAdapter);
                 return true;
         }
 
