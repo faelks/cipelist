@@ -83,4 +83,81 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="home">Home</string>
+
+    <!-- Search Filter -->
+    <string name="find_awesome_recipes">Find Awesome Recipes!</string>
+    <string name="search_term">Search Term</string>
+    <string name="enter_your_search_words_here">Enter your search words here</string>
+
+    <string name="cuisine">Cuisine</string>
+    <string-array name="cuisine_items">
+        <item>American</item>
+        <item>Italian</item>
+        <item>Asian</item>
+        <item>Mexican</item>
+        <item>Southern &amp; Soul Food</item>
+        <item>French</item>
+        <item>Southwestern</item>
+        <item>Barbecue</item>
+        <item>Indian</item>
+        <item>Chinese</item>
+        <item>Cajun &amp; Creole</item>
+        <item>English</item>
+        <item>Mediterranean</item>
+        <item>Greek</item>
+        <item>Spanish</item>
+        <item>German</item>
+        <item>Thai</item>
+        <item>Moroccan</item>
+        <item>Irish</item>
+        <item>Japanese</item>
+        <item>Cuban</item>
+        <item>Hawaian</item>
+        <item>Swedish</item>
+        <item>Hungarian</item>
+        <item>Portuguese</item>
+    </string-array>
+
+    <string name="allergies">Allergies</string>
+    <string-array name="allergy_items">
+        <item>Dairy</item>
+        <item>Egg</item>
+        <item>Gluten</item>
+        <item>Peanut</item>
+        <item>Seafood</item>
+        <item>Sesame</item>
+        <item>Soy</item>
+        <item>Sulfite</item>
+        <item>Tree Nut</item>
+        <item>Wheat</item>
+    </string-array>
+
+    <string name="course">Course</string>
+    <string-array name="course_items">
+        <item>Main Dishes</item>
+        <item>Desserts</item>
+        <item>Side Dishes</item>
+        <item>Lunch &amp; Snacks</item>
+        <item>Appetizers</item>
+        <item>Salads</item>
+        <item>Breads</item>
+        <item>Breakfast &amp; Brunch</item>
+        <item>Soups</item>
+        <item>Beverages</item>
+        <item>Condiments &amp; Sauces</item>
+        <item>Cocktails</item>
+    </string-array>
+
+    <string name="dietary_restriction">Dietary Restriction</string>
+    <string name="diet">Diet</string>
+    <string name="cooking_time">Cooking Time</string>
+    <string name="number_of_recipes">Number of Recipes</string>
+    <string-array name="diet_items">
+        <item>Lacto Vegetarian</item>
+        <item>Ovo Vegetarian</item>
+        <item>Pescetarian</item>
+        <item>Vegan</item>
+        <item>Vegetarian</item>
+    </string-array>
+
 </resources>
