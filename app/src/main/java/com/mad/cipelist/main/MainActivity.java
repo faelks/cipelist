@@ -2,6 +2,7 @@ package com.mad.cipelist.main;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -162,16 +163,19 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onItemClick(int position, View v) {
                 Log.i(LOG_TAG, " Clicked on Item " + (position+1));
-                createDialog(v, position);
-
+                startNewResultViewer(7, mAdapter.getSearchId(position));
             }
+
+
         });
 
         try {
             mLocalSearches = getLocalSearches(mCurrentUserId);
-            Log.d("Success!", "Loaded a local search into memory with " + mLocalSearches.size() + " items");
+            //Log.d("Success!", "Loaded a local search into memory with " + mLocalSearches.size() + " items");
         } catch (NullPointerException e) {
             Log.d("ERROR", "Could not load local searches, could be empty");
+        } catch (SQLiteException e) {
+            Log.d("ERROR", "SQLExceptions, could be empty");
         }
 
         if (mLocalSearches != null) {
@@ -248,6 +252,14 @@ public class MainActivity extends BaseActivity {
         mAuth.signOut();
     }
 
+    public void startNewResultViewer(int recipeAmount, String searchId) {
+        Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
+        shoppingListIntent.putExtra(SwiperActivity.RECIPE_AMOUNT, recipeAmount);
+        shoppingListIntent.putExtra(SwiperActivity.SEARCH_ID, searchId);
+        startActivity(shoppingListIntent);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+    }
+
     public class ViewButtonOnClickListener implements View.OnClickListener {
 
         int position;
@@ -260,11 +272,7 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public void onClick(View view) {
-            Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
-            shoppingListIntent.putExtra(SwiperActivity.RECIPE_AMOUNT, 7);
-            shoppingListIntent.putExtra(SwiperActivity.SEARCH_ID, mAdapter.getSearchId(position));
-            startActivity(shoppingListIntent);
-            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            startNewResultViewer(7, mAdapter.getSearchId(position));
             dialog.dismiss();
         }
     }

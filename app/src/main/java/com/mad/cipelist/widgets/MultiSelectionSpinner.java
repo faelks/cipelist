@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class MultiSelectionSpinner extends Spinner implements
     String[] _items = null;
     boolean[] mSelection = null;
     String defaultText = "";
+    String title = "";
 
     ArrayAdapter<String> simple_adapter;
 
@@ -54,6 +56,13 @@ public class MultiSelectionSpinner extends Spinner implements
     @Override
     public boolean performClick() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(title);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
         builder.setMultiChoiceItems(_items, mSelection, this);
         builder.show();
         return true;
@@ -136,8 +145,8 @@ public class MultiSelectionSpinner extends Spinner implements
         simple_adapter.add(buildSelectedItemString());
     }
 
-    public List<String> getSelectedStrings() {
-        List<String> selection = new LinkedList<String>();
+    public ArrayList<String> getSelectedStrings() {
+        ArrayList<String> selection = new ArrayList<>();
         for (int i = 0; i < _items.length; ++i) {
             if (mSelection[i]) {
                 selection.add(_items[i]);
@@ -203,5 +212,9 @@ public class MultiSelectionSpinner extends Spinner implements
         this.defaultText = text;
         simple_adapter.clear();
         simple_adapter.add(buildSelectedItemString());
+    }
+
+    public void setTitle(String text) {
+        this.title = text;
     }
 }

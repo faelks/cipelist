@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
+import com.mad.cipelist.common.Utils;
 import com.mad.cipelist.result.ResultActivity;
 import com.mad.cipelist.services.yummly.MockRecipeLoader;
 import com.mad.cipelist.services.yummly.RecipeLoader;
@@ -56,6 +57,14 @@ public class SwiperActivity extends BaseActivity {
         // id of the user/timestamp/searchparameters.
 
         mRecipeAmount = getIntent().getIntExtra("recipeAmount", 0);
+        ArrayList<String> diets = getIntent().getExtras().getStringArrayList(SearchFilterActivity.DIET);
+        Log.d(SWIPER_LOGTAG, "Loaded diets: " + diets);
+        ArrayList<String> cuisines = getIntent().getExtras().getStringArrayList(SearchFilterActivity.CUISINE);
+        Log.d(SWIPER_LOGTAG, "Loaded cuisines: " + cuisines);
+        ArrayList<String> allergies = getIntent().getExtras().getStringArrayList(SearchFilterActivity.ALLERGY);
+        Log.d(SWIPER_LOGTAG, "Loaded allergy: " + allergies);
+        ArrayList<String> courses = getIntent().getExtras().getStringArrayList(SearchFilterActivity.COURSE);
+        Log.d(SWIPER_LOGTAG, "Loaded course: " + courses);
         setSearchId();
 
         mSelectedRecipes = new ArrayList<>();
@@ -127,15 +136,17 @@ public class SwiperActivity extends BaseActivity {
      */
     private void onSwipeLimitReached(int recipeAmount) {
 
+        mSearch = new LocalSearch();
+        mSearch.userId = mCurrentUserId;
+        mSearch.searchId = mSearchId;
+        mSearch.searchTimeStamp = Utils.getCurrentDate();
+        mSearch.save();
+
         for (LocalRecipe r : mSelectedRecipes) {
             r.setSearchId(mSearchId);
             r.save();
         }
 
-        mSearch = new LocalSearch();
-        mSearch.searchId = mSearchId;
-        mSearch.userId = mCurrentUserId;
-        mSearch.save();
 
         Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
         shoppingListIntent.putExtra(RECIPE_AMOUNT, recipeAmount);

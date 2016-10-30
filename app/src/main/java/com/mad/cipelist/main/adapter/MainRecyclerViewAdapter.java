@@ -61,14 +61,15 @@ public class MainRecyclerViewAdapter extends RecyclerView
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.square_card_main, parent, false);
 
-        DataObjectHolder dataObjectHolder = new DataObjectHolder(view);
-        return dataObjectHolder;
+        return new DataObjectHolder(view);
     }
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
-        //String searchLabel = mUserEmail + (position+1);
-        //holder.label.setText(searchLabel);
+        String viewTitle = "Search " + (position + 1);
+        holder.info.setText(viewTitle);
+        holder.date.setText(mDataset.get(position).searchTimeStamp);
+
         if (mDataset.size() > 0) {
             String url = mDataset.get(position).getRecipes().get(0).getImageUrl();
 
@@ -94,7 +95,11 @@ public class MainRecyclerViewAdapter extends RecyclerView
 
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        if (mDataset != null) {
+            return mDataset.size();
+        } else {
+            return -1;
+        }
     }
 
     public String getSearchId(int position) {
@@ -116,8 +121,8 @@ public class MainRecyclerViewAdapter extends RecyclerView
     public static class DataObjectHolder extends RecyclerView.ViewHolder
             implements View
             .OnClickListener {
-        TextView label;
-        //TextView dateTime;
+        TextView info;
+        TextView date;
         ImageView image;
 
         /**
@@ -127,8 +132,8 @@ public class MainRecyclerViewAdapter extends RecyclerView
          */
         public DataObjectHolder(View itemView) {
             super(itemView);
-            //label = (TextView) itemView.findViewById(R.id.square_card_label);
-            //dateTime = (TextView) itemView.findViewById(R.id.textView2);
+            date = (TextView) itemView.findViewById(R.id.search_date);
+            info = (TextView) itemView.findViewById(R.id.search_title);
             image = (ImageView) itemView.findViewById(R.id.searchIv);
             Log.i(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);

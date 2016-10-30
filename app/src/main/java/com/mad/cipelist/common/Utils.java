@@ -8,6 +8,9 @@ import com.orm.SchemaGenerator;
 import com.orm.SugarContext;
 import com.orm.SugarDb;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
@@ -56,5 +59,9 @@ public class Utils {
      return new ArrayList<>(noDups);
      }
      */
+
+    public static String getCurrentDate() {
+        return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+    }
 
 }

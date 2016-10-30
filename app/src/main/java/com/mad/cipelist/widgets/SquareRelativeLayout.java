@@ -1,4 +1,4 @@
-package com.mad.cipelist.common;
+package com.mad.cipelist.widgets;
 
 import android.content.Context;
 import android.util.AttributeSet;

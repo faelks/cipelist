@@ -10,12 +10,15 @@ import java.util.List;
 public class LocalSearch extends SugarRecord{
     public String searchId;
     public String userId;
+    public String searchTimeStamp;
 
     public LocalSearch() {
     }
 
-    public LocalSearch(String searchId) {
+    public LocalSearch(String searchId, String userId, String timeStamp) {
         this.searchId = searchId;
+        this.userId = userId;
+        this.searchTimeStamp = timeStamp;
     }
 
     public List<LocalRecipe> getRecipes(){

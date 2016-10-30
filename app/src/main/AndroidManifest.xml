@@ -14,16 +14,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
+
         <meta-data
             android:name="DATABASE"
-            android:value="recipes.db" />
+            android:value="search_data.db" />
         <meta-data
             android:name="VERSION"
-            android:value="11" />
+            android:value="1" />
         <meta-data
             android:name="DOMAIN_PACKAGE_NAME"
-            android:value="com.mad.cipelist.services.yummly.model
-            " />
+            android:value="com.mad.cipelist.services.yummly.model" />
 
         <activity
             android:name=".main.SplashActivity"
