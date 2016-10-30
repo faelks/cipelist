@@ -85,6 +85,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.MainActivity" />
         </activity>
+        <activity
+            android:name=".result.RecipeDetail"
+            android:label="Recipe"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".result.ResultActivity" />
+        </activity>
+
     </application>
 
 </manifest>

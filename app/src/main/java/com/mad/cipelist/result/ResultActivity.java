@@ -7,7 +7,6 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
@@ -50,8 +49,6 @@ public class ResultActivity extends BaseActivity {
         titleIndicator.setFooterLineHeight(2 * density); //1dp
         titleIndicator.setFooterIndicatorHeight(3 * density); //3dp
         titleIndicator.setFooterIndicatorStyle(TitlePageIndicator.IndicatorStyle.Underline);
-        //titleIndicator.setTextColor(R.color.default_title_indicator_text_color);
-        //titleIndicator.setSelectedColor(R.color.default_title_indicator_selected_color);
         titleIndicator.setSelectedBold(true);
 
 
@@ -68,8 +65,7 @@ public class ResultActivity extends BaseActivity {
             // This method will be invoked when a new page becomes selected.
             @Override
             public void onPageSelected(int position) {
-                Toast.makeText(ResultActivity.this,
-                        "Selected page position: " + position, Toast.LENGTH_SHORT).show();
+                showToast("Selected page position: " + position);
             }
 
             // Called when the scroll state changes:

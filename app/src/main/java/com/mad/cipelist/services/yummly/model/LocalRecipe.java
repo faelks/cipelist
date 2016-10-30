@@ -47,8 +47,16 @@ public class LocalRecipe extends SugarRecord{
         return rating;
     }
 
+    public String getSearchId() {
+        return searchId;
+    }
+
     public void setSearchId(String searchId) {
         this.searchId = searchId;
+    }
+
+    public String getmId() {
+        return mId;
     }
 
 }

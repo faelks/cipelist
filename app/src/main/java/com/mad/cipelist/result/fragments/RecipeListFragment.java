@@ -1,5 +1,6 @@
 package com.mad.cipelist.result.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mad.cipelist.R;
+import com.mad.cipelist.result.RecipeDetail;
 import com.mad.cipelist.result.adapter.RecipeRecyclerViewAdapter;
 import com.mad.cipelist.services.yummly.model.LocalRecipe;
 
@@ -84,7 +86,7 @@ public class RecipeListFragment extends Fragment {
         mAdapter = new RecipeRecyclerViewAdapter(mDataset, new RecipeRecyclerViewAdapter.OnRecipeClickListener() {
             @Override
             public void onItemClick(LocalRecipe recipe) {
-                Log.d(TAG, "This is recipe: " + recipe.getRecipeName());
+                loadRecipeDetailActivity(recipe);
             }
         });
         mRecyclerView.setAdapter(mAdapter);
@@ -95,6 +97,13 @@ public class RecipeListFragment extends Fragment {
         Log.d(TAG, "onCreateView called");
 
         return view;
+    }
+
+    public void loadRecipeDetailActivity(LocalRecipe recipe) {
+        Intent recipeDetailIntent = new Intent(getActivity(), RecipeDetail.class);
+        recipeDetailIntent.putExtra("recipeId", recipe.getmId());
+        getActivity().startActivity(recipeDetailIntent);
+        getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
     @Override
