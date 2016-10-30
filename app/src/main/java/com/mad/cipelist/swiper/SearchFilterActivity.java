@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 
@@ -23,7 +24,9 @@ public class SearchFilterActivity extends BaseActivity {
     final static String CUISINE = "cuisine";
     final static String ALLERGY = "allergy";
     final static String COURSE = "course";
+    final static String QUERY = "query";
 
+    private EditText mQueryEt;
     private MultiSelectionSpinner mDietSpinner;
     private MultiSelectionSpinner mCuisineSpinner;
     private MultiSelectionSpinner mAllergiesSpinner;
@@ -39,6 +42,8 @@ public class SearchFilterActivity extends BaseActivity {
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.content_search_filter, contentFrameLayout);
+
+        mQueryEt = (EditText) findViewById(R.id.query_et);
 
         // Load spinners
         mDietSpinner = (MultiSelectionSpinner) findViewById(R.id.diet_spinner);
@@ -85,11 +90,14 @@ public class SearchFilterActivity extends BaseActivity {
         ArrayList<String> allergies = mAllergiesSpinner.getSelectedStrings();
         ArrayList<String> courses = mCourseSpinner.getSelectedStrings();
 
+        String query = mQueryEt.getText().toString();
+
         searchFilter = new Bundle();
         searchFilter.putStringArrayList(DIET, diets);
         searchFilter.putStringArrayList(CUISINE, cuisines);
         searchFilter.putStringArrayList(ALLERGY, allergies);
         searchFilter.putStringArrayList(COURSE, courses);
+        searchFilter.putString(QUERY, query);
 
 
 

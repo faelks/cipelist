@@ -2,10 +2,12 @@ package com.mad.cipelist.swiper;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -13,13 +15,14 @@ import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.common.Utils;
 import com.mad.cipelist.result.ResultActivity;
-import com.mad.cipelist.services.yummly.MockRecipeLoader;
+import com.mad.cipelist.services.yummly.ApiRecipeLoader;
 import com.mad.cipelist.services.yummly.RecipeLoader;
 import com.mad.cipelist.services.yummly.model.LocalRecipe;
 import com.mad.cipelist.services.yummly.model.LocalSearch;
 import com.mad.cipelist.swiper.widget.RecipeCard;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +42,11 @@ public class SwiperActivity extends BaseActivity {
     private int mRecipeAmount;
     private String mSearchId;
     private String mCurrentUserId;
+    private String mQuery;
     private LocalSearch mSearch;
     private List<LocalRecipe> mSelectedRecipes;
+    private List<LocalRecipe> mRecipes;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +57,17 @@ public class SwiperActivity extends BaseActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        mAvi = (AVLoadingIndicatorView) findViewById(R.id.swiper_avi);
+        mLoadTxt = (TextView) findViewById(R.id.swiper_load_text);
+
         mSwipeView = (SwipePlaceHolderView) findViewById(R.id.swipe_view);
-        Context mContext = this.getApplicationContext();
+        mContext = this.getApplicationContext();
         // This string should be unique for the search and be dependant on the
         // id of the user/timestamp/searchparameters.
 
         mRecipeAmount = getIntent().getIntExtra("recipeAmount", 0);
+        mQuery = getIntent().getExtras().getString(SearchFilterActivity.QUERY);
+
         ArrayList<String> diets = getIntent().getExtras().getStringArrayList(SearchFilterActivity.DIET);
         Log.d(SWIPER_LOGTAG, "Loaded diets: " + diets);
         ArrayList<String> cuisines = getIntent().getExtras().getStringArrayList(SearchFilterActivity.CUISINE);
@@ -65,6 +76,8 @@ public class SwiperActivity extends BaseActivity {
         Log.d(SWIPER_LOGTAG, "Loaded allergy: " + allergies);
         ArrayList<String> courses = getIntent().getExtras().getStringArrayList(SearchFilterActivity.COURSE);
         Log.d(SWIPER_LOGTAG, "Loaded course: " + courses);
+
+
         setSearchId();
 
         mSelectedRecipes = new ArrayList<>();
@@ -78,30 +91,6 @@ public class SwiperActivity extends BaseActivity {
                         .setSwipeInMsgLayoutId(R.layout.swiper_in_msg)
                         .setSwipeOutMsgLayoutId(R.layout.swiper_out_msg));
 
-        try {
-            // MockLoader that retrieves recipes from a locally saved search
-            RecipeLoader mLoader = new MockRecipeLoader(mContext);
-            List<LocalRecipe> recipes = mLoader.getRecipes();
-
-            if (recipes != null) {
-                for (final LocalRecipe recipe : recipes) {
-                    mSwipeView.addView(new RecipeCard(mContext, recipe, new RecipeCard.SwipeHandler() {
-                        @Override
-                        public void onSwipeIn() {
-
-                            mSelectedRecipes.add(recipe);
-
-                            if (mSelectedRecipes.size() >= mRecipeAmount) {
-                                onSwipeLimitReached(mSelectedRecipes.size());
-                            }
-                            //Log.d("EVENT", "onSwipedIn");
-                        }
-                    }));
-                }
-            }
-        } catch (NullPointerException n) {
-            Log.d(SWIPER_LOGTAG, "SwiperActivity could not retrieve json data, a null pointer exception was thrown");
-        }
 
         // Programatically call the doSwipe function on reject button click
         findViewById(R.id.reject_btn).setOnClickListener(new View.OnClickListener() {
@@ -118,6 +107,9 @@ public class SwiperActivity extends BaseActivity {
                 mSwipeView.doSwipe(true);
             }
         });
+
+        AsyncRecipeLoader loader = new AsyncRecipeLoader(mQuery);
+        loader.execute("");
     }
 
     private void setSearchId() {
@@ -173,4 +165,59 @@ public class SwiperActivity extends BaseActivity {
         super.onDestroy();
         Log.d(SWIPER_LOGTAG, "onDestroy()");
     }
+
+    public void addCards() {
+        try {
+            // MockLoader that retrieves recipes from a locally saved search
+            //RecipeLoader mLoader = new MockRecipeLoader(mContext);
+            Log.d(SWIPER_LOGTAG, "Start of addCards funct");
+            for (final LocalRecipe recipe : mRecipes) {
+                mSwipeView.addView(new RecipeCard(mContext, recipe, new RecipeCard.SwipeHandler() {
+                    @Override
+                    public void onSwipeIn() {
+
+                        mSelectedRecipes.add(recipe);
+
+                        if (mSelectedRecipes.size() >= mRecipeAmount) {
+                            onSwipeLimitReached(mSelectedRecipes.size());
+                        }
+                        Log.d("EVENT", "onSwipedIn");
+                    }
+                }));
+            }
+        } catch (NullPointerException n) {
+            Log.d(SWIPER_LOGTAG, "SwiperActivity could not retrieve json data, a null pointer exception was thrown");
+        }
+    }
+
+    private class AsyncRecipeLoader extends AsyncTask<String, Integer, List<LocalRecipe>> {
+
+        private String query;
+
+        AsyncRecipeLoader(String query) {
+            this.query = query;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            startLoadAnim("Loading Recipes");
+        }
+
+        @Override
+        protected List<LocalRecipe> doInBackground(String... strings) {
+            RecipeLoader mLoader = new ApiRecipeLoader(query);
+            return mLoader.getRecipes();
+        }
+
+        @Override
+        protected void onPostExecute(List<LocalRecipe> localRecipes) {
+            super.onPostExecute(localRecipes);
+            stopLoadAnim();
+            mRecipes = localRecipes;
+            Log.d(SWIPER_LOGTAG, "In post execute mrecipes = " + mRecipes.size());
+            addCards();
+        }
+    }
+
 }
