@@ -79,9 +79,7 @@ public class ResultActivity extends BaseActivity {
 
             }
         });
-
     }
-
 
     public void startLoadAnim() {
         mAvi.smoothToShow();

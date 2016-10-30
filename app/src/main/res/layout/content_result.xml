@@ -16,7 +16,13 @@
     <com.viewpagerindicator.TitlePageIndicator
         android:id="@+id/titles"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        app:footerIndicatorHeight="0dp"
+        app:footerLineHeight="0dp"
+        app:selectedBold="true"
+        app:selectedColor="@color/colorPrimary"
+        app:topPadding="2dp" />
 
     <LinearLayout
 

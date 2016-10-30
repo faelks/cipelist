@@ -81,7 +81,13 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
 
         void bind(final LocalRecipe item, final OnRecipeClickListener listener) {
             label.setText(item.getRecipeName());
-            Glide.with(itemView.getContext()).load(item.getImageUrl()).into(image);
+
+            String url = item.getImageUrl();
+            if (url.substring(url.length() - 4, url.length()).equals("=s90")) {
+                url = url.substring(0, url.length() - 4);
+            }
+
+            Glide.with(itemView.getContext()).load(url).into(image);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

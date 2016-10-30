@@ -2,7 +2,6 @@ package com.mad.cipelist.result.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +27,6 @@ import java.util.List;
 public class GroceryListFragment extends Fragment {
 
     HashMap<String, List<String>> dataChild;
-    private String mTitle;
-    private int mPage;
     private String mSearchId;
     private ExpandableListView mGroceriesElv;
     private ExpandableListAdapter mGroceriesAdapter;
@@ -40,8 +37,7 @@ public class GroceryListFragment extends Fragment {
     public static GroceryListFragment newInstance(int page, String title, String searchId) {
         GroceryListFragment groceryFragment = new GroceryListFragment();
         Bundle args = new Bundle();
-        args.putInt("pageNumber", page);
-        args.putString("title", title);
+
         args.putString("searchId", searchId);
 
         groceryFragment.setArguments(args);
@@ -52,11 +48,8 @@ public class GroceryListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //mPage = getArguments().getInt("pageNumber", 0);
-        //mTitle = getArguments().getString("title");
-        mSearchId = getArguments().getString("searchId");
 
-        initDataset();
+        initDataset(getArguments().getString("searchId"));
 
     }
 
@@ -66,7 +59,7 @@ public class GroceryListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.grocery_list_frag, container, false);
 
-        mGroceriesElv = (ExpandableListView) view.findViewById(R.id.groceriesElv);
+        mGroceriesElv = (ExpandableListView) view.findViewById(R.id.groceries_expandable_view);
 
         mGroceriesAdapter = new GroceriesAdapter(this.getContext(), headers, dataChild);
         mGroceriesElv.setAdapter(mGroceriesAdapter);
@@ -74,21 +67,18 @@ public class GroceryListFragment extends Fragment {
         return view;
     }
 
-    private void initDataset() {
-        List<LocalRecipe> recipes = LocalRecipe.find(LocalRecipe.class, "search_id = ?", mSearchId);
+    private void initDataset(String searchId) {
+        List<LocalRecipe> recipes = LocalRecipe.find(LocalRecipe.class, "search_id = ?", searchId);
         headers = new ArrayList<>();
         dataChild = new HashMap<>();
         Type type = new TypeToken<List<String>>() {
         }.getType();
-        int count = 0;
 
         for (LocalRecipe r : recipes) {
-            String header = "Recipe " + count;
-            headers.add(header);
-            ArrayList<String> ingredients = new Gson().fromJson(recipes.get(count).getIngredients(), type);
-            dataChild.put(header, ingredients);
-            Log.d("Groceries", "We loaded these ingredients: " + ingredients);
-            count++;
+            headers.add(r.getRecipeName());
+            ArrayList<String> ingredients = new Gson().fromJson(r.getIngredients(), type);
+            dataChild.put(r.getRecipeName(), ingredients);
+            //Log.d("Groceries", "We loaded these ingredients: " + ingredients);
         }
 
     }
