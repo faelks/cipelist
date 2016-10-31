@@ -9,12 +9,12 @@ import retrofit2.http.GET;
 import retrofit2.http.QueryMap;
 
 /**
- * Created by Felix on 6/10/16.
+ * Defines the structure of calls to the Yummly API.
  */
 public interface YummlyEndpointInterface {
 
     // Request method and URL specified in the annotation
-    // Callback for the parsed response is the last parameter
+    // The get request takes a hash map as a parameter that includes all the specified search filters.
 
     @GET("recipes?_app_id=772a7337&_app_key=c302ed36e3515ca025686c8c070b3739")
     Call<SearchResult> getSearch(

@@ -19,12 +19,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by Felix on 30/10/2016.
+ * Retrieves recipes from the Yummly Api based on the passed search filters.
  */
-
 public class ApiRecipeLoader implements RecipeLoader {
 
-    final static String API_TAG = "YUMMLY";
+    private final static String API_TAG = "YUMMLY";
 
     private String query;
     private List<String> diets;
@@ -90,10 +89,7 @@ public class ApiRecipeLoader implements RecipeLoader {
                 Log.d(API_TAG, "This is the call to api :" + call.request().toString());
                 //Log.d(API_TAG, "We have this many recipes back in loader :" + response.body().getRecipes().length);
 
-                ArrayList<LocalRecipe> recipes = getRecipes(sr.getRecipes());
-
-                //Log.d(API_TAG, "Passing recipes object with " + recipes.size() + " items");
-                return recipes;
+                return getRecipes(sr.getRecipes());
 
             } else {
                 Log.d(API_TAG, "Something went south");

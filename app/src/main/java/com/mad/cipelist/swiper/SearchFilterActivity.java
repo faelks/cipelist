@@ -49,18 +49,17 @@ public class SearchFilterActivity extends BaseActivity {
         // Load spinners
         mDietSpinner = (MultiSelectionSpinner) findViewById(R.id.diet_spinner);
         loadSpinner(mDietSpinner, R.array.diet_items, "Select Diet");
-
         mCuisineSpinner = (MultiSelectionSpinner) findViewById(R.id.cuisine_spinner);
         loadSpinner(mCuisineSpinner, R.array.cuisine_items, "Select Cuisine");
-
         mAllergiesSpinner = (MultiSelectionSpinner) findViewById(R.id.allergies_spinner);
         loadSpinner(mAllergiesSpinner, R.array.allergy_items, "Select Allergies");
-
         mCourseSpinner = (MultiSelectionSpinner) findViewById(R.id.course_spinner);
         loadSpinner(mCourseSpinner, R.array.course_items, "Select Courses");
 
+        // Load SeekBars
         mCookingTimeSb = (SeekBar) findViewById(R.id.cooking_time_bar);
 
+        // Load Button
         Button mStartSearchBtn = (Button) findViewById(R.id.start_search_btn);
         mStartSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,18 +77,29 @@ public class SearchFilterActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Loads a spinner based on the passed in parameters.
+     *
+     * @param spinner
+     * @param arrayId
+     * @param title
+     */
     public void loadSpinner(MultiSelectionSpinner spinner, int arrayId, String title) {
         spinner.setItems(getResources().getStringArray(arrayId));
         spinner.setDefaultText("None Selected");
         spinner.setTitle(title);
     }
 
+    /**
+     * Saves the different search filter options into a bundle that is passed
+     * via the intent to the Swiper class.
+     */
     public void saveSearchFilters() {
         // Extract and save all the data that the user has selected and pass this data to the swiper activity?
-        ArrayList<String> diets = formatDiets(mDietSpinner.getSelectedStrings());
-        ArrayList<String> cuisines = formatCuisine(mCuisineSpinner.getSelectedStrings());
-        ArrayList<String> allergies = formatAllergies(mAllergiesSpinner.getSelectedStrings());
-        ArrayList<String> courses = formatCourses(mCourseSpinner.getSelectedStrings());
+        ArrayList<String> diets = formatDietsForHttp(mDietSpinner.getSelectedStrings());
+        ArrayList<String> cuisines = formatCuisinesForHttp(mCuisineSpinner.getSelectedStrings());
+        ArrayList<String> allergies = formatAllergiesForHttp(mAllergiesSpinner.getSelectedStrings());
+        ArrayList<String> courses = formatCoursesForHttp(mCourseSpinner.getSelectedStrings());
 
 
         String query = mQueryEt.getText().toString();
@@ -101,11 +111,9 @@ public class SearchFilterActivity extends BaseActivity {
         searchFilter.putStringArrayList(COURSE, courses);
         searchFilter.putString(QUERY, query);
 
-
-
     }
 
-    public ArrayList<String> formatDiets(List<String> rawDiets) {
+    public ArrayList<String> formatDietsForHttp(List<String> rawDiets) {
         ArrayList<String> formattedDiet = new ArrayList<>();
         String[] diets = getResources().getStringArray(R.array.diet_items);
         for (String s : rawDiets) {
@@ -130,7 +138,7 @@ public class SearchFilterActivity extends BaseActivity {
         return formattedDiet;
     }
 
-    public ArrayList<String> formatCourses(List<String> rawCourses) {
+    public ArrayList<String> formatCoursesForHttp(List<String> rawCourses) {
         ArrayList<String> formattedCourses = new ArrayList<>();
         for (String s : rawCourses) {
             formattedCourses.add("course^course-" + s);
@@ -138,7 +146,7 @@ public class SearchFilterActivity extends BaseActivity {
         return formattedCourses;
     }
 
-    public ArrayList<String> formatCuisine(List<String> rawCuisines) {
+    public ArrayList<String> formatCuisinesForHttp(List<String> rawCuisines) {
         ArrayList<String> formattedCuisines = new ArrayList<>();
         for (String s : rawCuisines) {
             if (s.contains("&amp;")) {
@@ -149,7 +157,7 @@ public class SearchFilterActivity extends BaseActivity {
         return formattedCuisines;
     }
 
-    public ArrayList<String> formatAllergies(List<String> rawAllergies) {
+    public ArrayList<String> formatAllergiesForHttp(List<String> rawAllergies) {
         ArrayList<String> formattedAllergies = new ArrayList<>();
 
         for (String s : rawAllergies) {

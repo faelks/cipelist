@@ -44,7 +44,7 @@ public class SwiperActivity extends BaseActivity {
     private String mCurrentUserId;
     private String mQuery;
     private LocalSearch mSearch;
-    private List<LocalRecipe> mSelectedRecipes;
+    private List<LocalRecipe> mSelectedRecipes = new ArrayList<>();
     private List<LocalRecipe> mRecipes;
     private Context mContext;
 
@@ -65,17 +65,16 @@ public class SwiperActivity extends BaseActivity {
         // This string should be unique for the search and be dependant on the
         // id of the user/timestamp/searchparameters.
 
+        // Getting things passed by the searchfilteractivity
         mRecipeAmount = getIntent().getIntExtra("recipeAmount", 0);
         mQuery = getIntent().getExtras().getString(SearchFilterActivity.QUERY);
-
         ArrayList<String> diets = getIntent().getExtras().getStringArrayList(SearchFilterActivity.DIET);
         ArrayList<String> cuisines = getIntent().getExtras().getStringArrayList(SearchFilterActivity.CUISINE);
         ArrayList<String> allergies = getIntent().getExtras().getStringArrayList(SearchFilterActivity.ALLERGY);
         ArrayList<String> courses = getIntent().getExtras().getStringArrayList(SearchFilterActivity.COURSE);
 
+        // Set the id of the current search
         setSearchId();
-
-        mSelectedRecipes = new ArrayList<>();
 
         mSwipeView.getBuilder()
                 .setDisplayViewCount(3)
@@ -84,7 +83,6 @@ public class SwiperActivity extends BaseActivity {
                         .setRelativeScale(0.01f)
                         .setSwipeInMsgLayoutId(R.layout.swiper_in_msg)
                         .setSwipeOutMsgLayoutId(R.layout.swiper_out_msg));
-
 
         // Programatically call the doSwipe function on reject button click
         findViewById(R.id.reject_btn).setOnClickListener(new View.OnClickListener() {
@@ -102,10 +100,14 @@ public class SwiperActivity extends BaseActivity {
             }
         });
 
+        // Initiate a new call to the yummly api to get recipes based on search filter parameters
         AsyncRecipeLoader loader = new AsyncRecipeLoader(mQuery, diets, allergies, courses, cuisines);
         loader.execute("");
     }
 
+    /**
+     * Retrieves the id from the firebase authenication and uses it to generate a unique is for the search.
+     */
     private void setSearchId() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
@@ -160,10 +162,14 @@ public class SwiperActivity extends BaseActivity {
         Log.d(SWIPER_LOGTAG, "onDestroy()");
     }
 
+    /**
+     * Adds cards from the global variable mRecipes to the SwipeView.
+     * TODO: This should be changed so that it adds passed cards or newly loaded cards.
+     */
     public void addCards() {
         try {
-            // MockLoader that retrieves recipes from a locally saved search
-            //RecipeLoader mLoader = new MockRecipeLoader(mContext);
+
+
             Log.d(SWIPER_LOGTAG, "Start of addCards funct");
             for (final LocalRecipe recipe : mRecipes) {
                 mSwipeView.addView(new RecipeCard(mContext, recipe, new RecipeCard.SwipeHandler() {
@@ -184,6 +190,11 @@ public class SwiperActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Initiates an asynchronous call to the yummly api.
+     * It is possible that the asynchronicity can be handled by the .enqueue() call of the
+     * Retrofit library and thud avoid having an inner asynctask. This would require further restructuring of the class.
+     */
     private class AsyncRecipeLoader extends AsyncTask<String, Integer, List<LocalRecipe>> {
 
         private String query;
@@ -209,6 +220,9 @@ public class SwiperActivity extends BaseActivity {
 
         @Override
         protected List<LocalRecipe> doInBackground(String... strings) {
+            // MockLoader that retrieves recipes from a locally saved search
+            // RecipeLoader mLoader = new MockRecipeLoader(mContext);
+
             RecipeLoader mLoader = new ApiRecipeLoader(query, diets, courses, allergies, cuisines);
             return mLoader.getRecipes();
         }
@@ -216,8 +230,11 @@ public class SwiperActivity extends BaseActivity {
         @Override
         protected void onPostExecute(List<LocalRecipe> localRecipes) {
             super.onPostExecute(localRecipes);
+            // Stop the loading animation
             stopLoadAnim();
+            // Store the results in the global variable
             mRecipes = localRecipes;
+            // Add the loaded cards to the SwiperView in the Main Thread.
             addCards();
         }
     }
