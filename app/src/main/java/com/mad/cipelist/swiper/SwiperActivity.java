@@ -69,19 +69,13 @@ public class SwiperActivity extends BaseActivity {
         mQuery = getIntent().getExtras().getString(SearchFilterActivity.QUERY);
 
         ArrayList<String> diets = getIntent().getExtras().getStringArrayList(SearchFilterActivity.DIET);
-        Log.d(SWIPER_LOGTAG, "Loaded diets: " + diets);
         ArrayList<String> cuisines = getIntent().getExtras().getStringArrayList(SearchFilterActivity.CUISINE);
-        Log.d(SWIPER_LOGTAG, "Loaded cuisines: " + cuisines);
         ArrayList<String> allergies = getIntent().getExtras().getStringArrayList(SearchFilterActivity.ALLERGY);
-        Log.d(SWIPER_LOGTAG, "Loaded allergy: " + allergies);
         ArrayList<String> courses = getIntent().getExtras().getStringArrayList(SearchFilterActivity.COURSE);
-        Log.d(SWIPER_LOGTAG, "Loaded course: " + courses);
-
 
         setSearchId();
 
         mSelectedRecipes = new ArrayList<>();
-
 
         mSwipeView.getBuilder()
                 .setDisplayViewCount(3)
@@ -108,7 +102,7 @@ public class SwiperActivity extends BaseActivity {
             }
         });
 
-        AsyncRecipeLoader loader = new AsyncRecipeLoader(mQuery);
+        AsyncRecipeLoader loader = new AsyncRecipeLoader(mQuery, diets, allergies, courses, cuisines);
         loader.execute("");
     }
 
@@ -193,9 +187,18 @@ public class SwiperActivity extends BaseActivity {
     private class AsyncRecipeLoader extends AsyncTask<String, Integer, List<LocalRecipe>> {
 
         private String query;
+        private List<String> diets;
+        private List<String> allergies;
+        private List<String> courses;
+        private List<String> cuisines;
 
-        AsyncRecipeLoader(String query) {
+
+        AsyncRecipeLoader(String query, List<String> diets, List<String> allergies, List<String> courses, List<String> cuisines) {
             this.query = query;
+            this.diets = diets;
+            this.allergies = allergies;
+            this.courses = courses;
+            this.cuisines = cuisines;
         }
 
         @Override
@@ -206,7 +209,7 @@ public class SwiperActivity extends BaseActivity {
 
         @Override
         protected List<LocalRecipe> doInBackground(String... strings) {
-            RecipeLoader mLoader = new ApiRecipeLoader(query);
+            RecipeLoader mLoader = new ApiRecipeLoader(query, diets, courses, allergies, cuisines);
             return mLoader.getRecipes();
         }
 
@@ -215,7 +218,6 @@ public class SwiperActivity extends BaseActivity {
             super.onPostExecute(localRecipes);
             stopLoadAnim();
             mRecipes = localRecipes;
-            Log.d(SWIPER_LOGTAG, "In post execute mrecipes = " + mRecipes.size());
             addCards();
         }
     }

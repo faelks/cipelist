@@ -137,14 +137,15 @@
         <item>Main Dishes</item>
         <item>Desserts</item>
         <item>Side Dishes</item>
-        <item>Lunch &amp; Snacks</item>
+        <item>Lunch</item>
+        <item>Snacks</item>
         <item>Appetizers</item>
         <item>Salads</item>
         <item>Breads</item>
-        <item>Breakfast &amp; Brunch</item>
+        <item>Breakfast and Brunch</item>
         <item>Soups</item>
         <item>Beverages</item>
-        <item>Condiments &amp; Sauces</item>
+        <item>Condiments and Sauces</item>
         <item>Cocktails</item>
     </string-array>
 
@@ -154,6 +155,7 @@
     <string name="number_of_recipes">Number of Recipes</string>
     <string name="picture_of_recipe">Picture of Recipe</string>
     <string name="recipe_image">Recipe Image</string>
+
     <string-array name="diet_items">
         <item>Lacto Vegetarian</item>
         <item>Ovo Vegetarian</item>

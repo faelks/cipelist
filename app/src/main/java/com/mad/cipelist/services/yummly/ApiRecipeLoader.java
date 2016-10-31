@@ -9,7 +9,9 @@ import com.mad.cipelist.services.yummly.model.LocalRecipe;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -25,12 +27,20 @@ public class ApiRecipeLoader implements RecipeLoader {
     final static String API_TAG = "YUMMLY";
 
     private String query;
+    private List<String> diets;
+    private List<String> courses;
+    private List<String> cuisines;
+    private List<String> allergies;
 
     public ApiRecipeLoader() {
     }
 
-    public ApiRecipeLoader(String query) {
+    public ApiRecipeLoader(String query, List<String> diets, List<String> courses, List<String> allergies, List<String> cuisines) {
         this.query = query;
+        this.diets = diets;
+        this.courses = courses;
+        this.cuisines = cuisines;
+        this.allergies = allergies;
     }
 
     @Override
@@ -47,26 +57,42 @@ public class ApiRecipeLoader implements RecipeLoader {
 
         YummlyEndpointInterface yummlyEndpointInterface = retrofit.create(YummlyEndpointInterface.class);
 
-        Call<SearchResult> call = yummlyEndpointInterface.getSearch(query);
+        Map<String, String> data = new HashMap<>();
+
+        if (!query.equals("")) {
+            data.put("query", query);
+        }
+
+        for (String s : diets) {
+            data.put("allowedDiet[]", s);
+        }
+
+        for (String s : courses) {
+            data.put("allowedCourse[]", s);
+        }
+
+        for (String s : allergies) {
+            data.put("allowedAllergy[]", s);
+        }
+
+        for (String s : cuisines) {
+            data.put("allowedCuisine[]", s);
+        }
+
+
+        Call<SearchResult> call = yummlyEndpointInterface.getSearch(data);
 
         try {
             Response<SearchResult> response = call.execute();
             if (response.isSuccessful()) {
                 SearchResult sr = response.body();
-                LocalRecipe tempRecipe;
-                ArrayList<LocalRecipe> recipes = new ArrayList<>();
 
                 Log.d(API_TAG, "This is the call to api :" + call.request().toString());
-                Log.d(API_TAG, "We have this many recipes back in loader :" + response.body().getRecipes().length);
+                //Log.d(API_TAG, "We have this many recipes back in loader :" + response.body().getRecipes().length);
 
+                ArrayList<LocalRecipe> recipes = getRecipes(sr.getRecipes());
 
-                for (Recipe r : sr.getRecipes()) {
-                    String[] ingredients = r.getIngredients();
-                    String jsonIngredients = new Gson().toJson(ingredients);
-                    tempRecipe = new LocalRecipe(r.getRecipeName(), r.getRating(), r.getTotalTimeInSeconds(), r.getSmallImageUrls()[0], jsonIngredients, r.getId(), null);
-                    recipes.add(tempRecipe);
-                }
-                Log.d(API_TAG, "Passing recipes object with " + recipes.size() + " items");
+                //Log.d(API_TAG, "Passing recipes object with " + recipes.size() + " items");
                 return recipes;
 
             } else {
@@ -76,5 +102,17 @@ public class ApiRecipeLoader implements RecipeLoader {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private ArrayList<LocalRecipe> getRecipes(Recipe[] resultRecipes) {
+        ArrayList<LocalRecipe> result = new ArrayList<>();
+        LocalRecipe tempRecipe;
+        for (Recipe r : resultRecipes) {
+            String[] ingredients = r.getIngredients();
+            String jsonIngredients = new Gson().toJson(ingredients);
+            tempRecipe = new LocalRecipe(r.getRecipeName(), r.getRating(), r.getTotalTimeInSeconds(), r.getSmallImageUrls()[0], jsonIngredients, r.getId(), null);
+            result.add(tempRecipe);
+        }
+        return result;
     }
 }

@@ -13,6 +13,7 @@ import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.widgets.MultiSelectionSpinner;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Displays search filter options to the user.
@@ -85,10 +86,11 @@ public class SearchFilterActivity extends BaseActivity {
 
     public void saveSearchFilters() {
         // Extract and save all the data that the user has selected and pass this data to the swiper activity?
-        ArrayList<String> diets = mDietSpinner.getSelectedStrings();
-        ArrayList<String> cuisines = mCuisineSpinner.getSelectedStrings();
-        ArrayList<String> allergies = mAllergiesSpinner.getSelectedStrings();
-        ArrayList<String> courses = mCourseSpinner.getSelectedStrings();
+        ArrayList<String> diets = formatDiets(mDietSpinner.getSelectedStrings());
+        ArrayList<String> cuisines = formatCuisine(mCuisineSpinner.getSelectedStrings());
+        ArrayList<String> allergies = formatAllergies(mAllergiesSpinner.getSelectedStrings());
+        ArrayList<String> courses = formatCourses(mCourseSpinner.getSelectedStrings());
+
 
         String query = mQueryEt.getText().toString();
 
@@ -102,4 +104,91 @@ public class SearchFilterActivity extends BaseActivity {
 
 
     }
+
+    public ArrayList<String> formatDiets(List<String> rawDiets) {
+        ArrayList<String> formattedDiet = new ArrayList<>();
+        String[] diets = getResources().getStringArray(R.array.diet_items);
+        for (String s : rawDiets) {
+            switch (s) {
+                case "Lacto Vegetarian":
+                    formattedDiet.add("388^" + s);
+                    break;
+                case "Ovo Vegetarian":
+                    formattedDiet.add("389^" + s);
+                    break;
+                case "Pescetarian":
+                    formattedDiet.add("390^" + s);
+                    break;
+                case "Vegan":
+                    formattedDiet.add("386^" + s);
+                    break;
+                case "Vegetarian":
+                    formattedDiet.add("387^Lacto-ovo vegetarian");
+                    break;
+            }
+        }
+        return formattedDiet;
+    }
+
+    public ArrayList<String> formatCourses(List<String> rawCourses) {
+        ArrayList<String> formattedCourses = new ArrayList<>();
+        for (String s : rawCourses) {
+            formattedCourses.add("course^course-" + s);
+        }
+        return formattedCourses;
+    }
+
+    public ArrayList<String> formatCuisine(List<String> rawCuisines) {
+        ArrayList<String> formattedCuisines = new ArrayList<>();
+        for (String s : rawCuisines) {
+            if (s.contains("&amp;")) {
+                s = s.substring(0, s.indexOf(" "));
+            }
+            formattedCuisines.add("cuisine^cuisine-" + s.toLowerCase());
+        }
+        return formattedCuisines;
+    }
+
+    public ArrayList<String> formatAllergies(List<String> rawAllergies) {
+        ArrayList<String> formattedAllergies = new ArrayList<>();
+
+        for (String s : rawAllergies) {
+            switch (s) {
+                case "Dairy":
+                    formattedAllergies.add("396^" + s + "-Free");
+                    break;
+                case "Egg":
+                    formattedAllergies.add("397^" + s + "-Free");
+                    break;
+                case "Gluten":
+                    formattedAllergies.add("393^" + s + "-Free");
+                    break;
+                case "Peanut":
+                    formattedAllergies.add("394^" + s + "-Free");
+                    break;
+                case "Seafood":
+                    formattedAllergies.add("398^" + s + "-Free");
+                    break;
+                case "Sesame":
+                    formattedAllergies.add("399^" + s + "-Free");
+                    break;
+                case "Soy":
+                    formattedAllergies.add("400^" + s + "-Free");
+                    break;
+                case "Sulfite":
+                    formattedAllergies.add("401^" + s + "-Free");
+                    break;
+                case "Tree Nut":
+                    formattedAllergies.add("395^" + s + "-Free");
+                    break;
+                case "Wheat":
+                    formattedAllergies.add("392^" + s + "-Free");
+                    break;
+            }
+        }
+
+        return formattedAllergies;
+    }
+
 }
+
