@@ -48,7 +48,7 @@ public class MockRecipeLoader implements RecipeLoader {
     }
 
     @Override
-    public LocalRecipe getRecipe(String recipeId) {
+    public LocalRecipe getRecipe(LocalRecipe recipe) {
 
         // Do something with recipe id to get filename
         IndividualRecipe tempRecipe;
@@ -56,13 +56,13 @@ public class MockRecipeLoader implements RecipeLoader {
         // Need some better exceptionhandling
         try {
             Gson gson = new Gson();
-            String jsonString = loadJSONFromAsset(mContext, recipeId);
+            String jsonString = loadJSONFromAsset(mContext, recipe.getmId());
             tempRecipe = gson.fromJson(jsonString, IndividualRecipe.class);
 
             List<String> ingredients = tempRecipe.getIngredientLines();
             String jsonIngredients = new Gson().toJson(ingredients);
 
-            return new LocalRecipe(tempRecipe.getName(), tempRecipe.getRating().toString(), tempRecipe.getCookTime(), tempRecipe.getImages().get(0).getHostedLargeUrl(), jsonIngredients, recipeId, null);
+            return new LocalRecipe(tempRecipe.getName(), tempRecipe.getRating().toString(), tempRecipe.getCookTime(), tempRecipe.getImages().get(0).getHostedLargeUrl(), jsonIngredients, recipe.getmId(), null);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

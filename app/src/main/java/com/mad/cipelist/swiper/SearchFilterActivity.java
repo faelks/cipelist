@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
@@ -26,16 +27,19 @@ public class SearchFilterActivity extends BaseActivity {
     final static String ALLERGY = "allergy";
     final static String COURSE = "course";
     final static String QUERY = "query";
+    final static String MAX_TIME = "max time";
 
     private EditText mQueryEt;
     private MultiSelectionSpinner mDietSpinner;
     private MultiSelectionSpinner mCuisineSpinner;
     private MultiSelectionSpinner mAllergiesSpinner;
     private MultiSelectionSpinner mCourseSpinner;
+
+    private TextView mCookingTimeTv;
     private SeekBar mCookingTimeSb;
 
-    private Bundle searchFilter;
-
+    private TextView mRecipeAmountTv;
+    private SeekBar mRecipeAmountSb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +61,65 @@ public class SearchFilterActivity extends BaseActivity {
         loadSpinner(mCourseSpinner, R.array.course_items, "Select Courses");
 
         // Load SeekBars
+        mCookingTimeTv = (TextView) findViewById(R.id.cooking_time_amount_tv);
         mCookingTimeSb = (SeekBar) findViewById(R.id.cooking_time_bar);
+        mRecipeAmountTv = (TextView) findViewById(R.id.recipe_amount_tv);
+        mRecipeAmountSb = (SeekBar) findViewById(R.id.recipe_amount_bar);
+        // Default is 1 hour because importance of studies > cooking proper food
+        mCookingTimeSb.setProgress(2);
+        mCookingTimeSb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                String maxTime = "";
+                switch (i) {
+                    case 0:
+                        maxTime = "15 min";
+                        break;
+                    case 1:
+                        maxTime = "30 min";
+                        break;
+                    case 2:
+                        maxTime = "1 hour";
+                        break;
+                    case 3:
+                        maxTime = "2 hours";
+                        break;
+                    case 4:
+                        maxTime = "Unlimited";
+                        break;
+                }
+                mCookingTimeTv.setText(maxTime);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        mRecipeAmountSb.setProgress(7);
+        mRecipeAmountSb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                String amount = i + " recipes";
+                mRecipeAmountTv.setText(amount);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         // Load Button
         Button mStartSearchBtn = (Button) findViewById(R.id.start_search_btn);
@@ -65,11 +127,9 @@ public class SearchFilterActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
 
-                saveSearchFilters();
-
                 Intent swiperIntent = new Intent(SearchFilterActivity.this, SwiperActivity.class);
                 swiperIntent.putExtra("recipeAmount", 7);
-                swiperIntent.putExtras(searchFilter);
+                swiperIntent.putExtras(createSearchFilter());
                 startActivity(swiperIntent);
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 finish();
@@ -94,22 +154,25 @@ public class SearchFilterActivity extends BaseActivity {
      * Saves the different search filter options into a bundle that is passed
      * via the intent to the Swiper class.
      */
-    public void saveSearchFilters() {
+    public Bundle createSearchFilter() {
         // Extract and save all the data that the user has selected and pass this data to the swiper activity?
         ArrayList<String> diets = formatDietsForHttp(mDietSpinner.getSelectedStrings());
         ArrayList<String> cuisines = formatCuisinesForHttp(mCuisineSpinner.getSelectedStrings());
         ArrayList<String> allergies = formatAllergiesForHttp(mAllergiesSpinner.getSelectedStrings());
         ArrayList<String> courses = formatCoursesForHttp(mCourseSpinner.getSelectedStrings());
 
-
+        Integer maxTime = formatMaxTimeForHttp(mCookingTimeSb.getProgress());
         String query = mQueryEt.getText().toString();
 
-        searchFilter = new Bundle();
+        Bundle searchFilter = new Bundle();
         searchFilter.putStringArrayList(DIET, diets);
         searchFilter.putStringArrayList(CUISINE, cuisines);
         searchFilter.putStringArrayList(ALLERGY, allergies);
         searchFilter.putStringArrayList(COURSE, courses);
         searchFilter.putString(QUERY, query);
+        searchFilter.putInt(MAX_TIME, maxTime);
+
+        return searchFilter;
 
     }
 
@@ -142,6 +205,9 @@ public class SearchFilterActivity extends BaseActivity {
         ArrayList<String> formattedCourses = new ArrayList<>();
         for (String s : rawCourses) {
             formattedCourses.add("course^course-" + s);
+        }
+        if (rawCourses.size() < 1) {
+            formattedCourses.add("course^course-Main Dishes");
         }
         return formattedCourses;
     }
@@ -196,6 +262,22 @@ public class SearchFilterActivity extends BaseActivity {
         }
 
         return formattedAllergies;
+    }
+
+    public int formatMaxTimeForHttp(int time) {
+        switch (time) {
+            case 0:
+                return 900;
+            case 1:
+                return 1800;
+            case 2:
+                return 3600;
+            case 3:
+                return 7200;
+            case 4:
+                return -1;
+        }
+        return -1;
     }
 
 }

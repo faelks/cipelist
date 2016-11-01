@@ -67,6 +67,7 @@ public class SwiperActivity extends BaseActivity {
 
         // Getting things passed by the searchfilteractivity
         mRecipeAmount = getIntent().getIntExtra("recipeAmount", 0);
+        int maxTime = getIntent().getIntExtra(SearchFilterActivity.MAX_TIME, -1);
         mQuery = getIntent().getExtras().getString(SearchFilterActivity.QUERY);
         ArrayList<String> diets = getIntent().getExtras().getStringArrayList(SearchFilterActivity.DIET);
         ArrayList<String> cuisines = getIntent().getExtras().getStringArrayList(SearchFilterActivity.CUISINE);
@@ -101,7 +102,7 @@ public class SwiperActivity extends BaseActivity {
         });
 
         // Initiate a new call to the yummly api to get recipes based on search filter parameters
-        AsyncRecipeLoader loader = new AsyncRecipeLoader(mQuery, diets, allergies, courses, cuisines);
+        AsyncRecipeLoader loader = new AsyncRecipeLoader(mQuery, diets, allergies, courses, cuisines, maxTime);
         loader.execute("");
     }
 
@@ -202,14 +203,16 @@ public class SwiperActivity extends BaseActivity {
         private List<String> allergies;
         private List<String> courses;
         private List<String> cuisines;
+        private int maxTime;
 
 
-        AsyncRecipeLoader(String query, List<String> diets, List<String> allergies, List<String> courses, List<String> cuisines) {
+        AsyncRecipeLoader(String query, List<String> diets, List<String> allergies, List<String> courses, List<String> cuisines, int maxTime) {
             this.query = query;
             this.diets = diets;
             this.allergies = allergies;
             this.courses = courses;
             this.cuisines = cuisines;
+            this.maxTime = maxTime;
         }
 
         @Override
@@ -223,7 +226,7 @@ public class SwiperActivity extends BaseActivity {
             // MockLoader that retrieves recipes from a locally saved search
             // RecipeLoader mLoader = new MockRecipeLoader(mContext);
 
-            RecipeLoader mLoader = new ApiRecipeLoader(query, diets, courses, allergies, cuisines);
+            RecipeLoader mLoader = new ApiRecipeLoader(query, diets, courses, allergies, cuisines, maxTime);
             return mLoader.getRecipes();
         }
 

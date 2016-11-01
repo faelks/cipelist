@@ -4,21 +4,27 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.View;
+import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.result.adapter.ResultAdapter;
+import com.mad.cipelist.services.yummly.ApiRecipeLoader;
+import com.mad.cipelist.services.yummly.RecipeLoader;
+import com.mad.cipelist.services.yummly.model.LocalRecipe;
 import com.mad.cipelist.swiper.SwiperActivity;
 import com.viewpagerindicator.TitlePageIndicator;
 import com.wang.avi.AVLoadingIndicatorView;
+
+import java.util.List;
 
 /**
  * Displays two fragments that contain the general recipes and the grocerylist of the loaded search.
  */
 public class ResultActivity extends BaseActivity {
+    private static final String TAG = "ResultActivity";
 
     //public static String RESULT_LOGTAG = "ShoppingList";
 
@@ -51,9 +57,6 @@ public class ResultActivity extends BaseActivity {
         titleIndicator.setFooterIndicatorStyle(TitlePageIndicator.IndicatorStyle.Underline);
         titleIndicator.setSelectedBold(true);
 
-
-        stopLoadAnim();
-
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             // This method will be invoked when the current page is scrolled
@@ -75,14 +78,28 @@ public class ResultActivity extends BaseActivity {
 
             }
         });
+
+        updateRecipes(mSearchId);
     }
 
-    public void startLoadAnim() {
-        mAvi.smoothToShow();
-        mLoadTxt.setVisibility(View.VISIBLE);
+    public void updateRecipes(String searchId) {
+
+        List<LocalRecipe> recipes = LocalRecipe.find(LocalRecipe.class, "search_id = ?", searchId);
+        LocalRecipe.deleteAll(LocalRecipe.class, "search_id = ?", searchId);
+
+        RecipeLoader loader = new ApiRecipeLoader();
+
+        if (recipes != null) {
+            for (LocalRecipe r : recipes) {
+                r = loader.getRecipe(r);
+                r.save();
+            }
+        } else {
+            Log.d(TAG, "Dataset null after querying with " + searchId);
+        }
+
+
+
     }
-    public void stopLoadAnim() {
-        mAvi.smoothToHide();
-        mLoadTxt.setVisibility(View.GONE);
-    }
+
 }

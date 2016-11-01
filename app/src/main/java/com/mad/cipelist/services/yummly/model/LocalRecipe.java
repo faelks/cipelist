@@ -1,6 +1,10 @@
 package com.mad.cipelist.services.yummly.model;
 
+import com.google.gson.Gson;
+import com.mad.cipelist.services.yummly.dto.IndividualRecipe;
 import com.orm.SugarRecord;
+
+import java.util.List;
 
 /**
  * Stores the necessary data from the Recipe response.
@@ -13,6 +17,19 @@ public class LocalRecipe extends SugarRecord{
     private String cookingTime;
     private String imageUrl;
     private String searchId;
+
+    private String sourceUrl;
+    private String sourceDisplayName;
+    private String recipeUrl;
+
+    private int prepTime;
+    private int cookTime;
+    private int numberOfServings;
+    private String ingredientLines;
+
+
+
+
 
     public LocalRecipe() {}
 
@@ -57,6 +74,40 @@ public class LocalRecipe extends SugarRecord{
 
     public String getmId() {
         return mId;
+    }
+
+    /**
+     * Should prob not have processing logic here
+     *
+     * @param apiResponse
+     */
+    public void update(IndividualRecipe apiResponse) {
+        this.sourceUrl = apiResponse.getSource().getSourceSiteUrl();
+        this.sourceDisplayName = apiResponse.getSource().getSourceDisplayName();
+        this.recipeUrl = apiResponse.getSource().getSourceRecipeUrl();
+        if (apiResponse.getPrepTimeInSeconds() != null) {
+            this.prepTime = apiResponse.getPrepTimeInSeconds();
+        }
+        if (apiResponse.getCookTimeInSeconds() != null) {
+            this.cookTime = apiResponse.getCookTimeInSeconds();
+        }
+        this.numberOfServings = apiResponse.getNumberOfServings();
+
+        List<String> ingredientLines = apiResponse.getIngredientLines();
+        this.ingredientLines = new Gson().toJson(ingredientLines);
+
+    }
+
+    public String getRecipeUrl() {
+        return recipeUrl;
+    }
+
+    public String getSourceDisplayName() {
+        return sourceDisplayName;
+    }
+
+    public String getIngredientLines() {
+        return ingredientLines;
     }
 
 }

@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide;
 import com.mad.cipelist.R;
 import com.mad.cipelist.services.yummly.model.LocalRecipe;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Binds the selected recipes to the fragments recyclerview.
@@ -22,14 +22,14 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
         .RecipeHolder> {
 
     private static final String LOG_TAG = "RecipeRvAdapter";
-    private final ArrayList<LocalRecipe> mDataset;
+    private final List<LocalRecipe> mDataset;
     private final OnRecipeClickListener mListener;
 
     /**
      * Constructor that sets the context and data to be displayed
      * @param dataset A set of recipes that the user has selected
      */
-    public RecipeRecyclerViewAdapter(ArrayList<LocalRecipe> dataset, OnRecipeClickListener listener) {
+    public RecipeRecyclerViewAdapter(List<LocalRecipe> dataset, OnRecipeClickListener listener) {
         this.mDataset = dataset;
         this.mListener = listener;
         //Log.d(LOG_TAG, "Initialising Adapter");

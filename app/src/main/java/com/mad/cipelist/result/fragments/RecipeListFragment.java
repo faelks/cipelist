@@ -15,7 +15,6 @@ import com.mad.cipelist.result.RecipeDetail;
 import com.mad.cipelist.result.adapter.RecipeRecyclerViewAdapter;
 import com.mad.cipelist.services.yummly.model.LocalRecipe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +29,7 @@ public class RecipeListFragment extends Fragment {
     protected RecyclerView mRecyclerView;
     protected RecipeRecyclerViewAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
-    protected ArrayList<LocalRecipe> mDataset;
+    protected List<LocalRecipe> mDataset;
 
 
     private String mSearchId;
@@ -64,7 +63,7 @@ public class RecipeListFragment extends Fragment {
         }
 
         Log.d(TAG, "OnCreate called, initiating dataset...");
-        initDataset();
+        mDataset = getRecipesWithSearchId(mSearchId);
     }
 
     @Override
@@ -111,20 +110,15 @@ public class RecipeListFragment extends Fragment {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    // Should be rewritten as general function getRecipesWithId(String id){}
-    private void initDataset() {
-        List<LocalRecipe> recipes = LocalRecipe.find(LocalRecipe.class, "search_id = ?", mSearchId);
-        mDataset = new ArrayList<>();
-        for (LocalRecipe r : recipes) {
-            mDataset.add(r);
+    public List<LocalRecipe> getRecipesWithSearchId(String searchId) {
+
+        List<LocalRecipe> recipes = LocalRecipe.find(LocalRecipe.class, "search_id = ?", searchId);
+
+        if (recipes == null) {
+            Log.d(TAG, "Dataset null after querying with " + searchId);
         }
 
-        if (mDataset == null) {
-            Log.d(TAG, "Dataset null after querying with " + mSearchId);
-        } else {
-            for (LocalRecipe r : mDataset) {
-                Log.d("LocalRecipe", "Loaded recipe " + r.getRecipeName());
-            }
-        }
+        return recipes;
     }
+
 }

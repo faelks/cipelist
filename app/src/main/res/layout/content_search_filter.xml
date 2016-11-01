@@ -147,12 +147,28 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
-            <SeekBar
-                android:id="@+id/cooking_time_bar"
-                style="@android:style/Widget.DeviceDefault.Light.SeekBar"
-                android:layout_width="200sp"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:max="5400" />
+                android:minWidth="200sp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/cooking_time_amount_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/_1_hr"
+                    android:textAlignment="center" />
+
+                <SeekBar
+                    android:id="@+id/cooking_time_bar"
+                    style="@android:style/Widget.DeviceDefault.Light.SeekBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="4" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
@@ -172,12 +188,27 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
-            <SeekBar
-                android:id="@+id/recipe_amount_bar"
-                style="@android:style/Widget.DeviceDefault.Light.SeekBar"
-                android:layout_width="200sp"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:max="21" />
+                android:minWidth="200sp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/recipe_amount_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/_7_recipes"
+                    android:textAlignment="center" />
+
+                <SeekBar
+                    android:id="@+id/recipe_amount_bar"
+                    style="@android:style/Widget.DeviceDefault.Light.SeekBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="21" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
