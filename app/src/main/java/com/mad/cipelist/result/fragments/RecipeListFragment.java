@@ -32,19 +32,16 @@ public class RecipeListFragment extends Fragment {
     protected List<LocalRecipe> mDataset;
 
 
-    private String mSearchId;
-
     // newInstance constructor for creating fragment with arguments
-    public static RecipeListFragment newInstance(int page, String title, String searchId) {
+    public static RecipeListFragment newInstance(String title, String searchId) {
         RecipeListFragment recipeListFragment = new RecipeListFragment();
 
         Bundle args = new Bundle();
-        args.putInt("pageNumber", page);
         args.putString("title", title);
         args.putString("searchId", searchId);
         recipeListFragment.setArguments(args);
 
-        Log.d(TAG, "newInstance with args: page=" + page + ", title=" + title + ", searchId=" + searchId);
+        Log.d(TAG, "newInstance with args: title=" + title + ", searchId=" + searchId);
         return recipeListFragment;
 
     }
@@ -54,7 +51,7 @@ public class RecipeListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mSearchId = getArguments().getString("searchId");
+        String mSearchId = getArguments().getString("searchId");
 
         if (mSearchId == null) {
             mSearchId = "default";

@@ -3,7 +3,6 @@ package com.mad.cipelist.result.adapter;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Felix on 28/10/2016.
+ * Generates a grocerylist for the user based on the selected recipes.
  */
 public class GroceriesAdapter implements android.widget.ExpandableListAdapter {
 
@@ -27,7 +26,7 @@ public class GroceriesAdapter implements android.widget.ExpandableListAdapter {
         this.context = context;
         this.headers = headers;
         this.data = data;
-        Log.d("GroceriesAdapter", "We have headers: " + headers);
+        //Log.d("GroceriesAdapter", "We have headers: " + headers);
     }
 
     @Override

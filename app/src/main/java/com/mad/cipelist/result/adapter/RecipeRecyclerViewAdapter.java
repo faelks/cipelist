@@ -21,7 +21,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
         .Adapter<RecipeRecyclerViewAdapter
         .RecipeHolder> {
 
-    private static final String LOG_TAG = "RecipeRvAdapter";
+    //private static final String LOG_TAG = "RecipeRvAdapter";
     private final List<LocalRecipe> mDataset;
     private final OnRecipeClickListener mListener;
 

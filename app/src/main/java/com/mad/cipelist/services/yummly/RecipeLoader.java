@@ -5,7 +5,7 @@ import com.mad.cipelist.services.yummly.model.LocalRecipe;
 import java.util.List;
 
 /**
- * Created by Felix on 29/10/2016.
+ * Defines an interface for loading recipes to the applicaiton.
  */
 
 public interface RecipeLoader {

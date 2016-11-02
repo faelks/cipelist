@@ -18,13 +18,7 @@ import com.wang.avi.AVLoadingIndicatorView;
  * Displays two fragments that contain the general recipes and the grocerylist of the loaded search.
  */
 public class ResultActivity extends BaseActivity {
-    private static final String TAG = "ResultActivity";
-
-    //public static String RESULT_LOGTAG = "ShoppingList";
-    private ViewPager mPager;
-    private Context mContext;
-    private String mSearchId;
-    private TitlePageIndicator titleIndicator;
+    //private static final String TAG = "ResultActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,18 +27,18 @@ public class ResultActivity extends BaseActivity {
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.content_result, contentFrameLayout);
 
-        mContext = this.getApplicationContext();
+        Context mContext = this.getApplicationContext();
 
         mAvi = (AVLoadingIndicatorView) findViewById(R.id.avi);
         mLoadTxt = (TextView) findViewById(R.id.loadText);
-        mSearchId = getIntent().getStringExtra(SwiperActivity.SEARCH_ID);
+        String mSearchId = getIntent().getStringExtra(SwiperActivity.SEARCH_ID);
 
         FragmentPagerAdapter adapterViewPager = new ResultAdapter(getSupportFragmentManager(), mContext, mSearchId);
 
-        mPager = (ViewPager) findViewById(R.id.viewPager);
+        ViewPager mPager = (ViewPager) findViewById(R.id.viewPager);
         mPager.setAdapter(adapterViewPager);
 
-        titleIndicator = (TitlePageIndicator) findViewById(R.id.titles);
+        TitlePageIndicator titleIndicator = (TitlePageIndicator) findViewById(R.id.titles);
         titleIndicator.setViewPager(mPager);
 
         // Customises the title indicator

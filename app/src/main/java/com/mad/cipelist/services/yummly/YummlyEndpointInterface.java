@@ -13,7 +13,7 @@ import retrofit2.http.QueryMap;
 /**
  * Defines the structure of calls to the Yummly API.
  */
-public interface YummlyEndpointInterface {
+interface YummlyEndpointInterface {
 
     // Request method and URL specified in the annotation
     // The get request takes a hash map as a parameter that includes all the specified search filters.

@@ -44,7 +44,6 @@ public class SwiperActivity extends BaseActivity {
     private int mSwipeCount;
 
     private List<LocalRecipe> mSelectedRecipes;
-    private List<LocalRecipe> mRecipes;
     private Context mContext;
 
     private SearchFilter mFilter;
@@ -258,7 +257,7 @@ public class SwiperActivity extends BaseActivity {
 
         private final List<LocalRecipe> recipes;
 
-        public AsyncRecipeUpdate(List<LocalRecipe> recipes) {
+        AsyncRecipeUpdate(List<LocalRecipe> recipes) {
             this.recipes = recipes;
         }
 

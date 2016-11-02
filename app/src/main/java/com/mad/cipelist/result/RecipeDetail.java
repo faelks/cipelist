@@ -3,7 +3,6 @@ package com.mad.cipelist.result;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mad.cipelist.R;
@@ -13,7 +12,7 @@ import com.mad.cipelist.services.yummly.model.LocalRecipe;
 import java.util.List;
 
 /**
- * Created by Felix on 30/10/2016.
+ * Dsiplays the specific details for a recipe including image, rating and source.
  */
 
 public class RecipeDetail extends BaseActivity {
@@ -25,7 +24,7 @@ public class RecipeDetail extends BaseActivity {
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.content_recipe_detail, contentFrameLayout);
 
-        TextView idView = (TextView) findViewById(R.id.recipe_id);
+        //TextView idView = (TextView) findViewById(R.id.recipe_id);
         ImageView recipeImage = (ImageView) findViewById(R.id.recipe_detail_image);
 
         String recipeId = getIntent().getStringExtra("recipeId");

@@ -1,6 +1,5 @@
 package com.mad.cipelist.main;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
@@ -14,9 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,7 +27,6 @@ import com.mad.cipelist.settings.SettingsActivity;
 import com.mad.cipelist.swiper.SearchFilterActivity;
 import com.mad.cipelist.swiper.SwiperActivity;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -94,12 +90,12 @@ public class MainActivity extends BaseActivity {
         addRecipeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startNewSearch(7);
+                startNewSearch();
             }
         });
     }
 
-    public void startNewSearch(int amount) {
+    public void startNewSearch() {
         Intent intent = new Intent(this, SearchFilterActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
@@ -185,35 +181,6 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    public void createDialog(View v, int position) {
-
-        final Dialog dialog = new Dialog(v.getContext());
-        dialog.setContentView(R.layout.search_detail_dialog);
-        dialog.setTitle("Search " + (position + 1));
-
-        TextView searchQuery = (TextView) dialog.findViewById(R.id.searchQueryTv);
-        TextView searchDate = (TextView) dialog.findViewById(R.id.searchDateTv);
-        TextView searchMatches = (TextView) dialog.findViewById(R.id.matchesCountTv);
-        Button viewRecipeBtn = (Button) dialog.findViewById(R.id.viewSearchBtn);
-        Button cancelBtn = (Button) dialog.findViewById(R.id.cancelBtn);
-
-
-        searchQuery.setText("Burgers");
-        searchDate.setText(new Date().toString());
-        searchMatches.setText("7");
-
-        viewRecipeBtn.setOnClickListener(new ViewButtonOnClickListener(dialog, position));
-        assert cancelBtn != null;
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-    }
-
     public String getUserEmail() {
         if (mAuth.getCurrentUser() == null) {
             return "Anonymous";
@@ -260,6 +227,37 @@ public class MainActivity extends BaseActivity {
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
+    /*
+    public void createDialog(View v, int position) {
+
+        final Dialog dialog = new Dialog(v.getContext());
+        dialog.setContentView(R.layout.search_detail_dialog);
+        dialog.setTitle("Search " + (position + 1));
+
+        TextView searchQuery = (TextView) dialog.findViewById(R.id.searchQueryTv);
+        TextView searchDate = (TextView) dialog.findViewById(R.id.searchDateTv);
+        TextView searchMatches = (TextView) dialog.findViewById(R.id.matchesCountTv);
+        Button viewRecipeBtn = (Button) dialog.findViewById(R.id.viewSearchBtn);
+        Button cancelBtn = (Button) dialog.findViewById(R.id.cancelBtn);
+
+
+        searchQuery.setText("Burgers");
+        searchDate.setText(new Date().toString());
+        searchMatches.setText("7");
+
+        viewRecipeBtn.setOnClickListener(new ViewButtonOnClickListener(dialog, position));
+        assert cancelBtn != null;
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+
     public class ViewButtonOnClickListener implements View.OnClickListener {
 
         int position;
@@ -276,4 +274,6 @@ public class MainActivity extends BaseActivity {
             dialog.dismiss();
         }
     }
+
+    */
 }

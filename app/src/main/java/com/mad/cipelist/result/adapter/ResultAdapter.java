@@ -26,9 +26,9 @@ public class ResultAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0: // Fragment # 0 - This will show RecipeListFragment
-                return RecipeListFragment.newInstance(0, "Recipes", mSearchId);
+                return RecipeListFragment.newInstance("Recipes", mSearchId);
             case 1: // Fragment # 0 - This will show GroceryListFragment
-                return GroceryListFragment.newInstance(1, "Groceries", mSearchId);
+                return GroceryListFragment.newInstance("Groceries", mSearchId);
             default:
                 return null;
         }

@@ -35,7 +35,7 @@ public class GroceryListFragment extends Fragment {
     private List<String> headers;
 
     // newInstance constructor for creating fragment with arguments
-    public static GroceryListFragment newInstance(int page, String title, String searchId) {
+    public static GroceryListFragment newInstance(String title, String searchId) {
         GroceryListFragment groceryFragment = new GroceryListFragment();
         Bundle args = new Bundle();
 

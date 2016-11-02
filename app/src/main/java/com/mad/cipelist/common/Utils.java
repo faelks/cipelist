@@ -2,6 +2,7 @@ package com.mad.cipelist.common;
 
 import android.app.Activity;
 import android.content.Context;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.orm.SchemaGenerator;
@@ -10,6 +11,7 @@ import com.orm.SugarDb;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
@@ -43,25 +45,15 @@ public class Utils {
 
     /**
      * Shows the soft keyboard
-
+     */
     public static void showSoftKeyboard(View view, Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(INPUT_METHOD_SERVICE);
         view.requestFocus();
         inputMethodManager.showSoftInput(view, 0);
     }
-     */
-
-    /**
-     * Removes duplicates from the list
-     public List<String> removeDuplicates(List<String> ingredients) {
-     Set<String> noDups = new HashSet<>();
-     noDups.addAll(ingredients);
-     return new ArrayList<>(noDups);
-     }
-     */
 
     public static String getCurrentDate() {
-        return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date());
     }
 
 }

@@ -39,7 +39,6 @@ public class SearchFilterActivity extends BaseActivity {
     private SeekBar mCookingTimeSb;
 
     private TextView mRecipeAmountTv;
-    private SeekBar mRecipeAmountSb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +63,7 @@ public class SearchFilterActivity extends BaseActivity {
         mCookingTimeTv = (TextView) findViewById(R.id.cooking_time_amount_tv);
         mCookingTimeSb = (SeekBar) findViewById(R.id.cooking_time_bar);
         mRecipeAmountTv = (TextView) findViewById(R.id.recipe_amount_tv);
-        mRecipeAmountSb = (SeekBar) findViewById(R.id.recipe_amount_bar);
+        SeekBar mRecipeAmountSb = (SeekBar) findViewById(R.id.recipe_amount_bar);
         // Default is 1 hour because importance of studies > cooking proper food
         mCookingTimeSb.setProgress(2);
         mCookingTimeSb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -140,9 +139,9 @@ public class SearchFilterActivity extends BaseActivity {
     /**
      * Loads a spinner based on the passed in parameters.
      *
-     * @param spinner
-     * @param arrayId
-     * @param title
+     * @param spinner spinner object
+     * @param arrayId the identifier for the spinners items
+     * @param title the name of the attribute
      */
     public void loadSpinner(MultiSelectionSpinner spinner, int arrayId, String title) {
         spinner.setItems(getResources().getStringArray(arrayId));
@@ -178,7 +177,6 @@ public class SearchFilterActivity extends BaseActivity {
 
     public ArrayList<String> formatDietsForHttp(List<String> rawDiets) {
         ArrayList<String> formattedDiet = new ArrayList<>();
-        String[] diets = getResources().getStringArray(R.array.diet_items);
         for (String s : rawDiets) {
             switch (s) {
                 case "Lacto Vegetarian":
