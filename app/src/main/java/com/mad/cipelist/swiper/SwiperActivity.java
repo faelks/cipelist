@@ -7,10 +7,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.common.Utils;
@@ -30,6 +29,7 @@ import java.util.List;
 /**
  * Displays a swiper that the used can use to select recipes they like
  * Searches should only be saved if the swiping session completes
+ * TODO: Update swiperview with new recipes when nearing the end of stack
  */
 public class SwiperActivity extends BaseActivity {
 
@@ -38,15 +38,17 @@ public class SwiperActivity extends BaseActivity {
     public static final String SEARCH_ID = "searchId";
 
     private SwipePlaceHolderView mSwipeView;
-    private FirebaseAuth mAuth;
+    private LinearLayout mSwipeButtonHolder;
+
     private int mRecipeAmount;
-    private String mSearchId;
-    private String mCurrentUserId;
-    private String mQuery;
-    private LocalSearch mSearch;
-    private List<LocalRecipe> mSelectedRecipes = new ArrayList<>();
+    private int mRecipeLoadCount;
+    private int mSwipeCount;
+
+    private List<LocalRecipe> mSelectedRecipes;
     private List<LocalRecipe> mRecipes;
     private Context mContext;
+
+    private SearchFilter mFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,28 +57,22 @@ public class SwiperActivity extends BaseActivity {
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.content_swiper, contentFrameLayout);
 
-        mAuth = FirebaseAuth.getInstance();
-
         mAvi = (AVLoadingIndicatorView) findViewById(R.id.swiper_avi);
         mLoadTxt = (TextView) findViewById(R.id.swiper_load_text);
-
+        mSwipeButtonHolder = (LinearLayout) findViewById(R.id.swiper_button_holder);
         mSwipeView = (SwipePlaceHolderView) findViewById(R.id.swipe_view);
+
         mContext = this.getApplicationContext();
-        // This string should be unique for the search and be dependant on the
-        // id of the user/timestamp/searchparameters.
+        mRecipeLoadCount = 0;
+        mSelectedRecipes = new ArrayList<>();
 
         // Getting things passed by the searchfilteractivity
         mRecipeAmount = getIntent().getIntExtra("recipeAmount", 0);
-        int maxTime = getIntent().getIntExtra(SearchFilterActivity.MAX_TIME, -1);
-        mQuery = getIntent().getExtras().getString(SearchFilterActivity.QUERY);
-        ArrayList<String> diets = getIntent().getExtras().getStringArrayList(SearchFilterActivity.DIET);
-        ArrayList<String> cuisines = getIntent().getExtras().getStringArrayList(SearchFilterActivity.CUISINE);
-        ArrayList<String> allergies = getIntent().getExtras().getStringArrayList(SearchFilterActivity.ALLERGY);
-        ArrayList<String> courses = getIntent().getExtras().getStringArrayList(SearchFilterActivity.COURSE);
 
-        // Set the id of the current search
-        setSearchId();
+        // Creates a search filter using passed parameters
+        mFilter = createSearchFilter();
 
+        // Creates a swipe view with specified layout
         mSwipeView.getBuilder()
                 .setDisplayViewCount(3)
                 .setSwipeDecor(new SwipeDecor()
@@ -84,6 +80,7 @@ public class SwiperActivity extends BaseActivity {
                         .setRelativeScale(0.01f)
                         .setSwipeInMsgLayoutId(R.layout.swiper_in_msg)
                         .setSwipeOutMsgLayoutId(R.layout.swiper_out_msg));
+
 
         // Programatically call the doSwipe function on reject button click
         findViewById(R.id.reject_btn).setOnClickListener(new View.OnClickListener() {
@@ -102,44 +99,56 @@ public class SwiperActivity extends BaseActivity {
         });
 
         // Initiate a new call to the yummly api to get recipes based on search filter parameters
-        AsyncRecipeLoader loader = new AsyncRecipeLoader(mQuery, diets, allergies, courses, cuisines, maxTime);
+        AsyncRecipeLoader loader = new AsyncRecipeLoader(mFilter);
         loader.execute("");
     }
 
     /**
-     * Retrieves the id from the firebase authenication and uses it to generate a unique is for the search.
+     * Creates a filter object that uses the values passed from the search filter activity.
+     * @return a search filter
      */
-    private void setSearchId() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
-            mCurrentUserId = user.getUid();
-            mSearchId = mCurrentUserId + System.currentTimeMillis();
-        } else {
-            mSearchId = mCurrentUserId = "default";
-        }
+    public SearchFilter createSearchFilter() {
+
+        int maxTime = getIntent().getIntExtra(SearchFilterActivity.MAX_TIME, -1);
+        String query = getIntent().getExtras().getString(SearchFilterActivity.QUERY);
+        ArrayList<String> diets = getIntent().getExtras().getStringArrayList(SearchFilterActivity.DIET);
+        ArrayList<String> cuisines = getIntent().getExtras().getStringArrayList(SearchFilterActivity.CUISINE);
+        ArrayList<String> allergies = getIntent().getExtras().getStringArrayList(SearchFilterActivity.ALLERGY);
+        ArrayList<String> courses = getIntent().getExtras().getStringArrayList(SearchFilterActivity.COURSE);
+
+        return new SearchFilter(maxTime, query, diets, cuisines, allergies, courses, getSearchId());
     }
 
     /**
-     * Initializes the shopping list activity and finishes the current activity
-     * @param recipeAmount The amount of recipes stored in the database
+     * Retrieves the current user id to generate a unique id for the search.
      */
-    private void onSwipeLimitReached(int recipeAmount) {
+    private String getSearchId() {
+        String id = getUserId() + System.currentTimeMillis();
+        Log.d(SWIPER_LOGTAG, "Current search id is: " + id);
+        return id;
+    }
 
-        mSearch = new LocalSearch();
-        mSearch.userId = mCurrentUserId;
-        mSearch.searchId = mSearchId;
-        mSearch.searchTimeStamp = Utils.getCurrentDate();
-        mSearch.save();
+    /**
+     * Stores the selected recipes and starts the result activity.
+     */
+    private void onSwipeLimitReached() {
 
-        for (LocalRecipe r : mSelectedRecipes) {
-            r.setSearchId(mSearchId);
-            r.save();
-        }
+        LocalSearch search = new LocalSearch();
+        search.userId = getUserId();
+        search.searchId = mFilter.getSearchId();
+        search.searchTimeStamp = Utils.getCurrentDate();
+        search.save();
 
+        new AsyncRecipeUpdate(mSelectedRecipes).execute();
 
+    }
+
+    /**
+     * Start the result activity with an animation and passes a search id.
+     */
+    public void startResultActivity() {
         Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
-        shoppingListIntent.putExtra(RECIPE_AMOUNT, recipeAmount);
-        shoppingListIntent.putExtra(SEARCH_ID, mSearchId);
+        shoppingListIntent.putExtra(SEARCH_ID, mFilter.getSearchId());
         startActivity(shoppingListIntent);
         finish();
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
@@ -148,42 +157,59 @@ public class SwiperActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(SWIPER_LOGTAG, "onResume()");
+        //Log.d(SWIPER_LOGTAG, "onResume()");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(SWIPER_LOGTAG, "onPause()");
+        //Log.d(SWIPER_LOGTAG, "onPause()");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(SWIPER_LOGTAG, "onDestroy()");
+        //Log.d(SWIPER_LOGTAG, "onDestroy()");
     }
 
     /**
      * Adds cards from the global variable mRecipes to the SwipeView.
-     * TODO: This should be changed so that it adds passed cards or newly loaded cards.
      */
-    public void addCards() {
+    public void addCards(List<LocalRecipe> recipes) {
+
+        mRecipeLoadCount += 10;
+
         try {
 
-
-            Log.d(SWIPER_LOGTAG, "Start of addCards funct");
-            for (final LocalRecipe recipe : mRecipes) {
+            for (final LocalRecipe recipe : recipes) {
                 mSwipeView.addView(new RecipeCard(mContext, recipe, new RecipeCard.SwipeHandler() {
                     @Override
                     public void onSwipeIn() {
 
+                        mSwipeCount++;
+                        // Set the search id of the recipe so that is is associated with the current search
+                        recipe.setSearchId(mFilter.getSearchId());
                         mSelectedRecipes.add(recipe);
 
                         if (mSelectedRecipes.size() >= mRecipeAmount) {
-                            onSwipeLimitReached(mSelectedRecipes.size());
+                            onSwipeLimitReached();
+                        } else if (mSwipeCount >= (mRecipeLoadCount - 5)) {
+                            new AsyncRecipeLoader(mFilter).execute();
                         }
                         Log.d("EVENT", "onSwipedIn");
+
+
                     }
+
+                    @Override
+                    public void onSwipedOut() {
+                        mSwipeCount++;
+                        if (mSwipeCount >= (mRecipeLoadCount - 5)) {
+                            new AsyncRecipeLoader(mFilter).execute();
+                        }
+                    }
+
+
                 }));
             }
         } catch (NullPointerException n) {
@@ -193,32 +219,21 @@ public class SwiperActivity extends BaseActivity {
 
     /**
      * Initiates an asynchronous call to the yummly api.
-     * It is possible that the asynchronicity can be handled by the .enqueue() call of the
-     * Retrofit library and thud avoid having an inner asynctask. This would require further restructuring of the class.
      */
     private class AsyncRecipeLoader extends AsyncTask<String, Integer, List<LocalRecipe>> {
 
-        private String query;
-        private List<String> diets;
-        private List<String> allergies;
-        private List<String> courses;
-        private List<String> cuisines;
-        private int maxTime;
+        private SearchFilter mFilter;
 
-
-        AsyncRecipeLoader(String query, List<String> diets, List<String> allergies, List<String> courses, List<String> cuisines, int maxTime) {
-            this.query = query;
-            this.diets = diets;
-            this.allergies = allergies;
-            this.courses = courses;
-            this.cuisines = cuisines;
-            this.maxTime = maxTime;
+        AsyncRecipeLoader(SearchFilter filter) {
+            this.mFilter = filter;
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            startLoadAnim("Loading Recipes");
+            if (mRecipeLoadCount == 0) {
+                startLoadAnim("Loading Recipes");
+            }
         }
 
         @Override
@@ -226,7 +241,7 @@ public class SwiperActivity extends BaseActivity {
             // MockLoader that retrieves recipes from a locally saved search
             // RecipeLoader mLoader = new MockRecipeLoader(mContext);
 
-            RecipeLoader mLoader = new ApiRecipeLoader(query, diets, courses, allergies, cuisines, maxTime);
+            RecipeLoader mLoader = new ApiRecipeLoader(mFilter, mRecipeLoadCount);
             return mLoader.getRecipes();
         }
 
@@ -235,10 +250,49 @@ public class SwiperActivity extends BaseActivity {
             super.onPostExecute(localRecipes);
             // Stop the loading animation
             stopLoadAnim();
-            // Store the results in the global variable
-            mRecipes = localRecipes;
             // Add the loaded cards to the SwiperView in the Main Thread.
-            addCards();
+            addCards(localRecipes);
+        }
+    }
+
+    public class AsyncRecipeUpdate extends AsyncTask<Void, Void, Void> {
+
+        private final List<LocalRecipe> recipes;
+
+        public AsyncRecipeUpdate(List<LocalRecipe> recipes) {
+            this.recipes = recipes;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            RecipeLoader loader = new ApiRecipeLoader();
+
+            for (LocalRecipe r : recipes) {
+                loader.updateRecipe(r);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            stopLoadAnim();
+            startResultActivity();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mSwipeButtonHolder.setVisibility(View.INVISIBLE);
+            mSwipeView.setVisibility(View.INVISIBLE);
+            startLoadAnim("Saving Recipes");
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
         }
     }
 

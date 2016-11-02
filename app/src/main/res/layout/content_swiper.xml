@@ -9,6 +9,7 @@
     tools:context=".swiper.SwiperActivity">
 
     <LinearLayout
+        android:id="@+id/swiper_button_holder"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_gravity="bottom"

@@ -47,7 +47,6 @@ public class MockRecipeLoader implements RecipeLoader {
 
     }
 
-    @Override
     public LocalRecipe getRecipe(LocalRecipe recipe) {
 
         // Do something with recipe id to get filename
@@ -67,6 +66,16 @@ public class MockRecipeLoader implements RecipeLoader {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public void updateRecipe(LocalRecipe recipe) {
+
+    }
+
+    @Override
+    public LocalRecipe getRecipe(String recipeId) {
+        return null;
     }
 
     @Override

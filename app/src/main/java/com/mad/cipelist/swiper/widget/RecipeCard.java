@@ -56,6 +56,7 @@ public class RecipeCard {
 
     @SwipeOut
     private void onSwipedOut(){
+        mSwipeHandler.onSwipedOut();
         //Log.d(EVENT_LOGTAG, "onSwipedOut");
     }
 
@@ -81,5 +82,7 @@ public class RecipeCard {
 
     public interface SwipeHandler {
         void onSwipeIn();
+
+        void onSwipedOut();
     }
 }

@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
 import com.mad.cipelist.main.MainActivity;
 import com.mad.cipelist.swiper.SearchFilterActivity;
@@ -26,6 +28,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected AVLoadingIndicatorView mAvi;
     protected TextView mLoadTxt;
+    protected FirebaseAuth mAuth;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
     Toolbar toolbar;
@@ -34,6 +37,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base_activity_drawer);
+
+        mAuth = FirebaseAuth.getInstance();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
@@ -97,6 +102,15 @@ public abstract class BaseActivity extends AppCompatActivity {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             finish();
+        }
+    }
+
+    public String getUserId() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            return user.getUid();
+        } else {
+            return "Default";
         }
     }
 

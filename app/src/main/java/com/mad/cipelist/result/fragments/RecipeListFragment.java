@@ -54,8 +54,6 @@ public class RecipeListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //int mPage = getArguments() != null ? getArguments().getInt("pageNumber") : 0;
-        //String mTitle = getArguments().getString("title");
         mSearchId = getArguments().getString("searchId");
 
         if (mSearchId == null) {

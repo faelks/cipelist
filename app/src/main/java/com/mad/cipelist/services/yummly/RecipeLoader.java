@@ -9,7 +9,9 @@ import java.util.List;
  */
 
 public interface RecipeLoader {
-    LocalRecipe getRecipe(LocalRecipe initialRecipe);
+    void updateRecipe(LocalRecipe recipe);
+
+    LocalRecipe getRecipe(String recipeId);
 
     List<LocalRecipe> getRecipes();
 }

@@ -2,6 +2,7 @@ package com.mad.cipelist.services.yummly.model;
 
 import com.google.gson.Gson;
 import com.mad.cipelist.services.yummly.dto.IndividualRecipe;
+import com.mindorks.placeholderview.annotations.NonReusable;
 import com.orm.SugarRecord;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 /**
  * Stores the necessary data from the Recipe response.
  */
+@NonReusable
 public class LocalRecipe extends SugarRecord{
     private String mId;
     private String ingredients;
