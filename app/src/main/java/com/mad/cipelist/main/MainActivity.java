@@ -162,7 +162,7 @@ public class MainActivity extends BaseActivity {
                 .MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                Log.i(LOG_TAG, " Clicked on Item " + (position+1));
+                //Log.i(LOG_TAG, " Clicked on Item " + (position+1));
                 startNewResultViewer(7, mAdapter.getSearchId(position));
             }
 
@@ -242,7 +242,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public List<LocalSearch> getLocalSearches(String id) {
-        Log.d(LOG_TAG, "Current UserID: " + id);
+        //Log.d(LOG_TAG, "Current UserID: " + id);
         return LocalSearch.find(LocalSearch.class, "user_id = ?", id);
     }
 

@@ -2,7 +2,6 @@ package com.mad.cipelist.main.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +76,7 @@ public class MainRecyclerViewAdapter extends RecyclerView
             if (url.substring(url.length() - 4, url.length()).equals("=s90")) {
                 url = url.substring(0, url.length() - 4);
             }
-            Log.d(LOG_TAG, "Trying to glide with url " + url);
+            //Log.d(LOG_TAG, "Trying to glide with url " + url);
             Glide.with(holder.itemView.getContext()).load(url).into(holder.image);
         }
         //holder.dateTime.setText(mDataset.get(position).getTotalMatchCount());
@@ -135,7 +134,7 @@ public class MainRecyclerViewAdapter extends RecyclerView
             date = (TextView) itemView.findViewById(R.id.search_date);
             info = (TextView) itemView.findViewById(R.id.search_title);
             image = (ImageView) itemView.findViewById(R.id.searchIv);
-            Log.i(LOG_TAG, "Adding Listener");
+            //Log.i(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);
         }
 

@@ -88,7 +88,7 @@ public class GroceryListFragment extends Fragment {
 
             String[] measurements = {"lbs.", "lb", "envelope", "slices", "cloves", "sprigs", "pound", "pounds", "tbsp", "tablespoons", "tablespoon", "tsp", "teaspoon", "teaspoons", "oz.", "oz", "ounces", "containers", "cup", "cups", "handful", "pint", "jar", "can"};
 
-            for (int i = 0; i < ingredientsLines.size(); i++) {
+            for (int i = 0; i < ingredientsLines.size() - 1; ++i) {
 
                 s1 = ingredientsList.get(i).toLowerCase();
                 if (s1.substring(s1.length() - 1).equals("s")) {

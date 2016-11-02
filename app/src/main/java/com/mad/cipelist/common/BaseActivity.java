@@ -29,9 +29,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected AVLoadingIndicatorView mAvi;
     protected TextView mLoadTxt;
     protected FirebaseAuth mAuth;
+    protected Toolbar toolbar;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
-    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
