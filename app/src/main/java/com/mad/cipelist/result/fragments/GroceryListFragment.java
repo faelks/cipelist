@@ -2,6 +2,7 @@ package com.mad.cipelist.result.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,12 +75,54 @@ public class GroceryListFragment extends Fragment {
         Type type = new TypeToken<List<String>>() {
         }.getType();
 
+        ArrayList<String> finalIngredients = new ArrayList<>();
+
+        headers.add("Ingredients");
         for (LocalRecipe r : recipes) {
-            headers.add(r.getRecipeName());
-            ArrayList<String> ingredients = new Gson().fromJson(r.getIngredients(), type);
-            dataChild.put(r.getRecipeName(), ingredients);
-            //Log.d("Groceries", "We loaded these ingredients: " + ingredients);
+
+            ArrayList<String> ingredientsLines = new Gson().fromJson(r.getIngredientLines(), type);
+            ArrayList<String> ingredientsList = new Gson().fromJson(r.getIngredients(), type);
+
+            String amount, s1, s2;
+            amount = "N/A";
+
+            String[] measurements = {"lbs.", "lb", "envelope", "slices", "cloves", "sprigs", "pound", "pounds", "tbsp", "tablespoons", "tablespoon", "tsp", "teaspoon", "teaspoons", "oz.", "oz", "ounces", "containers", "cup", "cups", "handful", "pint", "jar", "can"};
+
+            for (int i = 0; i < ingredientsLines.size(); i++) {
+
+                s1 = ingredientsList.get(i).toLowerCase();
+                if (s1.substring(s1.length() - 1).equals("s")) {
+                    s1 = s1.substring(0, s1.length() - 1);
+                }
+                s2 = ingredientsLines.get(i).toLowerCase();
+
+                String[] s = s2.split(" ");
+
+                if (s[0].matches("[a-z]+")) {
+                    amount = "N/A";
+                } else if (s[1].contains(s1) || (s[1] + " " + s[2]).equals(s1)) {
+                    amount = s[0];
+                } else {
+                    for (String string : measurements) {
+                        if (s2.contains(string)) {
+                            amount = s2.substring(0, s2.indexOf(string) + string.length());
+                        }
+                    }
+                }
+                if (amount.equals("N/A") && s[0].matches("[0-9]+")) {
+                    amount = s[0];
+                }
+                if (finalIngredients.contains(s1 + " " + amount)) {
+                    Log.d("Grocery List", "Removing " + s1);
+                } else {
+                    finalIngredients.add(s1 + " " + amount);
+                }
+                //Log.d("StringManipulation", "s1 = " + s1 + "||| s2 = " + s2 + "||| amount = " + amount);
+            }
+
         }
+
+        dataChild.put("Ingredients", finalIngredients);
 
     }
 

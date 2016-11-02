@@ -29,7 +29,6 @@ import java.util.List;
 /**
  * Displays a swiper that the used can use to select recipes they like
  * Searches should only be saved if the swiping session completes
- * TODO: Update swiperview with new recipes when nearing the end of stack
  */
 public class SwiperActivity extends BaseActivity {
 
