@@ -8,9 +8,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mad.cipelist.R;
 import com.mad.cipelist.services.yummly.model.LocalRecipe;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,7 +42,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
     @Override
     public RecipeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.card_recipe_row, parent, false);
+                .inflate(R.layout.recipe_list_item, parent, false);
         return new RecipeHolder(view);
     }
 
@@ -65,6 +69,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
 
 
         private TextView label;
+        private TextView ingredientsAmount;
         private ImageView image;
 
 
@@ -75,12 +80,18 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
          */
         RecipeHolder(View itemView) {
             super(itemView);
-            label = (TextView) itemView.findViewById(R.id.recipeLbl);
+            label = (TextView) itemView.findViewById(R.id.recipe_title_tv);
             image = (ImageView) itemView.findViewById(R.id.recipeImg);
+            ingredientsAmount = (TextView) itemView.findViewById(R.id.recipe_ingredient_amount_tv);
         }
 
         void bind(final LocalRecipe item, final OnRecipeClickListener listener) {
             label.setText(item.getRecipeName());
+
+            Type type = new TypeToken<List<String>>() {
+            }.getType();
+            ArrayList<String> ingredients = new Gson().fromJson(item.getIngredients(), type);
+            ingredientsAmount.setText(ingredients.size() + " ingredients");
 
             String url = item.getImageUrl();
             if (url.substring(url.length() - 4, url.length()).equals("=s90")) {

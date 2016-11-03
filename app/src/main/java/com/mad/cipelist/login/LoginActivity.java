@@ -26,6 +26,7 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 /**
  * Allows the user to login with prerecorded or new details and also provides an anonymous option.
+ * TODO: Still needs a bit of formatting, not sure if the static image is the way to go
  */
 
 public class LoginActivity extends Activity {

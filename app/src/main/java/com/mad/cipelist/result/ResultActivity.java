@@ -16,6 +16,7 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 /**
  * Displays two fragments that contain the general recipes and the grocerylist of the loaded search.
+ * TODO: Needs to display the ingredients more fluently
  */
 public class ResultActivity extends BaseActivity {
     //private static final String TAG = "ResultActivity";

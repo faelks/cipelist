@@ -23,17 +23,17 @@ public class LocalRecipe extends SugarRecord{
     private String sourceUrl;
     private String sourceDisplayName;
     private String recipeUrl;
-
     private int prepTime;
     private int cookTime;
     private int numberOfServings;
     private String ingredientLines;
 
+    public LocalRecipe() {
+    }
 
 
 
 
-    public LocalRecipe() {}
 
     public LocalRecipe(String name, String rating, String cookingTime, String imageUrl, String ingredients, String mId, String searchId) {
         this.recipeName = name;
@@ -44,6 +44,10 @@ public class LocalRecipe extends SugarRecord{
         this.mId = mId;
         this.searchId = searchId;
 
+    }
+
+    public String getSourceUrl() {
+        return sourceUrl;
     }
 
     public String getRecipeName() {
@@ -112,4 +116,7 @@ public class LocalRecipe extends SugarRecord{
         return ingredientLines;
     }
 
+    public int getPrepTime() {
+        return prepTime;
+    }
 }

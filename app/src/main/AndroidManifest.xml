@@ -61,7 +61,8 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/settings"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Inverted">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.MainActivity" />
@@ -89,7 +90,7 @@
             android:name=".result.RecipeDetail"
             android:label="Recipe"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar.Inverted">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".result.ResultActivity" />

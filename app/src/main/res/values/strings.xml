@@ -157,6 +157,8 @@
     <string name="recipe_image">Recipe Image</string>
     <string name="_1_hr">1 hour</string>
     <string name="_7_recipes">7 recipes</string>
+    <string name="recipe_detail_image">Recipe Detail Image</string>
+    <string name="view_cooking_instuctions">View Cooking Instuctions</string>
 
     <string-array name="diet_items">
         <item>Lacto Vegetarian</item>

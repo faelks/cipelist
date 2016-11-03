@@ -18,6 +18,7 @@ import com.mad.cipelist.services.yummly.ApiRecipeLoader;
 import com.mad.cipelist.services.yummly.RecipeLoader;
 import com.mad.cipelist.services.yummly.model.LocalRecipe;
 import com.mad.cipelist.services.yummly.model.LocalSearch;
+import com.mad.cipelist.swiper.model.SearchFilter;
 import com.mad.cipelist.swiper.widget.RecipeCard;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;

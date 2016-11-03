@@ -25,6 +25,7 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 /**
  * Defines the base activity which extends certain activities in the application.
+ * TODO: Add more base activities, like loader, animations, menu things? Settings?
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -33,6 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected TextView mLoadTxt;
     protected FirebaseAuth mAuth;
     protected Toolbar toolbar;
+    protected TextView mDrawerHeaderTv;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
 
@@ -50,6 +52,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
+
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -114,6 +117,15 @@ public abstract class BaseActivity extends AppCompatActivity {
             return user.getUid();
         } else {
             return "Default";
+        }
+    }
+
+    public String getUserEmail() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            return user.getEmail();
+        } else {
+            return "Anonymous";
         }
     }
 

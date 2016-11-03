@@ -7,7 +7,7 @@ import com.mad.cipelist.services.yummly.dto.IndividualRecipe;
 import com.mad.cipelist.services.yummly.dto.Recipe;
 import com.mad.cipelist.services.yummly.dto.SearchResult;
 import com.mad.cipelist.services.yummly.model.LocalRecipe;
-import com.mad.cipelist.swiper.SearchFilter;
+import com.mad.cipelist.swiper.model.SearchFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -32,8 +32,8 @@ import java.util.List;
 /**
  * Displays the initial landing page with previous searches.
  * This method needs to load all searches associated with the
- * user and display them in the recycler view. Currently the
- * view is populated with default items.
+ * user and display them in the recycler view.
+ * TODO: Add more structure and sorting functionality? On Long click etc.
  */
 public class MainActivity extends BaseActivity {
 

@@ -1,4 +1,4 @@
-package com.mad.cipelist.swiper;
+package com.mad.cipelist.swiper.model;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public class SearchFilter {
     private List<String> courses;
     private String searchId;
 
-    SearchFilter(int maximumTime, String query, List<String> diets, List<String> cuisines, List<String> allergies, List<String> courses, String searchId) {
+    public SearchFilter(int maximumTime, String query, List<String> diets, List<String> cuisines, List<String> allergies, List<String> courses, String searchId) {
         this.maximumTime = maximumTime;
         this.query = query;
         this.diets = diets;
