@@ -2,7 +2,6 @@ package com.mad.cipelist.result.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,53 +75,133 @@ public class GroceryListFragment extends Fragment {
         }.getType();
 
         ArrayList<String> finalIngredients = new ArrayList<>();
+        HashMap<String, List<String>> ingredientAmount = new HashMap<>();
 
         headers.add("Ingredients");
         for (LocalRecipe r : recipes) {
 
-            ArrayList<String> ingredientsLines = new Gson().fromJson(r.getIngredientLines(), type);
-            ArrayList<String> ingredientsList = new Gson().fromJson(r.getIngredients(), type);
+            ArrayList<String> ingredientLines = new Gson().fromJson(r.getIngredientLines(), type);
+            ArrayList<String> ingredients = new Gson().fromJson(r.getIngredients(), type);
 
-            String amount, s1, s2;
+            String amount, s1, s2, ingredient, ingredientSingular, ingredientLine;
             amount = "N/A";
 
             String[] measurements = {"lbs.", "lb", "envelope", "slices", "cloves", "sprigs", "pound", "pounds", "tbsp", "tablespoons", "tablespoon", "tsp", "teaspoon", "teaspoons", "oz.", "oz", "ounces", "containers", "cup", "cups", "handful", "pint", "jar", "can"};
 
-            for (int i = 0; i < ingredientsLines.size() - 1; ++i) {
+            for (int i = 0; i < ingredients.size() - 1; i++) {
 
-                s1 = ingredientsList.get(i).toLowerCase();
-                if (s1.substring(s1.length() - 1).equals("s")) {
-                    s1 = s1.substring(0, s1.length() - 1);
+                ingredient = ingredients.get(i).toLowerCase();
+                if (ingredient.substring(ingredient.length() - 1).equals("s")) {
+                    ingredientSingular = ingredient.substring(0, ingredient.length() - 1);
+                } else {
+                    ingredientSingular = ingredient;
                 }
-                s2 = ingredientsLines.get(i).toLowerCase();
 
-                String[] s = s2.split(" ");
+                ingredientLine = ingredientLines.get(i).toLowerCase();
 
-                if (s[0].matches("[a-z]+")) {
-                    amount = "N/A";
-                } else if (s[1].contains(s1) || (s[1] + " " + s[2]).equals(s1)) {
+                String[] s = ingredientLine.split(" ");
+
+                if (s.length > 1 && s[0].matches("[a-z]+")) { // If the first word is only letters we can't determine a value
+                    ingredientLine = ingredientLine.substring(s[0].length() + 1, ingredientLine.length() - 1);
+                    s = ingredientLine.split(" ");
+                    if (s.length > 2 && (s[0] + s[1] + s[2]).matches("[0-9]+to[0-9]+")) {
+                        amount = s[0] + " " + s[1] + " " + s[2];
+                    } else if (s[0].matches("[0-9]+")) { // If the first word is a value we can use this as an amount
+                        amount = s[0];
+                    }
+                } else if (s.length > 1 && s[1].contains(ingredientSingular)) { // If the second word is or contains the ingredient the first word is the amount
                     amount = s[0];
                 } else {
-                    for (String string : measurements) {
-                        if (s2.contains(string)) {
-                            amount = s2.substring(0, s2.indexOf(string) + string.length());
+                    for (String string : measurements) { // Look for any occurence of common measurement terms and select the preceding substring
+                        if (ingredientLine.contains(string)) {
+                            String temp = ingredientLine.substring(0, ingredientLine.indexOf(string) + string.length());
+                            s = temp.split(" ");
+                            if (s.length > 1) {
+                                amount = s[0] + " " + s[1];
+                            } else {
+                                amount = s[0];
+                            }
                         }
                     }
                 }
-                if (amount.equals("N/A") && s[0].matches("[0-9]+")) {
-                    amount = s[0];
+
+                List<String> amounts = ingredientAmount.get(ingredient);
+                if (amounts == null) {
+                    amounts = new ArrayList<>();
                 }
-                if (finalIngredients.contains(s1 + " " + amount)) {
-                    Log.d("Grocery List", "Removing " + s1);
-                } else {
-                    finalIngredients.add(s1 + " " + amount);
+                amounts.add(amount);
+                ingredientAmount.put(ingredient, amounts);
+            }
+        }
+
+        for (String s : ingredientAmount.keySet()) {
+            List<String> values = ingredientAmount.get(s);
+            String result;
+
+            String[] defaults = {"salt", "pepper", "ginger", "starch", "oil", "broth", "parsley", "garlic"};
+            for (String def : defaults) {
+                if (s.contains(def)) {
+                    result = s;
                 }
-                //Log.d("StringManipulation", "s1 = " + s1 + "||| s2 = " + s2 + "||| amount = " + amount);
             }
 
+            if (values.size() == 1) {
+                result = values.get(0) + " " + s;
+            } else {
+                String condensed = getCondensedAmount(values);
+                if (condensed != null) {
+                    result = condensed + " " + s;
+                } else {
+                    result = s;
+                }
+            }
+            finalIngredients.add(result);
         }
 
         dataChild.put("Ingredients", finalIngredients);
+
+    }
+
+    public String getCondensedAmount(List<String> values) {
+        String measurement = "";
+        int amount = 0;
+        List<String> unresolveds = new ArrayList<>();
+
+        for (String s : values) {
+            if (!s.contains("N/A")) {
+                return null;
+            } else {
+                String[] split = s.split(" ");
+
+                if (split[0].matches("[0-9/]+")) {
+                    if (measurement.isEmpty()) {
+                        measurement = split[1];
+                    }
+                    if (measurement.contains(split[1])) {
+                        if (split[0].matches("[0-9]+")) {
+                            amount += Integer.parseInt(split[0]);
+                        } else if (split[0].matches("[0-9]/[0-9]")) {
+                            int numerator = Integer.parseInt(split[0].substring(0, 1));
+                            int denominator = Integer.parseInt(split[0].substring(2, 3));
+                            amount += (numerator / denominator);
+                        }
+                    }
+
+                } else {
+                    unresolveds.add(s);
+                }
+            }
+        }
+        return amount + " " + measurement + " Unresolved: " + unresolveds.toString();
+        /*
+        if (split[0].matches("[0-9]+")) {
+            integers.add(Integer.parseInt(split[0]));
+        } else if (split[0].matches("[0-9]/[0-9]")) {
+            int numerator = Integer.parseInt(split[0].substring(0,1));
+            int denominator = Integer.parseInt(split[0].substring(2,3));
+            integers.add(numerator/denominator);
+        }
+        */
 
     }
 

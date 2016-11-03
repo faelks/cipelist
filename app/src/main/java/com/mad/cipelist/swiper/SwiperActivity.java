@@ -57,6 +57,7 @@ public class SwiperActivity extends BaseActivity {
 
         mAvi = (AVLoadingIndicatorView) findViewById(R.id.swiper_avi);
         mLoadTxt = (TextView) findViewById(R.id.swiper_load_text);
+
         mSwipeButtonHolder = (LinearLayout) findViewById(R.id.swiper_button_holder);
         mSwipeView = (SwipePlaceHolderView) findViewById(R.id.swipe_view);
 
@@ -136,7 +137,7 @@ public class SwiperActivity extends BaseActivity {
         search.searchId = mFilter.getSearchId();
         search.searchTimeStamp = Utils.getCurrentDate();
         search.save();
-
+        startLoadAnim("Saving Recipes");
         new AsyncRecipeUpdate(mSelectedRecipes).execute();
 
     }
@@ -247,9 +248,10 @@ public class SwiperActivity extends BaseActivity {
         protected void onPostExecute(List<LocalRecipe> localRecipes) {
             super.onPostExecute(localRecipes);
             // Stop the loading animation
-            stopLoadAnim();
             // Add the loaded cards to the SwiperView in the Main Thread.
             addCards(localRecipes);
+            crossfade(mAvi, mSwipeView);
+            stopLoadAnim();
         }
     }
 
@@ -276,7 +278,6 @@ public class SwiperActivity extends BaseActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            stopLoadAnim();
             startResultActivity();
         }
 
@@ -285,7 +286,6 @@ public class SwiperActivity extends BaseActivity {
             super.onPreExecute();
             mSwipeButtonHolder.setVisibility(View.INVISIBLE);
             mSwipeView.setVisibility(View.INVISIBLE);
-            startLoadAnim("Saving Recipes");
         }
 
         @Override

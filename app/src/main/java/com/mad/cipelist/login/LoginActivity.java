@@ -9,7 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ScrollView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +34,7 @@ public class LoginActivity extends Activity {
 
     private TextInputEditText mInputEmailEt;
     private TextInputEditText mInputPasswordEt;
-    private ScrollView mLoginContainer;
+    private LinearLayout mLoginContainer;
 
     private AVLoadingIndicatorView mAvi;
     private TextView mLoadTxt;
@@ -57,7 +57,7 @@ public class LoginActivity extends Activity {
         mInputPasswordEt = (TextInputEditText) findViewById(R.id.input_password);
         mAvi = (AVLoadingIndicatorView) findViewById(R.id.login_avi);
         mLoadTxt = (TextView) findViewById(R.id.login_load_text);
-        mLoginContainer = (ScrollView) findViewById(R.id.login_container);
+        mLoginContainer = (LinearLayout) findViewById(R.id.login_container);
 
         // Buttons
         mLoginBtn = (Button) findViewById(R.id.btn_login);
@@ -125,6 +125,7 @@ public class LoginActivity extends Activity {
 
             }
         };
+
 
     }
 

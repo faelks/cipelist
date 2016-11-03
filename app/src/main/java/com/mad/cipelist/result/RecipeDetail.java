@@ -25,7 +25,7 @@ public class RecipeDetail extends BaseActivity {
         getLayoutInflater().inflate(R.layout.content_recipe_detail, contentFrameLayout);
 
         //TextView idView = (TextView) findViewById(R.id.recipe_id);
-        ImageView recipeImage = (ImageView) findViewById(R.id.recipe_detail_image);
+        final ImageView recipeImage = (ImageView) findViewById(R.id.recipe_detail_image);
 
         String recipeId = getIntent().getStringExtra("recipeId");
 
@@ -41,6 +41,7 @@ public class RecipeDetail extends BaseActivity {
             url = url.substring(0, url.length() - 4);
         }
         Glide.with(getApplicationContext()).load(url).into(recipeImage);
+
 
     }
 }

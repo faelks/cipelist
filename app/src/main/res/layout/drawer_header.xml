@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_header"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
@@ -13,8 +12,7 @@
         android:id="@+id/drawer_header_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@drawable/text_logo" />
+        android:paddingTop="@dimen/nav_header_vertical_spacing" />
 
     <LinearLayout
         android:layout_width="wrap_content"

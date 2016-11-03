@@ -16,11 +16,12 @@
         android:id="@+id/titles"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        app:footerIndicatorHeight="0dp"
-        app:footerLineHeight="0dp"
+        android:background="@color/colorPrimaryDark"
+        android:textSize="17sp"
+        app:footerIndicatorHeight="1dp"
+        app:footerLineHeight="2dp"
         app:selectedBold="true"
-        app:selectedColor="@color/colorPrimary"
+        app:selectedColor="@color/colorAccent"
         app:topPadding="2dp" />
 
     <LinearLayout
@@ -35,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="invisible"
-            app:indicatorColor="@color/colorPrimary"
+            app:indicatorColor="@color/colorAccent"
             app:indicatorName="BallPulseIndicator"
             />
         <TextView
@@ -43,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/generating_shopping_list"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/colorAccent"
             android:visibility="invisible" />
 
     </LinearLayout>
