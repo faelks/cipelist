@@ -8,9 +8,11 @@
             android:title="@string/home" />
         <item
             android:id="@+id/nav_swiper"
+            android:icon="@drawable/ic_menu_search"
             android:title="@string/new_search" />
         <item
             android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_settings"
             android:title="@string/settings" />
     </group>
 

@@ -7,6 +7,15 @@
     android:fitsSystemWindows="true"
     tools:context=".swiper.SwiperActivity">
 
+    <ProgressBar
+        android:id="@+id/swiper_progress_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:indeterminate="false"
+        android:paddingTop="10sp" />
+
     <LinearLayout
         android:id="@+id/swiper_button_holder"
         android:layout_width="match_parent"

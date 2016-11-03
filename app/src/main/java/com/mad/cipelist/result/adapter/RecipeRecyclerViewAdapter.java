@@ -5,9 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mad.cipelist.R;
@@ -71,6 +76,8 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
         private TextView label;
         private TextView ingredientsAmount;
         private ImageView image;
+        private ProgressBar progress;
+        private LinearLayout infoHolder;
 
 
         /**
@@ -83,6 +90,8 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
             label = (TextView) itemView.findViewById(R.id.recipe_title_tv);
             image = (ImageView) itemView.findViewById(R.id.recipeImg);
             ingredientsAmount = (TextView) itemView.findViewById(R.id.recipe_ingredient_amount_tv);
+            progress = (ProgressBar) itemView.findViewById(R.id.recipe_card_progress_bar);
+            infoHolder = (LinearLayout) itemView.findViewById(R.id.recipe_card_info_holders);
         }
 
         void bind(final LocalRecipe item, final OnRecipeClickListener listener) {
@@ -98,7 +107,20 @@ public class RecipeRecyclerViewAdapter extends RecyclerView
                 url = url.substring(0, url.length() - 4);
             }
 
-            Glide.with(itemView.getContext()).load(url).into(image);
+            Glide.with(itemView.getContext()).load(url).listener(new RequestListener<String, GlideDrawable>() {
+                @Override
+                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                    infoHolder.setVisibility(View.VISIBLE);
+                    image.setVisibility(View.VISIBLE);
+                    progress.setVisibility(View.GONE);
+                    return false;
+                }
+            }).into(image);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

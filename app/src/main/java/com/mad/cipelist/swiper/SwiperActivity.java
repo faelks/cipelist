@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.mad.cipelist.R;
@@ -39,6 +40,7 @@ public class SwiperActivity extends BaseActivity {
 
     private SwipePlaceHolderView mSwipeView;
     private LinearLayout mSwipeButtonHolder;
+    private ProgressBar mProgressBar;
 
     private int mRecipeAmount;
     private int mRecipeLoadCount;
@@ -61,6 +63,8 @@ public class SwiperActivity extends BaseActivity {
 
         mSwipeButtonHolder = (LinearLayout) findViewById(R.id.swiper_button_holder);
         mSwipeView = (SwipePlaceHolderView) findViewById(R.id.swipe_view);
+        mProgressBar = (ProgressBar) findViewById(R.id.swiper_progress_bar);
+
 
         mContext = this.getApplicationContext();
         mRecipeLoadCount = 0;
@@ -68,6 +72,7 @@ public class SwiperActivity extends BaseActivity {
 
         // Getting things passed by the searchfilteractivity
         mRecipeAmount = getIntent().getIntExtra("recipeAmount", 0);
+        mProgressBar.setMax(mRecipeAmount);
 
         // Creates a search filter using passed parameters
         mFilter = createSearchFilter();
@@ -190,6 +195,7 @@ public class SwiperActivity extends BaseActivity {
                         // Set the search id of the recipe so that is is associated with the current search
                         recipe.setSearchId(mFilter.getSearchId());
                         mSelectedRecipes.add(recipe);
+                        mProgressBar.setProgress(mSelectedRecipes.size());
 
                         if (mSelectedRecipes.size() >= mRecipeAmount) {
                             onSwipeLimitReached();
@@ -251,7 +257,6 @@ public class SwiperActivity extends BaseActivity {
             // Stop the loading animation
             // Add the loaded cards to the SwiperView in the Main Thread.
             addCards(localRecipes);
-            crossfade(mAvi, mSwipeView);
             stopLoadAnim();
         }
     }
