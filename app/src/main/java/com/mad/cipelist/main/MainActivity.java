@@ -29,6 +29,10 @@ import com.mad.cipelist.swiper.SwiperActivity;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Displays the initial landing page with previous searches.
  * This method needs to load all searches associated with the
@@ -39,22 +43,28 @@ public class MainActivity extends BaseActivity {
 
     private static String LOG_TAG = "MainActivity";
 
-    private RecyclerView mSearchRecyclerView;
-
+    @BindView(R.id.my_recycler_view)
+    RecyclerView searchRecyclerView;
+    @BindView(R.id.addRecipeFab)
+    FloatingActionButton addRecipeFab;
     private MainRecyclerViewAdapter mAdapter;
-
     private List<LocalSearch> mLocalSearches;
     private String mCurrentUserId;
-
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    @OnClick(R.id.addRecipeFab)
+    public void onFabClick() {
+        startNewSearch();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.content_main, contentFrameLayout);
+
+        ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -77,24 +87,17 @@ public class MainActivity extends BaseActivity {
             mCurrentUserId = "default";
         }
 
-        // View that holds the current searches that are unique to the user
-        mSearchRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mSearchRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        searchRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 
         if (mAdapter == null) {
             mAdapter = new MainRecyclerViewAdapter(this, mLocalSearches, mCurrentUserId, getUserEmail());
-            mSearchRecyclerView.setAdapter(mAdapter);
+            searchRecyclerView.setAdapter(mAdapter);
         }
-
-        FloatingActionButton addRecipeFab = (FloatingActionButton) findViewById(R.id.addRecipeFab);
-        addRecipeFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startNewSearch();
-            }
-        });
     }
 
+    /**
+     * Starts a new search for recipes
+     */
     public void startNewSearch() {
         Intent intent = new Intent(this, SearchFilterActivity.class);
         startActivity(intent);
@@ -176,7 +179,7 @@ public class MainActivity extends BaseActivity {
 
         if (mLocalSearches != null) {
             mAdapter = new MainRecyclerViewAdapter(this, mLocalSearches, mCurrentUserId, getUserEmail());
-            mSearchRecyclerView.setAdapter(mAdapter);
+            searchRecyclerView.setAdapter(mAdapter);
         }
 
     }
@@ -208,8 +211,13 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Retrieves all the searches that are related to the current user
+     *
+     * @param id the users id
+     * @return relevant searches
+     */
     public List<LocalSearch> getLocalSearches(String id) {
-        //Log.d(LOG_TAG, "Current UserID: " + id);
         return LocalSearch.find(LocalSearch.class, "user_id = ?", id);
     }
 
@@ -226,54 +234,4 @@ public class MainActivity extends BaseActivity {
         startActivity(shoppingListIntent);
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
-
-    /*
-    public void createDialog(View v, int position) {
-
-        final Dialog dialog = new Dialog(v.getContext());
-        dialog.setContentView(R.layout.search_detail_dialog);
-        dialog.setTitle("Search " + (position + 1));
-
-        TextView searchQuery = (TextView) dialog.findViewById(R.id.searchQueryTv);
-        TextView searchDate = (TextView) dialog.findViewById(R.id.searchDateTv);
-        TextView searchMatches = (TextView) dialog.findViewById(R.id.matchesCountTv);
-        Button viewRecipeBtn = (Button) dialog.findViewById(R.id.viewSearchBtn);
-        Button cancelBtn = (Button) dialog.findViewById(R.id.cancelBtn);
-
-
-        searchQuery.setText("Burgers");
-        searchDate.setText(new Date().toString());
-        searchMatches.setText("7");
-
-        viewRecipeBtn.setOnClickListener(new ViewButtonOnClickListener(dialog, position));
-        assert cancelBtn != null;
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-    }
-
-
-    public class ViewButtonOnClickListener implements View.OnClickListener {
-
-        int position;
-        Dialog dialog;
-
-        public ViewButtonOnClickListener(Dialog dialog, int position) {
-            this.position = position;
-            this.dialog = dialog;
-        }
-
-        @Override
-        public void onClick(View view) {
-            startNewResultViewer(7, mAdapter.getSearchId(position));
-            dialog.dismiss();
-        }
-    }
-
-    */
 }

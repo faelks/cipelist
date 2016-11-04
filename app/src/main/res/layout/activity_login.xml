@@ -86,7 +86,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/link_anon"
+            android:id="@+id/login_anonymously_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"

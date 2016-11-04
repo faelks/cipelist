@@ -19,90 +19,77 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
-import com.mad.cipelist.common.Utils;
 import com.mad.cipelist.main.MainActivity;
 import com.wang.avi.AVLoadingIndicatorView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 /**
  * Allows the user to login with prerecorded or new details and also provides an anonymous option.
- * TODO: Still needs a bit of formatting, not sure if the static image is the way to go
  */
 
 public class LoginActivity extends Activity {
 
     private final static String TAG = "LoginActivity";
-
-    private TextInputEditText mInputEmailEt;
-    private TextInputEditText mInputPasswordEt;
-    private LinearLayout mLoginContainer;
-
-    private AVLoadingIndicatorView mAvi;
-    private TextView mLoadTxt;
-
-    private Button mLoginBtn;
-    private Button mSignupBtn;
+    @BindView(R.id.input_email)
+    TextInputEditText mInputEmailEt;
+    @BindView(R.id.input_password)
+    TextInputEditText mInputPasswordEt;
+    @BindView(R.id.login_anonymously_tv)
+    TextView mAnonymousLoginTv;
+    @BindView(R.id.login_avi)
+    AVLoadingIndicatorView mAvi;
+    @BindView(R.id.login_load_text)
+    TextView mLoadTxt;
+    @BindView(R.id.login_container)
+    LinearLayout mLoginContainer;
+    @BindView(R.id.btn_login)
+    Button mLoginBtn;
+    @BindView(R.id.btn_signup)
+    Button mSignupBtn;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    @OnClick(R.id.login_anonymously_tv)
+    public void loginAnonymously() {
+        startLoadAnim("Logging in");
+        mAuth.signInAnonymously()
+                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInAnonymously", task.getException());
+                            stopLoadAnim();
+                        }
+                    }
+                });
+    }
+
+    @OnClick(R.id.btn_login)
+    public void login() {
+        signIn(mInputEmailEt.getText().toString(), mInputPasswordEt.getText().toString());
+    }
+
+    @OnClick(R.id.btn_signup)
+    public void signup() {
+        createUser(mInputEmailEt.getText().toString(), mInputPasswordEt.getText().toString());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
-
-        // Views
-        TextView mAnonymousLoginTv = (TextView) findViewById(R.id.link_anon);
-        mInputEmailEt = (TextInputEditText) findViewById(R.id.input_email);
-        mInputPasswordEt = (TextInputEditText) findViewById(R.id.input_password);
-        mAvi = (AVLoadingIndicatorView) findViewById(R.id.login_avi);
-        mLoadTxt = (TextView) findViewById(R.id.login_load_text);
-        mLoginContainer = (LinearLayout) findViewById(R.id.login_container);
-
-        // Buttons
-        mLoginBtn = (Button) findViewById(R.id.btn_login);
-        mSignupBtn = (Button) findViewById(R.id.btn_signup);
-
-
-        mLoginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn(mInputEmailEt.getText().toString(), mInputPasswordEt.getText().toString());
-            }
-        });
-
-        mSignupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createUser(mInputEmailEt.getText().toString(), mInputPasswordEt.getText().toString());
-            }
-        });
-
-        mAnonymousLoginTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mLoginContainer.setVisibility(View.INVISIBLE);
-                Utils.hideSoftKeyboard(LoginActivity.this);
-                startLoadAnim("Logging in");
-                mAuth.signInAnonymously()
-                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                Log.d(TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
-
-                                // If sign in fails, display a message to the user. If sign in succeeds
-                                // the auth state listener will be notified and logic to handle the
-                                // signed in user can be handled in the listener.
-                                if (!task.isSuccessful()) {
-                                    Log.w(TAG, "signInAnonymously", task.getException());
-                                    mLoginContainer.setVisibility(View.VISIBLE);
-                                }
-                                stopLoadAnim();
-                            }
-                        });
-            }
-        });
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -112,7 +99,7 @@ public class LoginActivity extends Activity {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     String username = (user.getEmail() == null) ? "Anonymous" : user.getEmail();
-                    showToast("Signed in as: " + username);
+                    Toast.makeText(LoginActivity.this, "Signed in as: " + username, Toast.LENGTH_SHORT).show();
 
                     // Start the main activity and end the current login activity
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -123,16 +110,12 @@ public class LoginActivity extends Activity {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
-
             }
         };
-
-
     }
 
     /**
      * Called when the login button is pressed. Needs to talk to the firebase setup
-     * TODO: Need to add a timeout on the login
      */
     public void signIn(String email, String password) {
 
@@ -141,9 +124,7 @@ public class LoginActivity extends Activity {
         }
 
         mLoginBtn.setEnabled(false);
-        mLoginContainer.setVisibility(View.INVISIBLE);
         startLoadAnim("Logging in");
-        Utils.hideSoftKeyboard(this);
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -156,11 +137,11 @@ public class LoginActivity extends Activity {
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            showToast("Authentication Failed");
-                            mLoginContainer.setVisibility(View.VISIBLE);
+                            Toast.makeText(LoginActivity.this, "Authentication Failed", Toast.LENGTH_SHORT).show();
+                            stopLoadAnim();
+                            mLoginBtn.setEnabled(true);
                         }
-                        stopLoadAnim();
-                        mLoginBtn.setEnabled(true);
+
                     }
                 });
     }
@@ -172,11 +153,7 @@ public class LoginActivity extends Activity {
         }
 
         mSignupBtn.setEnabled(false);
-        mLoginContainer.setVisibility(View.INVISIBLE);
         startLoadAnim("Registering User");
-        Utils.hideSoftKeyboard(this);
-
-        //TODO: Need to add a timeout on the createUser?
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -187,17 +164,19 @@ public class LoginActivity extends Activity {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            showToast("Registration Failed");
+                            Toast.makeText(LoginActivity.this, "Registration Failed", Toast.LENGTH_SHORT).show();
                             mSignupBtn.setEnabled(true);
-                            mLoginContainer.setVisibility(View.VISIBLE);
                             stopLoadAnim();
                         }
-
-                        // ...
                     }
                 });
     }
 
+    /**
+     * Short function that validates the user input in the input fieldss
+     *
+     * @return validity of form
+     */
     private boolean validateForm() {
         boolean valid = true;
 
@@ -216,15 +195,12 @@ public class LoginActivity extends Activity {
         } else {
             mInputPasswordEt.setError(null);
         }
-
-        // TODO add further validation of input
-
         return valid;
     }
 
     @Override
     public void onBackPressed() {
-        // Disable going back to the MainActivity
+        // Disable going back button
         moveTaskToBack(true);
     }
 
@@ -242,19 +218,23 @@ public class LoginActivity extends Activity {
         }
     }
 
+    /**
+     * Initiates a loading animation with a custom text and hides the content views
+     * @param msg custom text
+     */
     public void startLoadAnim(String msg) {
         mAvi.smoothToShow();
         mLoadTxt.setText(msg);
         mLoadTxt.setVisibility(View.VISIBLE);
+        mLoginContainer.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Stops the loading animation in case of failure and shows the content view.
+     */
     public void stopLoadAnim() {
         mAvi.smoothToHide();
-        mLoadTxt.setVisibility(View.GONE);
+        mLoadTxt.setVisibility(View.INVISIBLE);
+        mLoginContainer.setVisibility(View.VISIBLE);
     }
-
-    public void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-    }
-
 }
