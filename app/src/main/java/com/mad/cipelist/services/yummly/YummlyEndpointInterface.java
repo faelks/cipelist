@@ -3,11 +3,13 @@ package com.mad.cipelist.services.yummly;
 import com.mad.cipelist.services.yummly.dto.IndividualRecipe;
 import com.mad.cipelist.services.yummly.dto.SearchResult;
 
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
 /**
@@ -20,6 +22,10 @@ interface YummlyEndpointInterface {
 
     @GET("recipes?_app_id=772a7337&_app_key=c302ed36e3515ca025686c8c070b3739&requirePictures=true")
     Call<SearchResult> getSearch(
+            @Query("allowedDiet[]") List<String> diets,
+            @Query("allowedCourse[]") List<String> courses,
+            @Query("allowedAllergy[]") List<String> allergies,
+            @Query("allowedCuisine[]") List<String> cuisines,
             @QueryMap(encoded = true) Map<String, String> options
     );
 

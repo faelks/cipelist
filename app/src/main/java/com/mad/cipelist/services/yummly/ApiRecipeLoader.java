@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -106,7 +107,7 @@ public class ApiRecipeLoader implements RecipeLoader {
 
         Map<String, String> queryMap = createQueryMap(mFilter, query);
 
-        Call<SearchResult> call = mInterface.getSearch(queryMap);
+        Call<SearchResult> call = mInterface.getSearch(mFilter.getDiets(), mFilter.getCourses(), mFilter.getAllergies(), mFilter.getCuisines(), queryMap);
 
         try {
             Response<SearchResult> response = call.execute();
@@ -133,7 +134,7 @@ public class ApiRecipeLoader implements RecipeLoader {
             data.put("q", query);
         }
 
-        for (String s : filter.getDiets()) {
+        /** for (String s : filter.getDiets()) {
             data.put("allowedDiet[]", s);
         }
 
@@ -147,13 +148,16 @@ public class ApiRecipeLoader implements RecipeLoader {
 
         for (String s : filter.getCuisines()) {
             data.put("allowedCuisine[]", s);
-        }
+         } */
 
         if (filter.getMaximumTime() != -1) {
             data.put("maxTotalTimeInSeconds", "" + filter.getMaximumTime());
         }
 
-        if (mLoadCount != 0) {
+        if (query == null) {
+            int rand = new Random().nextInt(160) + 40;
+            data.put("start", "" + (mLoadCount + rand));
+        } else if (mLoadCount != 0) {
             data.put("start", "" + mLoadCount);
         }
 
@@ -169,6 +173,7 @@ public class ApiRecipeLoader implements RecipeLoader {
             tempRecipe = new LocalRecipe(r.getRecipeName(), r.getRating(), r.getTotalTimeInSeconds(), r.getSmallImageUrls()[0], jsonIngredients, r.getId(), null);
             result.add(tempRecipe);
         }
+        Log.d(API_TAG, "Loaded " + result.size() + " recipes");
         return result;
     }
 }

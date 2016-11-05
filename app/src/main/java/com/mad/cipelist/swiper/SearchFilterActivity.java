@@ -197,11 +197,12 @@ public class SearchFilterActivity extends BaseActivity {
 
     public ArrayList<String> formatCoursesForHttp(List<String> rawCourses) {
         ArrayList<String> formattedCourses = new ArrayList<>();
-        for (String s : rawCourses) {
-            formattedCourses.add("course^course-" + s);
-        }
-        if (rawCourses.size() < 1) {
+        if (rawCourses.isEmpty()) {
             formattedCourses.add("course^course-Main Dishes");
+        } else {
+            for (String s : rawCourses) {
+                formattedCourses.add("course^course-" + s);
+            }
         }
         return formattedCourses;
     }
