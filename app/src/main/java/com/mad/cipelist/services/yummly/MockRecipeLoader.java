@@ -26,6 +26,13 @@ public class MockRecipeLoader implements RecipeLoader {
         this.mContext = context;
     }
 
+    /**
+     * Loads an object from a locally stored file in the assets folder.
+     *
+     * @param context      The application context
+     * @param jsonFileName The name of the file to retrieve
+     * @return the json string read from file
+     */
     private static String loadJSONFromAsset(Context context, String jsonFileName) {
         String json;
         InputStream is;
@@ -47,30 +54,19 @@ public class MockRecipeLoader implements RecipeLoader {
 
     }
 
-    public LocalRecipe getRecipe(LocalRecipe recipe) {
-
-        // Do something with recipe id to get filename
-        IndividualRecipe tempRecipe;
-
-        // Need some better exceptionhandling
-        try {
-            Gson gson = new Gson();
-            String jsonString = loadJSONFromAsset(mContext, recipe.getmId());
-            tempRecipe = gson.fromJson(jsonString, IndividualRecipe.class);
-
-            List<String> ingredients = tempRecipe.getIngredientLines();
-            String jsonIngredients = new Gson().toJson(ingredients);
-
-            return new LocalRecipe(tempRecipe.getName(), tempRecipe.getRating().toString(), tempRecipe.getCookTime(), tempRecipe.getImages().get(0).getHostedLargeUrl(), jsonIngredients, recipe.getmId(), null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     @Override
     public void updateRecipe(LocalRecipe recipe) {
+        try {
+            Gson gson = new Gson();
+            String jsonString = loadJSONFromAsset(mContext, recipe.getmId() + ".json");
+            IndividualRecipe ir = gson.fromJson(jsonString, IndividualRecipe.class);
 
+            recipe.update(ir);
+
+            recipe.save();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -84,7 +80,7 @@ public class MockRecipeLoader implements RecipeLoader {
 
         try {
             Gson gson = new Gson();
-            String jsonString = loadJSONFromAsset(mContext, "recipes.json");
+            String jsonString = loadJSONFromAsset(mContext, "demo.json");
             SearchResult sr = gson.fromJson(jsonString, SearchResult.class);
 
             LocalRecipe tempRecipe;

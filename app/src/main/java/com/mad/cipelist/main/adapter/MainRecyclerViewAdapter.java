@@ -69,7 +69,7 @@ public class MainRecyclerViewAdapter extends RecyclerView
         holder.info.setText(viewTitle);
         holder.date.setText(mDataset.get(position).searchTimeStamp);
 
-        if (mDataset.size() > 0) {
+        if (!mDataset.get(position).getRecipes().isEmpty()) {
             String url = mDataset.get(position).getRecipes().get(0).getImageUrl();
 
             // Looks for a size restriction at the end of the url and removes it if found

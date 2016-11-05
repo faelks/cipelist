@@ -16,6 +16,7 @@ import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.common.Utils;
 import com.mad.cipelist.result.ResultActivity;
 import com.mad.cipelist.services.yummly.ApiRecipeLoader;
+import com.mad.cipelist.services.yummly.MockRecipeLoader;
 import com.mad.cipelist.services.yummly.RecipeLoader;
 import com.mad.cipelist.services.yummly.model.LocalRecipe;
 import com.mad.cipelist.services.yummly.model.LocalSearch;
@@ -25,7 +26,9 @@ import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 import com.wang.avi.AVLoadingIndicatorView;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -42,6 +45,7 @@ public class SwiperActivity extends BaseActivity {
     public static final String SWIPER_LOGTAG = "Swiper";
     public static final String RECIPE_AMOUNT = "recipeAmount";
     public static final String SEARCH_ID = "searchId";
+
     @BindView(R.id.swiper_avi)
     AVLoadingIndicatorView avi;
     @BindView(R.id.swiper_load_text)
@@ -52,6 +56,7 @@ public class SwiperActivity extends BaseActivity {
     LinearLayout swipeButtonHolder;
     @BindView(R.id.swiper_progress_bar)
     ProgressBar swipeProgressBar;
+
     private int mRecipeAmount;
     private int mRecipeLoadCount;
     private int mSwipeCount;
@@ -183,7 +188,7 @@ public class SwiperActivity extends BaseActivity {
      */
     public void addCards(List<LocalRecipe> recipes) {
 
-        mRecipeLoadCount += 4;
+        mRecipeLoadCount += 10;
 
         try {
 
@@ -200,7 +205,7 @@ public class SwiperActivity extends BaseActivity {
 
                         if (mSelectedRecipes.size() >= mRecipeAmount) {
                             onSwipeLimitReached();
-                        } else if (mSwipeCount >= (mRecipeLoadCount * mQueries.size() / 2)) {
+                        } else if (mSwipeCount >= (mRecipeLoadCount * mQueries.size() - 5)) {
                             new AsyncRecipeLoader(mFilter).execute();
                         }
                         Log.d("EVENT", "onSwipedIn");
@@ -211,7 +216,7 @@ public class SwiperActivity extends BaseActivity {
                     @Override
                     public void onSwipedOut() {
                         mSwipeCount++;
-                        if (mSwipeCount >= (mRecipeLoadCount - 5)) {
+                        if (mSwipeCount >= (mRecipeLoadCount * mQueries.size() - 5)) {
                             new AsyncRecipeLoader(mFilter).execute();
                         }
                     }
@@ -245,8 +250,18 @@ public class SwiperActivity extends BaseActivity {
 
         @Override
         protected List<LocalRecipe> doInBackground(String... strings) {
-            // MockLoader that retrieves recipes from a locally saved search
-            // RecipeLoader mLoader = new MockRecipeLoader(mContext);
+            // MockLoader that retrieves recipes from a locally saved search in case it matches the criteria
+            if (mQueries != null && mQueries.get(0).equals("pasta") && mQueries.get(1).equals("pizza") && mQueries.get(2).equals("burger")) {
+                RecipeLoader loader = new MockRecipeLoader(getApplicationContext());
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return loader.getRecipes(null);
+            }
+
+
             List<LocalRecipe> response = new ArrayList<>();
             RecipeLoader mLoader = new ApiRecipeLoader(mFilter, mRecipeLoadCount);
             if (mQueries != null && !mQueries.isEmpty()) {
@@ -284,7 +299,17 @@ public class SwiperActivity extends BaseActivity {
             RecipeLoader loader = new ApiRecipeLoader();
 
             for (LocalRecipe r : recipes) {
-                loader.updateRecipe(r);
+                try {
+                    // Check if the file exists in the assets folder already
+                    if (Arrays.asList(mContext.getResources().getAssets().list("")).contains(r.getmId() + ".json")) {
+                        loader = new MockRecipeLoader(mContext);
+                        loader.updateRecipe(r);
+                    } else {
+                        loader.updateRecipe(r);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
             return null;

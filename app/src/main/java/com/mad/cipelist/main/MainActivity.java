@@ -1,5 +1,6 @@
 package com.mad.cipelist.main;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
@@ -90,11 +91,14 @@ public class MainActivity extends BaseActivity {
         }
         if (searchRecyclerView != null) {
             searchRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+            createAdapter(MainActivity.this, mLocalSearches, mCurrentUserId, getUserEmail());
         }
 
+    }
 
-        if (mAdapter == null) {
-            mAdapter = new MainRecyclerViewAdapter(this, mLocalSearches, mCurrentUserId, getUserEmail());
+    private void createAdapter(Activity activity, List<LocalSearch> searches, String userId, String userEmail) {
+        mAdapter = new MainRecyclerViewAdapter(activity, searches, userId, userEmail);
+        if (searchRecyclerView != null) {
             searchRecyclerView.setAdapter(mAdapter);
         }
     }
@@ -147,6 +151,10 @@ public class MainActivity extends BaseActivity {
                 finish();
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 return true;
+            case R.id.action_clear_searches:
+                LocalSearch.deleteAll(LocalSearch.class, "user_id = ? ", mCurrentUserId);
+                mLocalSearches.clear();
+                createAdapter(MainActivity.this, null, mCurrentUserId, getUserEmail());
         }
 
         try {
@@ -182,8 +190,7 @@ public class MainActivity extends BaseActivity {
         }
 
         if (mLocalSearches != null) {
-            mAdapter = new MainRecyclerViewAdapter(this, mLocalSearches, mCurrentUserId, getUserEmail());
-            searchRecyclerView.setAdapter(mAdapter);
+            createAdapter(MainActivity.this, mLocalSearches, mCurrentUserId, getUserEmail());
         }
 
     }

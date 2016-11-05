@@ -17,5 +17,10 @@
         android:orderInCategory="103"
         android:title="@string/logout"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_clear_searches"
+        android:orderInCategory="103"
+        android:title="@string/clear_searches"
+        app:showAsAction="never" />
 
 </menu>

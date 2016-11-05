@@ -65,9 +65,7 @@ public class ApiRecipeLoader implements RecipeLoader {
             if (response.isSuccessful()) {
                 recipe.update(response.body());
 
-                //Log.d(API_TAG, "We have an updated recipe with url " + recipe.getRecipeUrl());
-                //Log.d(API_TAG, "We have an updated recipe with ingredientLines" + recipe.getIngredientLines());
-                //Log.d(API_TAG, "We have an updated recipe with source displayname " + recipe.getSourceDisplayName());
+                Log.d(API_TAG, "Recipe Url: " + call.request().toString());
 
                 recipe.save();
             } else {
@@ -133,22 +131,6 @@ public class ApiRecipeLoader implements RecipeLoader {
         if (query != null && !query.isEmpty()) {
             data.put("q", query);
         }
-
-        /** for (String s : filter.getDiets()) {
-            data.put("allowedDiet[]", s);
-        }
-
-        for (String s : filter.getCourses()) {
-            data.put("allowedCourse[]", s);
-        }
-
-        for (String s : filter.getAllergies()) {
-            data.put("allowedAllergy[]", s);
-        }
-
-        for (String s : filter.getCuisines()) {
-            data.put("allowedCuisine[]", s);
-         } */
 
         if (filter.getMaximumTime() != -1) {
             data.put("maxTotalTimeInSeconds", "" + filter.getMaximumTime());

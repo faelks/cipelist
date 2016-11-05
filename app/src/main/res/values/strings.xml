@@ -159,6 +159,7 @@
     <string name="_7_recipes">7 recipes</string>
     <string name="recipe_detail_image">Recipe Detail Image</string>
     <string name="view_cooking_instuctions">View Cooking Instuctions</string>
+    <string name="clear_searches">Clear Searches</string>
 
     <string-array name="diet_items">
         <item>Lacto Vegetarian</item>
