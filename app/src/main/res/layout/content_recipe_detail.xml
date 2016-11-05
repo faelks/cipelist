@@ -61,13 +61,13 @@
 
         </LinearLayout>
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/recipe_ingredient_lines"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <Button
-            android:id="@+id/launch_source"
+            android:id="@+id/recipe_launch_source_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"

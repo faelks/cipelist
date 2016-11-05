@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -43,6 +44,7 @@ public class MainActivity extends BaseActivity {
 
     private static String LOG_TAG = "MainActivity";
 
+    @Nullable
     @BindView(R.id.my_recycler_view)
     RecyclerView searchRecyclerView;
     @BindView(R.id.addRecipeFab)
@@ -86,8 +88,10 @@ public class MainActivity extends BaseActivity {
         } else {
             mCurrentUserId = "default";
         }
+        if (searchRecyclerView != null) {
+            searchRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        }
 
-        searchRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 
         if (mAdapter == null) {
             mAdapter = new MainRecyclerViewAdapter(this, mLocalSearches, mCurrentUserId, getUserEmail());

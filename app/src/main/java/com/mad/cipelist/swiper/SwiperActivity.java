@@ -26,7 +26,12 @@ import com.mindorks.placeholderview.SwipePlaceHolderView;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Displays a swiper that the used can use to select recipes they like
@@ -37,34 +42,30 @@ public class SwiperActivity extends BaseActivity {
     public static final String SWIPER_LOGTAG = "Swiper";
     public static final String RECIPE_AMOUNT = "recipeAmount";
     public static final String SEARCH_ID = "searchId";
-
-    private SwipePlaceHolderView mSwipeView;
-    private LinearLayout mSwipeButtonHolder;
-    private ProgressBar mProgressBar;
-
+    @BindView(R.id.swiper_avi)
+    AVLoadingIndicatorView avi;
+    @BindView(R.id.swiper_load_text)
+    TextView loadText;
+    @BindView(R.id.swipe_view)
+    SwipePlaceHolderView swipeView;
+    @BindView(R.id.swiper_button_holder)
+    LinearLayout swipeButtonHolder;
+    @BindView(R.id.swiper_progress_bar)
+    ProgressBar swipeProgressBar;
     private int mRecipeAmount;
     private int mRecipeLoadCount;
     private int mSwipeCount;
-
     private List<LocalRecipe> mSelectedRecipes;
     private Context mContext;
-
     private SearchFilter mFilter;
+    private ArrayList<String> mQueries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.content_swiper, contentFrameLayout);
-
-        mAvi = (AVLoadingIndicatorView) findViewById(R.id.swiper_avi);
-        mLoadTxt = (TextView) findViewById(R.id.swiper_load_text);
-
-        mSwipeButtonHolder = (LinearLayout) findViewById(R.id.swiper_button_holder);
-        mSwipeView = (SwipePlaceHolderView) findViewById(R.id.swipe_view);
-        mProgressBar = (ProgressBar) findViewById(R.id.swiper_progress_bar);
-
+        ButterKnife.bind(this);
 
         mContext = this.getApplicationContext();
         mRecipeLoadCount = 0;
@@ -72,13 +73,14 @@ public class SwiperActivity extends BaseActivity {
 
         // Getting things passed by the searchfilteractivity
         mRecipeAmount = getIntent().getIntExtra("recipeAmount", 0);
-        mProgressBar.setMax(mRecipeAmount);
+        swipeProgressBar.setMax(mRecipeAmount);
 
         // Creates a search filter using passed parameters
         mFilter = createSearchFilter();
+        mQueries = getIntent().getExtras().getStringArrayList(SearchFilterActivity.QUERY);
 
         // Creates a swipe view with specified layout
-        mSwipeView.getBuilder()
+        swipeView.getBuilder()
                 .setDisplayViewCount(3)
                 .setSwipeDecor(new SwipeDecor()
                         .setPaddingTop(20)
@@ -91,7 +93,7 @@ public class SwiperActivity extends BaseActivity {
         findViewById(R.id.reject_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSwipeView.doSwipe(false);
+                swipeView.doSwipe(false);
             }
         });
 
@@ -99,7 +101,7 @@ public class SwiperActivity extends BaseActivity {
         findViewById(R.id.accept_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSwipeView.doSwipe(true);
+                swipeView.doSwipe(true);
             }
         });
 
@@ -115,13 +117,12 @@ public class SwiperActivity extends BaseActivity {
     public SearchFilter createSearchFilter() {
 
         int maxTime = getIntent().getIntExtra(SearchFilterActivity.MAX_TIME, -1);
-        String query = getIntent().getExtras().getString(SearchFilterActivity.QUERY);
         ArrayList<String> diets = getIntent().getExtras().getStringArrayList(SearchFilterActivity.DIET);
         ArrayList<String> cuisines = getIntent().getExtras().getStringArrayList(SearchFilterActivity.CUISINE);
         ArrayList<String> allergies = getIntent().getExtras().getStringArrayList(SearchFilterActivity.ALLERGY);
         ArrayList<String> courses = getIntent().getExtras().getStringArrayList(SearchFilterActivity.COURSE);
 
-        return new SearchFilter(maxTime, query, diets, cuisines, allergies, courses, getSearchId());
+        return new SearchFilter(maxTime, diets, cuisines, allergies, courses, getSearchId());
     }
 
     /**
@@ -143,7 +144,7 @@ public class SwiperActivity extends BaseActivity {
         search.searchId = mFilter.getSearchId();
         search.searchTimeStamp = Utils.getCurrentDate();
         search.save();
-        startLoadAnim("Saving Recipes");
+        startLoadAnim(avi, loadText, "Saving Recipes");
         new AsyncRecipeUpdate(mSelectedRecipes).execute();
 
     }
@@ -182,12 +183,12 @@ public class SwiperActivity extends BaseActivity {
      */
     public void addCards(List<LocalRecipe> recipes) {
 
-        mRecipeLoadCount += 10;
+        mRecipeLoadCount += 4;
 
         try {
 
             for (final LocalRecipe recipe : recipes) {
-                mSwipeView.addView(new RecipeCard(mContext, recipe, new RecipeCard.SwipeHandler() {
+                swipeView.addView(new RecipeCard(mContext, recipe, new RecipeCard.SwipeHandler() {
                     @Override
                     public void onSwipeIn() {
 
@@ -195,11 +196,11 @@ public class SwiperActivity extends BaseActivity {
                         // Set the search id of the recipe so that is is associated with the current search
                         recipe.setSearchId(mFilter.getSearchId());
                         mSelectedRecipes.add(recipe);
-                        mProgressBar.setProgress(mSelectedRecipes.size());
+                        swipeProgressBar.setProgress(mSelectedRecipes.size());
 
                         if (mSelectedRecipes.size() >= mRecipeAmount) {
                             onSwipeLimitReached();
-                        } else if (mSwipeCount >= (mRecipeLoadCount - 5)) {
+                        } else if (mSwipeCount >= (mRecipeLoadCount * mQueries.size() / 2)) {
                             new AsyncRecipeLoader(mFilter).execute();
                         }
                         Log.d("EVENT", "onSwipedIn");
@@ -238,7 +239,7 @@ public class SwiperActivity extends BaseActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             if (mRecipeLoadCount == 0) {
-                startLoadAnim("Loading Recipes");
+                startLoadAnim(avi, loadText, "Loading Recipes");
             }
         }
 
@@ -246,9 +247,17 @@ public class SwiperActivity extends BaseActivity {
         protected List<LocalRecipe> doInBackground(String... strings) {
             // MockLoader that retrieves recipes from a locally saved search
             // RecipeLoader mLoader = new MockRecipeLoader(mContext);
-
+            List<LocalRecipe> response = new ArrayList<>();
             RecipeLoader mLoader = new ApiRecipeLoader(mFilter, mRecipeLoadCount);
-            return mLoader.getRecipes();
+            if (mQueries != null && !mQueries.isEmpty()) {
+                for (String query : mQueries) {
+                    response.addAll(mLoader.getRecipes(query));
+                }
+            }
+
+            response.addAll(mLoader.getRecipes(null));
+            Collections.shuffle(response);
+            return new ArrayList<>(new LinkedHashSet<>(response));
         }
 
         @Override
@@ -257,7 +266,7 @@ public class SwiperActivity extends BaseActivity {
             // Stop the loading animation
             // Add the loaded cards to the SwiperView in the Main Thread.
             addCards(localRecipes);
-            stopLoadAnim();
+            stopLoadAnim(avi, loadText);
         }
     }
 
@@ -290,8 +299,8 @@ public class SwiperActivity extends BaseActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mSwipeButtonHolder.setVisibility(View.INVISIBLE);
-            mSwipeView.setVisibility(View.INVISIBLE);
+            swipeButtonHolder.setVisibility(View.INVISIBLE);
+            swipeView.setVisibility(View.INVISIBLE);
         }
 
         @Override

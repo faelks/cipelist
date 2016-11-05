@@ -8,16 +8,14 @@ import java.util.List;
 
 public class SearchFilter {
     private int maximumTime;
-    private String query;
     private List<String> diets;
     private List<String> cuisines;
     private List<String> allergies;
     private List<String> courses;
     private String searchId;
 
-    public SearchFilter(int maximumTime, String query, List<String> diets, List<String> cuisines, List<String> allergies, List<String> courses, String searchId) {
+    public SearchFilter(int maximumTime, List<String> diets, List<String> cuisines, List<String> allergies, List<String> courses, String searchId) {
         this.maximumTime = maximumTime;
-        this.query = query;
         this.diets = diets;
         this.cuisines = cuisines;
         this.allergies = allergies;
@@ -27,10 +25,6 @@ public class SearchFilter {
 
     public int getMaximumTime() {
         return maximumTime;
-    }
-
-    public String getQuery() {
-        return query;
     }
 
     public List<String> getDiets() {

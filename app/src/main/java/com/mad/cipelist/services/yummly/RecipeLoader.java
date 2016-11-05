@@ -13,5 +13,5 @@ public interface RecipeLoader {
 
     LocalRecipe getRecipe(String recipeId);
 
-    List<LocalRecipe> getRecipes();
+    List<LocalRecipe> getRecipes(String query);
 }

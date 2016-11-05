@@ -102,9 +102,9 @@ public class ApiRecipeLoader implements RecipeLoader {
         return result[0];
     }
 
-    public List<LocalRecipe> getRecipes() {
+    public List<LocalRecipe> getRecipes(String query) {
 
-        Map<String, String> queryMap = createQueryMap(mFilter);
+        Map<String, String> queryMap = createQueryMap(mFilter, query);
 
         Call<SearchResult> call = mInterface.getSearch(queryMap);
 
@@ -126,11 +126,11 @@ public class ApiRecipeLoader implements RecipeLoader {
         return null;
     }
 
-    private Map<String, String> createQueryMap(SearchFilter filter) {
+    private Map<String, String> createQueryMap(SearchFilter filter, String query) {
         Map<String, String> data = new HashMap<>();
 
-        if (filter.getQuery() != null && !filter.getQuery().isEmpty()) {
-            data.put("q", filter.getQuery());
+        if (query != null && !query.isEmpty()) {
+            data.put("q", query);
         }
 
         for (String s : filter.getDiets()) {

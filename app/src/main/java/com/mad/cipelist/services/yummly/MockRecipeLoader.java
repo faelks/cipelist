@@ -79,7 +79,7 @@ public class MockRecipeLoader implements RecipeLoader {
     }
 
     @Override
-    public List<LocalRecipe> getRecipes() {
+    public List<LocalRecipe> getRecipes(String query) {
         List<LocalRecipe> recipes = new ArrayList<>();
 
         try {

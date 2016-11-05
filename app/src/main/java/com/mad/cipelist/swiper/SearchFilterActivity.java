@@ -2,7 +2,6 @@ package com.mad.cipelist.swiper;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -15,6 +14,10 @@ import com.mad.cipelist.widgets.MultiSelectionSpinner;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Displays search filter options to the user.
@@ -29,16 +32,36 @@ public class SearchFilterActivity extends BaseActivity {
     final static String QUERY = "query";
     final static String MAX_TIME = "max time";
 
-    private EditText mQueryEt;
-    private MultiSelectionSpinner mDietSpinner;
-    private MultiSelectionSpinner mCuisineSpinner;
-    private MultiSelectionSpinner mAllergiesSpinner;
-    private MultiSelectionSpinner mCourseSpinner;
+    @BindView(R.id.query_et)
+    EditText queryEt;
+    @BindView(R.id.diet_spinner)
+    MultiSelectionSpinner dietSpinner;
+    @BindView(R.id.cuisine_spinner)
+    MultiSelectionSpinner cuisineSpinner;
+    @BindView(R.id.allergies_spinner)
+    MultiSelectionSpinner allergiesSpinner;
+    @BindView(R.id.course_spinner)
+    MultiSelectionSpinner courseSpinner;
+    @BindView(R.id.cooking_time_tv)
+    TextView cookingTimeTv;
+    @BindView(R.id.cooking_time_bar)
+    SeekBar cookingTimeSeekBar;
+    @BindView(R.id.recipe_amount_tv)
+    TextView recipeAmountTv;
+    @BindView(R.id.recipe_amount_bar)
+    SeekBar recipeAmountSeekBar;
+    @BindView(R.id.start_search_btn)
+    Button startSearchBtn;
 
-    private TextView mCookingTimeTv;
-    private SeekBar mCookingTimeSb;
-
-    private TextView mRecipeAmountTv;
+    @OnClick(R.id.start_search_btn)
+    public void startSearch() {
+        Intent swiperIntent = new Intent(SearchFilterActivity.this, SwiperActivity.class);
+        swiperIntent.putExtra("recipeAmount", 7);
+        swiperIntent.putExtras(createSearchFilter());
+        startActivity(swiperIntent);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+        finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,27 +69,16 @@ public class SearchFilterActivity extends BaseActivity {
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.content_search_filter, contentFrameLayout);
+        ButterKnife.bind(this);
 
-        mQueryEt = (EditText) findViewById(R.id.query_et);
+        // Load spinners with items
+        loadSpinner(dietSpinner, R.array.diet_items, "Select Diet");
+        loadSpinner(cuisineSpinner, R.array.cuisine_items, "Select Cuisine");
+        loadSpinner(allergiesSpinner, R.array.allergy_items, "Select Allergies");
+        loadSpinner(courseSpinner, R.array.course_items, "Select Courses");
 
-        // Load spinners
-        mDietSpinner = (MultiSelectionSpinner) findViewById(R.id.diet_spinner);
-        loadSpinner(mDietSpinner, R.array.diet_items, "Select Diet");
-        mCuisineSpinner = (MultiSelectionSpinner) findViewById(R.id.cuisine_spinner);
-        loadSpinner(mCuisineSpinner, R.array.cuisine_items, "Select Cuisine");
-        mAllergiesSpinner = (MultiSelectionSpinner) findViewById(R.id.allergies_spinner);
-        loadSpinner(mAllergiesSpinner, R.array.allergy_items, "Select Allergies");
-        mCourseSpinner = (MultiSelectionSpinner) findViewById(R.id.course_spinner);
-        loadSpinner(mCourseSpinner, R.array.course_items, "Select Courses");
-
-        // Load SeekBars
-        mCookingTimeTv = (TextView) findViewById(R.id.cooking_time_amount_tv);
-        mCookingTimeSb = (SeekBar) findViewById(R.id.cooking_time_bar);
-        mRecipeAmountTv = (TextView) findViewById(R.id.recipe_amount_tv);
-        SeekBar mRecipeAmountSb = (SeekBar) findViewById(R.id.recipe_amount_bar);
-        // Default is 1 hour because importance of studies > cooking proper food
-        mCookingTimeSb.setProgress(2);
-        mCookingTimeSb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        cookingTimeSeekBar.setProgress(2);
+        cookingTimeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 String maxTime = "";
@@ -87,7 +99,7 @@ public class SearchFilterActivity extends BaseActivity {
                         maxTime = "Unlimited";
                         break;
                 }
-                mCookingTimeTv.setText(maxTime);
+                cookingTimeTv.setText(maxTime);
             }
 
             @Override
@@ -101,12 +113,12 @@ public class SearchFilterActivity extends BaseActivity {
             }
         });
 
-        mRecipeAmountSb.setProgress(7);
-        mRecipeAmountSb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        recipeAmountSeekBar.setProgress(7);
+        recipeAmountSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 String amount = i + " recipes";
-                mRecipeAmountTv.setText(amount);
+                recipeAmountTv.setText(amount);
             }
 
             @Override
@@ -117,21 +129,6 @@ public class SearchFilterActivity extends BaseActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
-            }
-        });
-
-        // Load Button
-        Button mStartSearchBtn = (Button) findViewById(R.id.start_search_btn);
-        mStartSearchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent swiperIntent = new Intent(SearchFilterActivity.this, SwiperActivity.class);
-                swiperIntent.putExtra("recipeAmount", 7);
-                swiperIntent.putExtras(createSearchFilter());
-                startActivity(swiperIntent);
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                finish();
             }
         });
     }
@@ -155,20 +152,19 @@ public class SearchFilterActivity extends BaseActivity {
      */
     public Bundle createSearchFilter() {
         // Extract and save all the data that the user has selected and pass this data to the swiper activity?
-        ArrayList<String> diets = formatDietsForHttp(mDietSpinner.getSelectedStrings());
-        ArrayList<String> cuisines = formatCuisinesForHttp(mCuisineSpinner.getSelectedStrings());
-        ArrayList<String> allergies = formatAllergiesForHttp(mAllergiesSpinner.getSelectedStrings());
-        ArrayList<String> courses = formatCoursesForHttp(mCourseSpinner.getSelectedStrings());
-
-        Integer maxTime = formatMaxTimeForHttp(mCookingTimeSb.getProgress());
-        String query = mQueryEt.getText().toString();
+        ArrayList<String> diets = formatDietsForHttp(dietSpinner.getSelectedStrings());
+        ArrayList<String> cuisines = formatCuisinesForHttp(cuisineSpinner.getSelectedStrings());
+        ArrayList<String> allergies = formatAllergiesForHttp(allergiesSpinner.getSelectedStrings());
+        ArrayList<String> courses = formatCoursesForHttp(courseSpinner.getSelectedStrings());
+        Integer maxTime = formatMaxTimeForHttp(cookingTimeSeekBar.getProgress());
+        ArrayList<String> query = formatQueryString(queryEt.getText().toString());
 
         Bundle searchFilter = new Bundle();
         searchFilter.putStringArrayList(DIET, diets);
         searchFilter.putStringArrayList(CUISINE, cuisines);
         searchFilter.putStringArrayList(ALLERGY, allergies);
         searchFilter.putStringArrayList(COURSE, courses);
-        searchFilter.putString(QUERY, query);
+        searchFilter.putStringArrayList(QUERY, query);
         searchFilter.putInt(MAX_TIME, maxTime);
 
         return searchFilter;
@@ -276,6 +272,24 @@ public class SearchFilterActivity extends BaseActivity {
                 return -1;
         }
         return -1;
+    }
+
+    public ArrayList<String> formatQueryString(String query) {
+        ArrayList<String> queries = new ArrayList<>();
+        if (!query.isEmpty() && query.contains(",")) {
+            String[] split = query.split(",");
+            for (String s : split) {
+                if (!s.isEmpty()) {
+                    s = s.trim();
+                    queries.add(s);
+                }
+            }
+        } else if (!query.isEmpty()) {
+            queries.add(query.trim());
+        } else {
+            return null;
+        }
+        return queries;
     }
 
 }

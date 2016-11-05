@@ -79,7 +79,6 @@ public class MainRecyclerViewAdapter extends RecyclerView
             //Log.d(LOG_TAG, "Trying to glide with url " + url);
             Glide.with(holder.itemView.getContext()).load(url).into(holder.image);
         }
-        //holder.dateTime.setText(mDataset.get(position).getTotalMatchCount());
     }
 
     public void addItem(LocalSearch dataObj, int index) {

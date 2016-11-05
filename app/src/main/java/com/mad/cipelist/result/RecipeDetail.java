@@ -3,11 +3,10 @@ package com.mad.cipelist.result;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -17,6 +16,10 @@ import com.mad.cipelist.services.yummly.model.LocalRecipe;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Dsiplays the specific details for a recipe including image, rating and source.
  * TODO: Needs a bit more formatting to be acceptable
@@ -24,13 +27,28 @@ import java.util.List;
 
 public class RecipeDetail extends BaseActivity {
 
-    private TextView mTitleTv;
-    private TextView mCookingTimeTv;
-    private TextView mPrepTimeTv;
-    private ImageView mRecipeIv;
-    private ListView mIngredientLinesLv;
-    private Button mToSourceBtn;
+    @BindView(R.id.recipe_title)
+    TextView titleTv;
+    @BindView(R.id.recipe_cooking_time)
+    TextView cookingTimeTv;
+    @BindView(R.id.recipe_prep_time)
+    TextView prepTimeTv;
+    @BindView(R.id.recipe_detail_image)
+    ImageView recipeIv;
+    @BindView(R.id.recipe_ingredient_lines)
+    RecyclerView ingredientLinesRv;
+    @BindView(R.id.recipe_launch_source_btn)
+    Button launchSourceBtn;
+    private LocalRecipe mRecipe;
 
+    @OnClick(R.id.recipe_launch_source_btn)
+    public void launchSource() {
+        String uri = mRecipe.getRecipeUrl();
+        if (!uri.startsWith("http://") && !uri.startsWith("https://"))
+            uri = "http://" + uri;
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,31 +56,24 @@ public class RecipeDetail extends BaseActivity {
 
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.content_recipe_detail, contentFrameLayout);
-
-        // Initialise views
-        mTitleTv = (TextView) findViewById(R.id.recipe_title);
-        mCookingTimeTv = (TextView) findViewById(R.id.recipe_cooking_time);
-        mPrepTimeTv = (TextView) findViewById(R.id.recipe_prep_time);
-        mRecipeIv = (ImageView) findViewById(R.id.recipe_detail_image);
-        mIngredientLinesLv = (ListView) findViewById(R.id.recipe_ingredient_lines);
-        mToSourceBtn = (Button) findViewById(R.id.launch_source);
+        ButterKnife.bind(this);
 
         // Get the recipe that is to be injected
         String recipeId = getIntent().getStringExtra("recipeId");
         List<LocalRecipe> recipe = LocalRecipe.find(LocalRecipe.class, "m_id = ?", recipeId);
-        final LocalRecipe mRecipe = recipe.get(0);
+        mRecipe = recipe.get(0);
 
         // Format the url and inject a resultin image into the image view
         String url = mRecipe.getImageUrl();
         if (url.substring(url.length() - 4, url.length()).equals("=s90")) {
             url = url.substring(0, url.length() - 4);
         }
-        Glide.with(getApplicationContext()).load(url).into(mRecipeIv);
+        Glide.with(getApplicationContext()).load(url).into(recipeIv);
 
         // Inject the other views
-        mTitleTv.setText(mRecipe.getRecipeName());
-        mCookingTimeTv.setText(mRecipe.getCookingTime());
-        mPrepTimeTv.setText("PrepTime = " + mRecipe.getPrepTime());
+        titleTv.setText(mRecipe.getRecipeName());
+        cookingTimeTv.setText(mRecipe.getCookingTime());
+        prepTimeTv.setText("PrepTime = " + mRecipe.getPrepTime());
         /*ListAdapter adapter = new ListAdapter() {
             @Override
             public boolean areAllItemsEnabled() {
@@ -125,18 +136,6 @@ public class RecipeDetail extends BaseActivity {
             }
         };
         mIngredientLinesLv.setAdapter(adapter); */
-        mToSourceBtn.setText("View Cooking Instructions");
-
-        mToSourceBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String uri = mRecipe.getRecipeUrl();
-                if (!uri.startsWith("http://") && !uri.startsWith("https://"))
-                    uri = "http://" + uri;
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                startActivity(intent);
-            }
-        });
 
     }
 }

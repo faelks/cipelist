@@ -14,6 +14,9 @@ import com.mad.cipelist.swiper.SwiperActivity;
 import com.viewpagerindicator.TitlePageIndicator;
 import com.wang.avi.AVLoadingIndicatorView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Displays two fragments that contain the general recipes and the grocerylist of the loaded search.
  * TODO: Needs to display the ingredients more fluently
@@ -21,25 +24,30 @@ import com.wang.avi.AVLoadingIndicatorView;
 public class ResultActivity extends BaseActivity {
     //private static final String TAG = "ResultActivity";
 
+    @BindView(R.id.avi)
+    AVLoadingIndicatorView mAvi;
+    @BindView(R.id.viewPager)
+    ViewPager mPager;
+    @BindView(R.id.loadText)
+    TextView mLoadTxt;
+    @BindView(R.id.titles)
+    TitlePageIndicator titleIndicator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.content_result, contentFrameLayout);
+        ButterKnife.bind(this);
 
         Context mContext = this.getApplicationContext();
 
-        mAvi = (AVLoadingIndicatorView) findViewById(R.id.avi);
-        mLoadTxt = (TextView) findViewById(R.id.loadText);
         String mSearchId = getIntent().getStringExtra(SwiperActivity.SEARCH_ID);
 
         FragmentPagerAdapter adapterViewPager = new ResultAdapter(getSupportFragmentManager(), mContext, mSearchId);
 
-        ViewPager mPager = (ViewPager) findViewById(R.id.viewPager);
         mPager.setAdapter(adapterViewPager);
 
-        TitlePageIndicator titleIndicator = (TitlePageIndicator) findViewById(R.id.titles);
         titleIndicator.setViewPager(mPager);
 
         // Customises the title indicator

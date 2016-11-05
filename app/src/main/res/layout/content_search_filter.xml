@@ -155,7 +155,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/cooking_time_amount_tv"
+                    android:id="@+id/cooking_time_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/_1_hr"
