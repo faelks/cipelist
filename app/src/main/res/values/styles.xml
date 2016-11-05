@@ -2,25 +2,36 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <!-- Hint color and label color in FALSE state -->
-        <item name="android:textColorHint">@color/white</item>
-        <item name="android:textColor">@color/white</item>
-        <!-- Label color in TRUE state and bar color FALSE and TRUE State -->
-        <item name="colorControlNormal">@color/white</item>
-        <item name="colorControlActivated">@color/colorAccent</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar.Inverted" parent="AppTheme.NoActionBar">
-        <item name="android:textColor">@color/colorPrimaryDark</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.Inverted" parent="AppTheme.NoActionBar">
+        <!-- Hint color and label color in FALSE state -->
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <!-- Label color in TRUE state and bar color FALSE and TRUE State -->
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <style name="EditTextTheme">
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <style name="SearchFilterLayoutTheme">
+        <item name="android:background">@color/white</item>
+        <item name="android:padding">16sp</item>
+        <item name="android:paddingLeft">25sp</item>
+        <item name="android:paddingRight">25sp</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:alpha">0.7</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

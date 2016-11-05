@@ -22,7 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.login.LoginActivity;
-import com.mad.cipelist.main.adapter.MainRecyclerViewAdapter;
+import com.mad.cipelist.main.adapter.MainSearchRecyclerViewAdapter;
 import com.mad.cipelist.result.ResultActivity;
 import com.mad.cipelist.services.yummly.model.LocalSearch;
 import com.mad.cipelist.settings.SettingsActivity;
@@ -39,26 +39,26 @@ import butterknife.OnClick;
  * Displays the initial landing page with previous searches.
  * This method needs to load all searches associated with the
  * user and display them in the recycler view.
- * TODO: Add more structure and sorting functionality? On Long click etc.
  */
 public class MainActivity extends BaseActivity {
 
     private static String LOG_TAG = "MainActivity";
 
     @Nullable
-    @BindView(R.id.my_recycler_view)
+    @BindView(R.id.main_search_recycler_view)
     RecyclerView searchRecyclerView;
-    @BindView(R.id.addRecipeFab)
+    @BindView(R.id.add_recipe_fab)
     FloatingActionButton addRecipeFab;
-    private MainRecyclerViewAdapter mAdapter;
+    private MainSearchRecyclerViewAdapter mAdapter;
     private List<LocalSearch> mLocalSearches;
     private String mCurrentUserId;
+    // Used for user specific actions
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    @OnClick(R.id.addRecipeFab)
+    @OnClick(R.id.add_recipe_fab)
     public void onFabClick() {
-        startNewSearch();
+        startNewSearchActivity();
     }
 
     @Override
@@ -66,7 +66,6 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.content_main, contentFrameLayout);
-
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
@@ -84,20 +83,51 @@ public class MainActivity extends BaseActivity {
             }
         };
 
-        if (mAuth.getCurrentUser() != null) {
-            mCurrentUserId = mAuth.getCurrentUser().getUid();
-        } else {
-            mCurrentUserId = "default";
-        }
+        // Set the current user id
+        mCurrentUserId = (mAuth.getCurrentUser() != null) ? mAuth.getCurrentUser().getUid() : "Anonymous";
+
+        // Initialise the layout manager and adapter for the main recycler view
         if (searchRecyclerView != null) {
             searchRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
             createAdapter(MainActivity.this, mLocalSearches, mCurrentUserId, getUserEmail());
         }
 
+        // Register a context menu with the recycler view that is displayed on long clicks
+        registerForContextMenu(searchRecyclerView);
+
     }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int position;
+        try {
+            position = mAdapter.getPosition();
+        } catch (Exception e) {
+            Log.d(LOG_TAG, e.getLocalizedMessage(), e);
+            return super.onContextItemSelected(item);
+        }
+        switch (item.getItemId()) {
+            case R.id.ctx_menu_view:
+                startNewResultActivity(mAdapter.getSearchId(position));
+                break;
+            case R.id.ctx_menu_delete:
+                deleteSearch(mAdapter.getSearchId(position));
+                mAdapter.deleteItem(position);
+                break;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    /**
+     * Create an adapter for the recyclerview, allows you to reload the items shown
+     *
+     * @param activity  Current activity
+     * @param searches  The current list of searches for the user
+     * @param userId    the unique id of the user
+     * @param userEmail the email of the user
+     */
     private void createAdapter(Activity activity, List<LocalSearch> searches, String userId, String userEmail) {
-        mAdapter = new MainRecyclerViewAdapter(activity, searches, userId, userEmail);
+        mAdapter = new MainSearchRecyclerViewAdapter(activity, searches, userId, userEmail);
         if (searchRecyclerView != null) {
             searchRecyclerView.setAdapter(mAdapter);
         }
@@ -106,120 +136,29 @@ public class MainActivity extends BaseActivity {
     /**
      * Starts a new search for recipes
      */
-    public void startNewSearch() {
+    public void startNewSearchActivity() {
         Intent intent = new Intent(this, SearchFilterActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            moveTaskToBack(true);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.action_settings:
-                Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
-                startActivity(settingsIntent);
-                return true;
-            case R.id.action_about:
-                showToast("About Selected");
-                return true;
-            case R.id.action_logout:
-                mAuth.signOut();
-                Intent loginIntent = new Intent(this, LoginActivity.class);
-                startActivity(loginIntent);
-                finish();
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                return true;
-            case R.id.action_clear_searches:
-                LocalSearch.deleteAll(LocalSearch.class, "user_id = ? ", mCurrentUserId);
-                mLocalSearches.clear();
-                createAdapter(MainActivity.this, null, mCurrentUserId, getUserEmail());
-        }
-
-        try {
-            mLocalSearches = getLocalSearches(mCurrentUserId);
-        } catch (NullPointerException e) {
-            Log.d("ERROR", "Couldn't load local searches, could be empty");
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mAdapter.setOnItemClickListener(new MainRecyclerViewAdapter
-                .MyClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
-                //Log.i(LOG_TAG, " Clicked on Item " + (position+1));
-                startNewResultViewer(7, mAdapter.getSearchId(position));
-            }
-
-
-        });
-
-        try {
-            mLocalSearches = getLocalSearches(mCurrentUserId);
-            //Log.d("Success!", "Loaded a local search into memory with " + mLocalSearches.size() + " items");
-        } catch (NullPointerException e) {
-            Log.d("ERROR", "Could not load local searches, could be empty");
-        } catch (SQLiteException e) {
-            Log.d("ERROR", "SQLExceptions, could be empty");
-        }
-
-        if (mLocalSearches != null) {
-            createAdapter(MainActivity.this, mLocalSearches, mCurrentUserId, getUserEmail());
-        }
-
-    }
-
+    /**
+     * Returns the email of the current user
+     */
     public String getUserEmail() {
-        if (mAuth.getCurrentUser() == null) {
-            return "Anonymous";
-        } else {
-            return mAuth.getCurrentUser().getEmail();
-        }
+        return (mAuth.getCurrentUser() != null) ? mAuth.getCurrentUser().getEmail() : "Not Available";
     }
 
-    @Override
-    public void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
+    /**
+     * Start a new result activity where the recipes and groceries of a search are displayed/
+     *
+     * @param searchId The unique search id
+     */
+    public void startNewResultActivity(String searchId) {
+        Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
+        shoppingListIntent.putExtra(SwiperActivity.SEARCH_ID, searchId);
+        startActivity(shoppingListIntent);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
     /**
@@ -233,16 +172,105 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mAuth.signOut();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
-    public void startNewResultViewer(int recipeAmount, String searchId) {
-        Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
-        shoppingListIntent.putExtra(SwiperActivity.RECIPE_AMOUNT, recipeAmount);
-        shoppingListIntent.putExtra(SwiperActivity.SEARCH_ID, searchId);
-        startActivity(shoppingListIntent);
-        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // Close the navigation drawer if it is open when back is pressed
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            // Disable going back since this is the main activity
+            moveTaskToBack(true);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_settings:
+                Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivity(settingsIntent);
+                return true;
+            case R.id.action_about:
+                // TODO: Add an instructions page on click
+                showToast("About Selected");
+                return true;
+            case R.id.action_logout:
+                mAuth.signOut();
+                Intent loginIntent = new Intent(this, LoginActivity.class);
+                startActivity(loginIntent);
+                finish();
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                return true;
+            case R.id.action_clear_searches:
+                for (LocalSearch search : mLocalSearches) {
+                    deleteSearch(search.searchId);
+                }
+                mLocalSearches.clear();
+                createAdapter(MainActivity.this, null, mCurrentUserId, getUserEmail());
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mAdapter.setOnItemClickListener(new MainSearchRecyclerViewAdapter
+                .MyClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                startNewResultActivity(mAdapter.getSearchId(position));
+            }
+        });
+
+        try {
+            mLocalSearches = getLocalSearches(mCurrentUserId);
+        } catch (NullPointerException e) {
+            Log.e(LOG_TAG, "The database query returned a null exception");
+            e.printStackTrace();
+        } catch (SQLiteException e) {
+            Log.d(LOG_TAG, "The database returned a SQLiteException");
+            e.printStackTrace();
+        }
+
+        if (mLocalSearches != null) {
+            createAdapter(MainActivity.this, mLocalSearches, mCurrentUserId, getUserEmail());
+        }
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Add a listener that listens for logout events
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Log the user out since the application is destroyed
+        mAuth.signOut();
     }
 }

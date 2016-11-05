@@ -18,6 +18,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
 import com.mad.cipelist.main.MainActivity;
+import com.mad.cipelist.services.yummly.model.LocalRecipe;
+import com.mad.cipelist.services.yummly.model.LocalSearch;
 import com.mad.cipelist.swiper.SearchFilterActivity;
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -125,5 +127,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         } else {
             return "Anonymous";
         }
+    }
+
+    public void deleteSearch(String searchId) {
+        LocalSearch.deleteAll(LocalSearch.class, "search_id = ?", searchId);
+        LocalRecipe.deleteAll(LocalRecipe.class, "search_id = ?", searchId);
     }
 }

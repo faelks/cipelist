@@ -56,4 +56,11 @@ public class Utils {
         return new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date());
     }
 
+    public static String removeUrlImageSize(String url) {
+        if (url.substring(url.length() - 4, url.length()).equals("=s90")) {
+            url = url.substring(0, url.length() - 4);
+        }
+        return url;
+    }
+
 }

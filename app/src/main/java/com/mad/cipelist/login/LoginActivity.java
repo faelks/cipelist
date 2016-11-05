@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,22 +37,26 @@ import butterknife.OnClick;
 public class LoginActivity extends Activity {
 
     private final static String TAG = "LoginActivity";
+    @BindView(R.id.input_email_layout)
+    TextInputLayout inputEmailLayout;
     @BindView(R.id.input_email)
-    TextInputEditText mInputEmailEt;
+    TextInputEditText inputEmailEt;
+    @BindView(R.id.input_password_layout)
+    TextInputLayout inputPasswordLayout;
     @BindView(R.id.input_password)
-    TextInputEditText mInputPasswordEt;
+    TextInputEditText inputPassordEt;
     @BindView(R.id.login_anonymously_tv)
-    TextView mAnonymousLoginTv;
+    TextView anonymousLoginTv;
     @BindView(R.id.login_avi)
-    AVLoadingIndicatorView mAvi;
+    AVLoadingIndicatorView avi;
     @BindView(R.id.login_load_text)
-    TextView mLoadTxt;
+    TextView loadTv;
     @BindView(R.id.login_container)
-    LinearLayout mLoginContainer;
+    LinearLayout loginContainer;
     @BindView(R.id.btn_login)
-    Button mLoginBtn;
+    Button loginBtn;
     @BindView(R.id.btn_signup)
-    Button mSignupBtn;
+    Button signupBtn;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -75,12 +82,12 @@ public class LoginActivity extends Activity {
 
     @OnClick(R.id.btn_login)
     public void login() {
-        signIn(mInputEmailEt.getText().toString(), mInputPasswordEt.getText().toString());
+        signIn(inputEmailEt.getText().toString(), inputPassordEt.getText().toString());
     }
 
     @OnClick(R.id.btn_signup)
     public void signup() {
-        createUser(mInputEmailEt.getText().toString(), mInputPasswordEt.getText().toString());
+        createUser(inputEmailEt.getText().toString(), inputPassordEt.getText().toString());
     }
 
     @Override
@@ -112,6 +119,19 @@ public class LoginActivity extends Activity {
                 }
             }
         };
+
+        inputPassordEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE || i == EditorInfo.IME_ACTION_NEXT) {
+                    login();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
     }
 
     /**
@@ -123,7 +143,7 @@ public class LoginActivity extends Activity {
             return;
         }
 
-        mLoginBtn.setEnabled(false);
+        loginBtn.setEnabled(false);
         startLoadAnim("Logging in");
 
         mAuth.signInWithEmailAndPassword(email, password)
@@ -139,7 +159,7 @@ public class LoginActivity extends Activity {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication Failed", Toast.LENGTH_SHORT).show();
                             stopLoadAnim();
-                            mLoginBtn.setEnabled(true);
+                            loginBtn.setEnabled(true);
                         }
 
                     }
@@ -152,7 +172,7 @@ public class LoginActivity extends Activity {
             return;
         }
 
-        mSignupBtn.setEnabled(false);
+        signupBtn.setEnabled(false);
         startLoadAnim("Registering User");
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -165,7 +185,7 @@ public class LoginActivity extends Activity {
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Toast.makeText(LoginActivity.this, "Registration Failed", Toast.LENGTH_SHORT).show();
-                            mSignupBtn.setEnabled(true);
+                            signupBtn.setEnabled(true);
                             stopLoadAnim();
                         }
                     }
@@ -180,20 +200,24 @@ public class LoginActivity extends Activity {
     private boolean validateForm() {
         boolean valid = true;
 
-        String email = mInputEmailEt.getText().toString();
+        String email = inputEmailEt.getText().toString();
         if (TextUtils.isEmpty(email)) {
-            mInputEmailEt.setError("Required");
+            inputEmailLayout.setErrorEnabled(true);
+            inputEmailLayout.setError("You need to enter an email");
             valid = false;
         } else {
-            mInputEmailEt.setError(null);
+            inputEmailLayout.setError(null);
+            inputEmailLayout.setErrorEnabled(false);
         }
 
-        String password = mInputPasswordEt.getText().toString();
+        String password = inputPassordEt.getText().toString();
         if (TextUtils.isEmpty(password)) {
-            mInputPasswordEt.setError("Required");
+            inputPasswordLayout.setErrorEnabled(true);
+            inputPasswordLayout.setError("You need to enter a password");
             valid = false;
         } else {
-            mInputPasswordEt.setError(null);
+            inputPasswordLayout.setError(null);
+            inputPasswordLayout.setErrorEnabled(false);
         }
         return valid;
     }
@@ -223,18 +247,18 @@ public class LoginActivity extends Activity {
      * @param msg custom text
      */
     public void startLoadAnim(String msg) {
-        mAvi.smoothToShow();
-        mLoadTxt.setText(msg);
-        mLoadTxt.setVisibility(View.VISIBLE);
-        mLoginContainer.setVisibility(View.INVISIBLE);
+        avi.smoothToShow();
+        loadTv.setText(msg);
+        loadTv.setVisibility(View.VISIBLE);
+        loginContainer.setVisibility(View.INVISIBLE);
     }
 
     /**
      * Stops the loading animation in case of failure and shows the content view.
      */
     public void stopLoadAnim() {
-        mAvi.smoothToHide();
-        mLoadTxt.setVisibility(View.INVISIBLE);
-        mLoginContainer.setVisibility(View.VISIBLE);
+        avi.smoothToHide();
+        loadTv.setVisibility(View.INVISIBLE);
+        loginContainer.setVisibility(View.VISIBLE);
     }
 }

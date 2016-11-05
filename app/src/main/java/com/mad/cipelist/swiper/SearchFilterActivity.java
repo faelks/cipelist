@@ -1,10 +1,13 @@
 package com.mad.cipelist.swiper;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -32,28 +35,84 @@ public class SearchFilterActivity extends BaseActivity {
     final static String QUERY = "query";
     final static String MAX_TIME = "max time";
 
-    @BindView(R.id.query_et)
+    @BindView(R.id.sf_query_et)
     EditText queryEt;
-    @BindView(R.id.diet_spinner)
+    @BindView(R.id.sf_query_container)
+    RelativeLayout queryContainer;
+    @BindView(R.id.sf_diet_spinner)
     MultiSelectionSpinner dietSpinner;
-    @BindView(R.id.cuisine_spinner)
+    @BindView(R.id.sf_diet_container)
+    RelativeLayout dietContainer;
+    @BindView(R.id.sf_cuisine_container)
+    RelativeLayout cuisineContainer;
+    @BindView(R.id.sf_cuisine_spinner)
     MultiSelectionSpinner cuisineSpinner;
-    @BindView(R.id.allergies_spinner)
+    @BindView(R.id.sf_allergies_spinner)
     MultiSelectionSpinner allergiesSpinner;
-    @BindView(R.id.course_spinner)
+    @BindView(R.id.sf_allergies_container)
+    RelativeLayout allergiesContainer;
+    @BindView(R.id.sf_course_spinner)
     MultiSelectionSpinner courseSpinner;
-    @BindView(R.id.cooking_time_tv)
+    @BindView(R.id.sf_course_container)
+    RelativeLayout courseContainer;
+    @BindView(R.id.sf_cooking_time_tv)
     TextView cookingTimeTv;
-    @BindView(R.id.cooking_time_bar)
+    @BindView(R.id.sf_cooking_time_bar)
     SeekBar cookingTimeSeekBar;
-    @BindView(R.id.recipe_amount_tv)
+    @BindView(R.id.sf_cooking_time_container)
+    RelativeLayout cookingTimeContainer;
+    @BindView(R.id.sf_recipe_amount_tv)
     TextView recipeAmountTv;
-    @BindView(R.id.recipe_amount_bar)
+    @BindView(R.id.sf_recipe_amount_bar)
     SeekBar recipeAmountSeekBar;
-    @BindView(R.id.start_search_btn)
+    @BindView(R.id.sf_recipe_amount_container)
+    RelativeLayout recipeAmountContainer;
+    @BindView(R.id.sf_start_search_btn)
     Button startSearchBtn;
 
-    @OnClick(R.id.start_search_btn)
+    @OnClick(R.id.sf_query_container)
+    public void queryClick() {
+        queryEt.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        queryContainer.setAlpha(1);
+    }
+
+    @OnClick(R.id.sf_diet_container)
+    public void dietClick() {
+        dietSpinner.performClick();
+        dietContainer.setAlpha(1);
+    }
+
+    @OnClick(R.id.sf_cuisine_container)
+    public void cuisineClick() {
+        cuisineSpinner.performClick();
+        cuisineContainer.setAlpha(1);
+    }
+
+    @OnClick(R.id.sf_allergies_container)
+    public void allergiesClick() {
+        allergiesSpinner.performClick();
+        allergiesContainer.setAlpha(1);
+    }
+
+    @OnClick(R.id.sf_course_container)
+    public void courseClick() {
+        courseSpinner.performClick();
+        courseContainer.setAlpha(1);
+    }
+
+    @OnClick(R.id.sf_cooking_time_container)
+    public void cookingTimeClick() {
+        cookingTimeContainer.setAlpha(1);
+    }
+
+    @OnClick(R.id.sf_recipe_amount_container)
+    public void recipeAmountClick() {
+        recipeAmountContainer.setAlpha(1);
+    }
+
+    @OnClick(R.id.sf_start_search_btn)
     public void startSearch() {
         Intent swiperIntent = new Intent(SearchFilterActivity.this, SwiperActivity.class);
         swiperIntent.putExtra("recipeAmount", 7);
@@ -132,6 +191,7 @@ public class SearchFilterActivity extends BaseActivity {
             }
         });
     }
+
 
     /**
      * Loads a spinner based on the passed in parameters.
