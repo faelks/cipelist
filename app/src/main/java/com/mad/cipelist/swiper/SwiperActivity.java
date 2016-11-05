@@ -77,7 +77,7 @@ public class SwiperActivity extends BaseActivity {
         mSelectedRecipes = new ArrayList<>();
 
         // Getting things passed by the searchfilteractivity
-        mRecipeAmount = getIntent().getIntExtra("recipeAmount", 0);
+        mRecipeAmount = getIntent().getIntExtra(SearchFilterActivity.RECIPE_AMOUNT, 0);
         swipeProgressBar.setMax(mRecipeAmount);
 
         // Creates a search filter using passed parameters

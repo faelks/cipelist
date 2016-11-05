@@ -22,13 +22,13 @@ public class RecipeCard {
 
     //public static final String EVENT_LOGTAG = "Event";
 
-    @View(R.id.profileImageView)
+    @View(R.id.recipe_iv)
     private ImageView recipeImageView;
 
-    @View(R.id.recipeNameTxt)
+    @View(R.id.swiper_recipe_name)
     private TextView recipeNameTxt;
 
-    @View(R.id.timeAndRatingTxt)
+    @View(R.id.swiper_recipe_details)
     private TextView timeAndRatingTxt;
 
     private Context mContext;

@@ -1,78 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8sp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <LinearLayout
-        android:id="@+id/recipe_detail_container"
+    <TextView
+        android:id="@+id/recipe_title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:alpha="0.8"
+        android:background="@color/colorPrimaryDark"
+        android:padding="20dp"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/recipe_detail_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recipe_title"
+        android:contentDescription="@string/recipe_detail_image" />
+
+    <LinearLayout
+        android:id="@+id/recipe_detail_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recipe_detail_image"
         android:background="@color/white"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="20sp">
 
         <TextView
-            android:id="@+id/recipe_title"
-            android:layout_width="match_parent"
+            android:id="@+id/recipe_cooking_time"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryDark"
-            android:padding="8sp"
-            android:textColor="@color/white"
+            android:layout_gravity="start"
+            android:layout_weight="1"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <RelativeLayout
+        <TextView
+            android:id="@+id/recipe_prep_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:padding="3sp">
-
-            <ImageView
-                android:id="@+id/recipe_detail_image"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/recipe_detail_image" />
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16sp">
-
-            <TextView
-                android:id="@+id/recipe_cooking_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_weight="1"
-                android:textAlignment="textStart" />
-
-            <TextView
-                android:id="@+id/recipe_prep_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_weight="1"
-                android:textAlignment="textEnd" />
-
-        </LinearLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recipe_ingredient_lines"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/recipe_launch_source_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:text="@string/view_cooking_instuctions" />
+            android:layout_gravity="end"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:textStyle="normal" />
 
     </LinearLayout>
 
-</FrameLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recipe_ingredient_lines"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recipe_detail_info"
+        android:background="@color/white" />
+
+    <Button
+        android:id="@+id/recipe_launch_source_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="10dp"
+        android:text="@string/view_cooking_instuctions" />
+
+</RelativeLayout>

@@ -74,12 +74,12 @@ public class GroceryListFragment extends Fragment {
         Type type = new TypeToken<List<String>>() {
         }.getType();
 
-        ArrayList<String> finalIngredients = new ArrayList<>();
+
         HashMap<String, List<String>> ingredientAmount = new HashMap<>();
 
-        headers.add("Ingredients");
         for (LocalRecipe r : recipes) {
-
+            headers.add(r.getRecipeName());
+            ArrayList<String> finalIngredients = new ArrayList<>();
             ArrayList<String> ingredientLines = new Gson().fromJson(r.getIngredientLines(), type);
             ArrayList<String> ingredients = new Gson().fromJson(r.getIngredients(), type);
 
@@ -132,34 +132,31 @@ public class GroceryListFragment extends Fragment {
                 amounts.add(amount);
                 ingredientAmount.put(ingredient, amounts);
             }
-        }
+            for (String s : ingredientAmount.keySet()) {
+                List<String> values = ingredientAmount.get(s);
+                String result;
 
-        for (String s : ingredientAmount.keySet()) {
-            List<String> values = ingredientAmount.get(s);
-            String result;
-
-            String[] defaults = {"salt", "pepper", "ginger", "starch", "oil", "broth", "parsley", "garlic"};
-            for (String def : defaults) {
-                if (s.contains(def)) {
-                    result = s;
+                String[] defaults = {"salt", "pepper", "ginger", "starch", "oil", "broth", "parsley", "garlic"};
+                for (String def : defaults) {
+                    if (s.contains(def)) {
+                        result = s;
+                    }
                 }
-            }
 
-            if (values.size() == 1) {
-                result = values.get(0) + " " + s;
-            } else {
-                String condensed = getCondensedAmount(values);
-                if (condensed != null) {
-                    result = condensed + " " + s;
+                if (values.size() == 1) {
+                    result = values.get(0) + " " + s;
                 } else {
-                    result = s;
+                    String condensed = getCondensedAmount(values);
+                    if (condensed != null) {
+                        result = condensed + " " + s;
+                    } else {
+                        result = s;
+                    }
                 }
+                finalIngredients.add(result);
             }
-            finalIngredients.add(result);
+            dataChild.put(r.getRecipeName(), finalIngredients);
         }
-
-        dataChild.put("Ingredients", finalIngredients);
-
     }
 
     public String getCondensedAmount(List<String> values) {

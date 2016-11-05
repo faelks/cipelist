@@ -16,32 +16,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:alpha="0.7"
+        android:background="@color/colorPrimaryDark"
         android:orientation="vertical"
-        android:visibility="invisible">
+        android:padding="12dp">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/recipe_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="1"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/recipe_ingredient_amount_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10sp">
-
-            <TextView
-                android:id="@+id/recipe_title_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:alpha="1"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/recipe_ingredient_amount_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:alpha="1"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-        </LinearLayout>
+            android:alpha="1"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
 
     </LinearLayout>
 

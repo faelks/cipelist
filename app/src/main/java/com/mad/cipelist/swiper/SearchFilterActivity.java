@@ -33,7 +33,8 @@ public class SearchFilterActivity extends BaseActivity {
     final static String ALLERGY = "allergy";
     final static String COURSE = "course";
     final static String QUERY = "query";
-    final static String MAX_TIME = "max time";
+    final static String MAX_TIME = "maxTime";
+    static final String RECIPE_AMOUNT = "recipeAmount";
 
     @BindView(R.id.sf_query_et)
     EditText queryEt;
@@ -115,7 +116,6 @@ public class SearchFilterActivity extends BaseActivity {
     @OnClick(R.id.sf_start_search_btn)
     public void startSearch() {
         Intent swiperIntent = new Intent(SearchFilterActivity.this, SwiperActivity.class);
-        swiperIntent.putExtra("recipeAmount", 7);
         swiperIntent.putExtras(createSearchFilter());
         startActivity(swiperIntent);
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
@@ -211,21 +211,24 @@ public class SearchFilterActivity extends BaseActivity {
      * via the intent to the Swiper class.
      */
     public Bundle createSearchFilter() {
-        // Extract and save all the data that the user has selected and pass this data to the swiper activity?
+        // Extract and save all the data that the user has selected and pass this data to the swiper activity
+        ArrayList<String> query = formatQueryString(queryEt.getText().toString());
         ArrayList<String> diets = formatDietsForHttp(dietSpinner.getSelectedStrings());
         ArrayList<String> cuisines = formatCuisinesForHttp(cuisineSpinner.getSelectedStrings());
         ArrayList<String> allergies = formatAllergiesForHttp(allergiesSpinner.getSelectedStrings());
         ArrayList<String> courses = formatCoursesForHttp(courseSpinner.getSelectedStrings());
-        Integer maxTime = formatMaxTimeForHttp(cookingTimeSeekBar.getProgress());
-        ArrayList<String> query = formatQueryString(queryEt.getText().toString());
+        int maxTime = formatMaxTimeForHttp(cookingTimeSeekBar.getProgress());
+        int recipeAmount = recipeAmountSeekBar.getProgress();
+
 
         Bundle searchFilter = new Bundle();
+        searchFilter.putStringArrayList(QUERY, query);
         searchFilter.putStringArrayList(DIET, diets);
         searchFilter.putStringArrayList(CUISINE, cuisines);
         searchFilter.putStringArrayList(ALLERGY, allergies);
         searchFilter.putStringArrayList(COURSE, courses);
-        searchFilter.putStringArrayList(QUERY, query);
         searchFilter.putInt(MAX_TIME, maxTime);
+        searchFilter.putInt(RECIPE_AMOUNT, recipeAmount);
 
         return searchFilter;
 

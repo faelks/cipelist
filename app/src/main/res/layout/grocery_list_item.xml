@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:layout_height="30dp"
+    android:alpha="0.8"
+    android:background="@color/white"
+    android:orientation="horizontal"
+    android:padding="8dp">
 
     <CheckBox
         android:id="@+id/item_acquired_checkbox"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:padding="10dp" />
 
     <TextView
         android:id="@+id/lblListItem"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="5dp"
-        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
         android:paddingTop="5dp"
-        android:textSize="17sp" />
+        android:textSize="18sp" />
 
 </LinearLayout>

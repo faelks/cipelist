@@ -164,6 +164,11 @@
     <string name="delete">Delete</string>
     <string name="select_action">Select Action</string>
     <string name="enter_query_phrases">Enter query phrases</string>
+    <string name="an_image_of_a_recipe">An image of a recipe</string>
+    <string name="no_thanks">No Thanks!</string>
+    <string name="accept">Accept</string>
+    <string name="button_for_disliked_recipes">Button for disliked recipes</string>
+    <string name="button_for_liked_recipes">Button for liked recipes</string>
 
     <string-array name="diet_items">
         <item>Lacto Vegetarian</item>
