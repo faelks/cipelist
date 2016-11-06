@@ -3,6 +3,8 @@ package com.mad.cipelist.swiper;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +23,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTouch;
 
 /**
  * Displays search filter options to the user.
@@ -70,6 +73,12 @@ public class SearchFilterActivity extends BaseActivity {
     RelativeLayout recipeAmountContainer;
     @BindView(R.id.sf_start_search_btn)
     Button startSearchBtn;
+
+    @OnTouch(R.id.sf_query_et)
+    public boolean onQueryTouch() {
+        queryContainer.setAlpha(1);
+        return false;
+    }
 
     @OnClick(R.id.sf_query_container)
     public void queryClick() {
@@ -131,10 +140,10 @@ public class SearchFilterActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         // Load spinners with items
-        loadSpinner(dietSpinner, R.array.diet_items, "Select Diet");
-        loadSpinner(cuisineSpinner, R.array.cuisine_items, "Select Cuisine");
-        loadSpinner(allergiesSpinner, R.array.allergy_items, "Select Allergies");
-        loadSpinner(courseSpinner, R.array.course_items, "Select Courses");
+        loadSpinner(dietSpinner, R.array.diet_items, "Select Diet", dietContainer);
+        loadSpinner(cuisineSpinner, R.array.cuisine_items, "Select Cuisine", cuisineContainer);
+        loadSpinner(allergiesSpinner, R.array.allergy_items, "Select Allergies", allergiesContainer);
+        loadSpinner(courseSpinner, R.array.course_items, "Select Courses", courseContainer);
 
         cookingTimeSeekBar.setProgress(2);
         cookingTimeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -200,10 +209,17 @@ public class SearchFilterActivity extends BaseActivity {
      * @param arrayId the identifier for the spinners items
      * @param title the name of the attribute
      */
-    public void loadSpinner(MultiSelectionSpinner spinner, int arrayId, String title) {
+    public void loadSpinner(MultiSelectionSpinner spinner, int arrayId, String title, final RelativeLayout container) {
         spinner.setItems(getResources().getStringArray(arrayId));
         spinner.setDefaultText("None Selected");
         spinner.setTitle(title);
+        spinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                container.setAlpha(1);
+                return false;
+            }
+        });
     }
 
     /**

@@ -28,6 +28,7 @@ import java.util.List;
 public class GroceryListFragment extends Fragment {
 
     String[] measurements = {"lbs.", "lb", "envelope", "slices", "cloves", "sprigs", "pound", "pounds", "tbsp", "tablespoons", "tablespoon", "tsp", "teaspoon", "teaspoons", "oz.", "oz", "ounces", "containers", "cup", "cups", "handful", "pint", "jar", "can", "box"};
+    String[] defaults = {"salt", "pepper", "ginger", "starch", "broth", "parsley", "garlic", "basil"};
 
     HashMap<String, List<String>> dataChild;
     private String mSearchId;
@@ -70,6 +71,12 @@ public class GroceryListFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Removes all trailing "s" and "es" to convert all ingredients to singular form for easier processing
+     *
+     * @param list list to be modified
+     * @return modified list
+     */
     private ArrayList<String> removePlurals(ArrayList<String> list) {
         for (int i = 0; i < list.size() - 1; i++) {
             if (list.get(i).matches(".+s")) {
@@ -82,7 +89,7 @@ public class GroceryListFragment extends Fragment {
     }
 
     /**
-     * Retrieves the ingredients that correspond to the particular search and displays them in an Expandable View
+     * Retrieves the ingredients that correspond to the particular search and injects them into the global variables
      */
     private void initDataset(String searchId) {
         List<LocalRecipe> recipes = LocalRecipe.find(LocalRecipe.class, "search_id = ?", searchId);
@@ -100,12 +107,23 @@ public class GroceryListFragment extends Fragment {
             HashMap<String, List<String>> ingredientToAmounts = new HashMap<>();
             ingredients = removePlurals(ingredients);
 
+            String lastDefault, ingredientName, ingredientAmount;
+            lastDefault = ingredientName = ingredientAmount = "";
+
+
             for (String ingredientLine : ingredientLines) {
                 ingredientLine = ingredientLine.toLowerCase().trim();
-                String ingredientName = findAssociatedIngredientName(ingredientLine, ingredients);
-                String ingredientAmount = extractIngredientAmountFromLine(ingredientLine);
 
-                ingredientName = convertToDefaultIngredient(ingredientName);
+                if (isDefaultIngredient(ingredientLine, lastDefault) != null) {
+                    lastDefault = isDefaultIngredient(ingredientLine, lastDefault);
+                    ingredientName = lastDefault;
+                } else {
+                    ingredientName = findAssociatedIngredientName(ingredientLine, ingredients);
+                    ingredientName = convertToDefaultIngredient(ingredientName);
+                }
+
+                ingredientAmount = extractIngredientAmountFromLine(ingredientLine);
+
                 if (ingredientToAmounts.get(ingredientName) != null) {
                     ingredientToAmounts.get(ingredientName).add(ingredientAmount);
                 } else {
@@ -118,6 +136,29 @@ public class GroceryListFragment extends Fragment {
         }
     }
 
+    /**
+     * Checks to see if the ingredient line might be one of several default ingredients. Uses a last
+     * default value to avoid duplicate findings.
+     *
+     * @param ingredientLine the line to be processed
+     * @param lastDefault    the last default that was found
+     * @return the matching default ingredient or null if not found
+     */
+    private String isDefaultIngredient(String ingredientLine, String lastDefault) {
+        for (String s : defaults) {
+            if (!s.equals(lastDefault) && ingredientLine.contains(s)) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Process the ingredient line and try to match it to a string from the the ingredient array.
+     * @param ingredientLine The line that could contain an ingredient name
+     * @param ingredients list of ingredient
+     * @return the name of the matched ingredinent
+     */
     private String findAssociatedIngredientName(String ingredientLine, ArrayList<String> ingredients) {
 
         for (String i : ingredients) {
@@ -147,8 +188,13 @@ public class GroceryListFragment extends Fragment {
         return "default";
     }
 
+    /**
+     * Extract the amount of an ingredient from the ingredient line.
+     * @param ingredientLine the line to be processed
+     * @return the amount of the ingredient in the line
+     */
     private String extractIngredientAmountFromLine(String ingredientLine) {
-        String ingredientAmount = "N/A";
+        String ingredientAmount = "";
         String[] line = ingredientLine.split(" ");
         if (line[0] != null && (line[0].matches("[0-9½⅓¼]+") || line[0].matches("[0-9]+/[0-9]+"))) {
             ingredientAmount = (!line[0].matches("0")) ? line[0] + " " : "";
@@ -160,7 +206,7 @@ public class GroceryListFragment extends Fragment {
                     }
                 }
                 if (line[1].matches("[0-9½⅓¼]+")) {
-                    ingredientAmount += " " + line[1];
+                    ingredientAmount += line[1] + " ";
                     if (!line[2].isEmpty()) {
                         for (String m : measurements) {
                             if (m.contains(line[2])) {
@@ -180,8 +226,12 @@ public class GroceryListFragment extends Fragment {
         return ingredientAmount;
     }
 
+    /**
+     * Attempts to convert the the ingredient to one of the default values
+     * @param ingredientName the name of the ingredient to be processed
+     * @return the default value or the original value if no match found
+     */
     private String convertToDefaultIngredient(String ingredientName) {
-        String[] defaults = {"salt", "pepper", "ginger", "starch", "oil", "broth", "parsley", "garlic", "basil"};
 
         for (String defaultIngredient : defaults) {
             if (ingredientName.contains(defaultIngredient)) {
@@ -191,6 +241,11 @@ public class GroceryListFragment extends Fragment {
         return ingredientName;
     }
 
+    /**
+     * Condense the amounts matched to a certain ingredient to a single value
+     * @param recipeHashMap the ingredient to amount hashmap
+     * @return A list of strings in the format : {amount + " " + ingredient}
+     */
     private List<String> condenseIngredientAmounts(HashMap<String, List<String>> recipeHashMap) {
 
         ArrayList<String> finalIngredientAmounts = new ArrayList<>();
@@ -200,7 +255,8 @@ public class GroceryListFragment extends Fragment {
             List<String> amounts = recipeHashMap.get(ingredient);
 
             if (amounts.size() == 1) {
-                finalIngredientAmounts.add(amounts.get(0) + " " + ingredient);
+                String amount = (!amounts.get(0).isEmpty()) ? amounts.get(0) + " " : "";
+                finalIngredientAmounts.add(amount + ingredient);
             } else {
                 String condensedAmount = getCondensedAmount(amounts);
                 if (condensedAmount != null) {
@@ -215,6 +271,11 @@ public class GroceryListFragment extends Fragment {
         return finalIngredientAmounts;
     }
 
+    /**
+     * Condenses several amounts into one single value using the measurement type of the first item processed
+     * @param amounts list of different amounts
+     * @return a final amount or null if not matchable
+     */
     public String getCondensedAmount(List<String> amounts) {
 
         String measurement = "";
@@ -222,16 +283,16 @@ public class GroceryListFragment extends Fragment {
         List<String> unresolveds = new ArrayList<>();
 
         for (String amountLine : amounts) {
-            if (!amountLine.contains("N/A")) {
+            if (amountLine.isEmpty()) {
                 return null;
             } else {
                 String[] splitAmount = amountLine.split(" ");
 
                 if (splitAmount[0].matches("[0-9/]+")) {
-                    if (measurement.isEmpty() && !splitAmount[1].matches("[0-9]+")) {
+                    if (measurement.isEmpty() && splitAmount.length > 1 && !splitAmount[1].matches("[0-9]+")) {
                         measurement = splitAmount[1];
                     }
-                    if (measurement.contains(splitAmount[1])) {
+                    if (splitAmount.length > 1 && measurement.contains(splitAmount[1])) {
                         if (splitAmount[0].matches("[0-9]+")) {
                             amount += Integer.parseInt(splitAmount[0]);
                         } else if (splitAmount[0].matches("[0-9]/[0-9]")) {
@@ -247,20 +308,11 @@ public class GroceryListFragment extends Fragment {
             }
         }
         Log.d("G", unresolveds.toString());
-        if (amount != 0) {
+        if (amount != 0 && !measurement.isEmpty()) {
             return amount + " " + measurement;
         } else {
             return null;
         }
-        /*
-        if (split[0].matches("[0-9]+")) {
-            integers.add(Integer.parseInt(split[0]));
-        } else if (split[0].matches("[0-9]/[0-9]")) {
-            int numerator = Integer.parseInt(split[0].substring(0,1));
-            int denominator = Integer.parseInt(split[0].substring(2,3));
-            integers.add(numerator/denominator);
-        }
-        */
     }
 }
 

@@ -64,6 +64,7 @@ public class SwiperActivity extends BaseActivity {
     private Context mContext;
     private SearchFilter mFilter;
     private ArrayList<String> mQueries;
+    private int mQueriesAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +84,7 @@ public class SwiperActivity extends BaseActivity {
         // Creates a search filter using passed parameters
         mFilter = createSearchFilter();
         mQueries = getIntent().getExtras().getStringArrayList(SearchFilterActivity.QUERY);
+        mQueriesAmount = (mQueries != null && !mQueries.isEmpty()) ? mQueries.size() : 1;
 
         // Creates a swipe view with specified layout
         swipeView.getBuilder()
@@ -187,7 +189,7 @@ public class SwiperActivity extends BaseActivity {
      * Adds cards from the global variable mRecipes to the SwipeView.
      */
     public void addCards(List<LocalRecipe> recipes) {
-
+        stopLoadAnim(avi, loadText);
         mRecipeLoadCount += 10;
 
         try {
@@ -203,11 +205,7 @@ public class SwiperActivity extends BaseActivity {
                         mSelectedRecipes.add(recipe);
                         swipeProgressBar.setProgress(mSelectedRecipes.size());
 
-                        if (mSelectedRecipes.size() >= mRecipeAmount) {
-                            onSwipeLimitReached();
-                        } else if (mSwipeCount >= (mRecipeLoadCount * mQueries.size() - 5)) {
-                            new AsyncRecipeLoader(mFilter).execute();
-                        }
+                        handleSwipeCount();
                         Log.d("EVENT", "onSwipedIn");
 
 
@@ -216,9 +214,7 @@ public class SwiperActivity extends BaseActivity {
                     @Override
                     public void onSwipedOut() {
                         mSwipeCount++;
-                        if (mSwipeCount >= (mRecipeLoadCount * mQueries.size() - 5)) {
-                            new AsyncRecipeLoader(mFilter).execute();
-                        }
+                        handleSwipeCount();
                     }
 
 
@@ -226,6 +222,20 @@ public class SwiperActivity extends BaseActivity {
             }
         } catch (NullPointerException n) {
             Log.d(SWIPER_LOGTAG, "SwiperActivity could not retrieve json data, a null pointer exception was thrown");
+        }
+    }
+
+    /**
+     * Calculates the amount of recipes selected and the recipes left in the stack and acts accordingly.
+     */
+    private void handleSwipeCount() {
+        if (mSelectedRecipes.size() >= mRecipeAmount) {
+            onSwipeLimitReached();
+        } else if (mSwipeCount >= (mRecipeLoadCount * mQueriesAmount - 5)) {
+            new AsyncRecipeLoader(mFilter).execute();
+        }
+        if (mSwipeCount >= mRecipeLoadCount) {
+            startLoadAnim(avi, loadText, "Loading more recipes");
         }
     }
 
@@ -251,7 +261,7 @@ public class SwiperActivity extends BaseActivity {
         @Override
         protected List<LocalRecipe> doInBackground(String... strings) {
             // MockLoader that retrieves recipes from a locally saved search in case it matches the criteria
-            if (mQueries != null && mQueries.get(0).equals("pasta") && mQueries.get(1).equals("pizza") && mQueries.get(2).equals("burger")) {
+            if (mQueries != null && mQueries.size() >= 3 && mQueries.get(0).equals("pasta") && mQueries.get(1).equals("pizza") && mQueries.get(2).equals("burger")) {
                 RecipeLoader loader = new MockRecipeLoader(getApplicationContext());
                 try {
                     Thread.sleep(1000);
@@ -270,7 +280,10 @@ public class SwiperActivity extends BaseActivity {
                 }
             }
 
-            response.addAll(mLoader.getRecipes(null));
+            List<LocalRecipe> filler = mLoader.getRecipes(null);
+            if (filler != null) {
+                response.addAll(filler);
+            }
             Collections.shuffle(response);
             return new ArrayList<>(new LinkedHashSet<>(response));
         }
