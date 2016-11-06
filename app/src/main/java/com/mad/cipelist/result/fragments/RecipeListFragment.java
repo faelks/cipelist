@@ -97,7 +97,7 @@ public class RecipeListFragment extends Fragment {
         Intent recipeDetailIntent = new Intent(getActivity(), RecipeDetail.class);
         recipeDetailIntent.putExtra("recipeId", recipe.getmId());
         getActivity().startActivity(recipeDetailIntent);
-        getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     @Override

@@ -118,7 +118,7 @@ public class SearchFilterActivity extends BaseActivity {
         Intent swiperIntent = new Intent(SearchFilterActivity.this, SwiperActivity.class);
         swiperIntent.putExtras(createSearchFilter());
         startActivity(swiperIntent);
-        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         finish();
     }
 

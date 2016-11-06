@@ -139,7 +139,7 @@ public class MainActivity extends BaseActivity {
     public void startNewSearchActivity() {
         Intent intent = new Intent(this, SearchFilterActivity.class);
         startActivity(intent);
-        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     /**
@@ -158,7 +158,7 @@ public class MainActivity extends BaseActivity {
         Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
         shoppingListIntent.putExtra(SwiperActivity.SEARCH_ID, searchId);
         startActivity(shoppingListIntent);
-        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     /**
@@ -208,7 +208,7 @@ public class MainActivity extends BaseActivity {
                 Intent loginIntent = new Intent(this, LoginActivity.class);
                 startActivity(loginIntent);
                 finish();
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 return true;
             case R.id.action_clear_searches:
                 for (LocalSearch search : mLocalSearches) {

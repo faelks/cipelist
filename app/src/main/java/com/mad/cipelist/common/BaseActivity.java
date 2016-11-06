@@ -62,7 +62,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     case R.id.nav_swiper:
                         Intent searchIntent = new Intent(getApplicationContext(), SearchFilterActivity.class);
                         startActivity(searchIntent);
-                        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         drawerLayout.closeDrawers();
                         break;
                     case R.id.nav_home:
@@ -108,6 +108,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             finish();
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }
     }
 

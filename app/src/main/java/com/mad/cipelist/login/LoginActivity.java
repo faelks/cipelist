@@ -112,7 +112,7 @@ public class LoginActivity extends Activity {
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                     finish();
-                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
