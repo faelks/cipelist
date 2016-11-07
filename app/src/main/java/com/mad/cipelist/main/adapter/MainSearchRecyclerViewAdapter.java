@@ -61,7 +61,7 @@ public class MainSearchRecyclerViewAdapter extends RecyclerView
 
     @Override
     public void onBindViewHolder(final SearchHolder holder, int position) {
-        String viewTitle = "Search " + (position + 1);
+        String viewTitle = (mDataset.get(position).title != null) ? mDataset.get(position).title : "Search " + (position + 1);
         String nOfRecipes = "No. Recipes: " + mDataset.get(position).getRecipes().size();
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatter = new SimpleDateFormat("MMMM d", Locale.US);

@@ -150,10 +150,26 @@ public class SwiperActivity extends BaseActivity {
         search.userId = getUserId();
         search.searchId = mFilter.getSearchId();
         search.searchTimeStamp = Utils.getCurrentDate();
+        search.title = getSearchTitle();
         search.save();
         startLoadAnim(avi, loadText, "Saving Recipes");
         new AsyncRecipeUpdate(mSelectedRecipes).execute();
 
+    }
+
+    private String getSearchTitle() {
+        String title = "";
+        if (mQueries != null && !mQueries.isEmpty()) {
+            for (String query : mQueries) {
+                title += query + ", ";
+            }
+            // Capitalize first word
+            title = Character.toString(title.charAt(0)).toUpperCase() + title.substring(1);
+            // To remove the trailing comma
+            title = title.substring(0, title.length() - 2);
+            return title;
+        }
+        return null;
     }
 
     /**

@@ -16,7 +16,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Only used while testing with reoccuring restarts
-        //Utils.resetDatabase(this.getApplicationContext());
+        // Utils.resetDatabase(this.getApplicationContext());
 
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);

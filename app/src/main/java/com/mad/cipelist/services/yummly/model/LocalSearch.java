@@ -11,6 +11,7 @@ public class LocalSearch extends SugarRecord{
     public String searchId;
     public String userId;
     public String searchTimeStamp;
+    public String title;
 
     public LocalSearch() {
     }

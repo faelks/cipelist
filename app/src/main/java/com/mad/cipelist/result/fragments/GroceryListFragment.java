@@ -1,6 +1,7 @@
 package com.mad.cipelist.result.fragments;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -17,6 +19,7 @@ import com.mad.cipelist.services.yummly.model.LocalRecipe;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,13 +32,21 @@ public class GroceryListFragment extends Fragment {
 
     String[] measurements = {"lbs.", "lb", "envelope", "slices", "cloves", "sprigs", "pound", "pounds", "tbsp", "tablespoons", "tablespoon", "tsp", "teaspoon", "teaspoons", "oz.", "oz", "ounces", "containers", "cup", "cups", "handful", "pint", "jar", "can", "box"};
     String[] defaults = {"salt", "pepper", "ginger", "starch", "broth", "parsley", "garlic", "basil"};
+    HashMap<String, List<String>> ingredientTypes;
 
-    HashMap<String, List<String>> dataChild;
-    private String mSearchId;
+    private HashMap<String, List<String>> dataChildPerRecipe;
+    private HashMap<String, List<String>> dataChildPerIngredientType;
+
+    private List<String> ingredientTypeHeaders;
+    private List<String> recipeHeaders;
+    
     private ExpandableListView mGroceriesElv;
-    private ExpandableListAdapter mGroceriesAdapter;
-    private ArrayList<String> mIngredients;
-    private List<String> headers;
+    private ExpandableListAdapter mRecipeGroceriesAdapter;
+    private ExpandableListAdapter mIngredientTypeGroceriesAdapter;
+
+    private FloatingActionButton swapSortingFab;
+    private SortingStyle mCurrentSorting;
+    private ProgressBar mProgressBar;
 
     // newInstance constructor for creating fragment with arguments
     public static GroceryListFragment newInstance(String title, String searchId) {
@@ -53,6 +64,8 @@ public class GroceryListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mCurrentSorting = SortingStyle.RECIPE;
+
         initDataset(getArguments().getString("searchId"));
 
     }
@@ -64,11 +77,119 @@ public class GroceryListFragment extends Fragment {
         View view = inflater.inflate(R.layout.grocery_list_frag, container, false);
 
         mGroceriesElv = (ExpandableListView) view.findViewById(R.id.groceries_expandable_view);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.grocery_list_progress_bar);
 
-        mGroceriesAdapter = new GroceriesAdapter(this.getContext(), headers, dataChild);
-        mGroceriesElv.setAdapter(mGroceriesAdapter);
+        mRecipeGroceriesAdapter = new GroceriesAdapter(this.getContext(), recipeHeaders, dataChildPerRecipe);
+        mGroceriesElv.setAdapter(mRecipeGroceriesAdapter);
+
+        swapSortingFab = (FloatingActionButton) view.findViewById(R.id.swap_sorting_fab);
+        swapSortingFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                swapSorting(mCurrentSorting);
+            }
+        });
 
         return view;
+    }
+
+    private void swapSorting(SortingStyle sortingStyle) {
+        mGroceriesElv.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
+        switch (sortingStyle) {
+            case INGREDIENT_TYPE:
+                mGroceriesElv.setAdapter(mRecipeGroceriesAdapter);
+                mGroceriesElv.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.INVISIBLE);
+                mCurrentSorting = SortingStyle.RECIPE;
+                break;
+            case RECIPE:
+                swapToIngredientTypeSort();
+                mGroceriesElv.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.INVISIBLE);
+                mCurrentSorting = SortingStyle.INGREDIENT_TYPE;
+                break;
+        }
+    }
+
+    private void swapToIngredientTypeSort() {
+        ArrayList<String> ingredients = new ArrayList<>();
+        for (String recipe : dataChildPerRecipe.keySet()) {
+            for (String ingredient : dataChildPerRecipe.get(recipe)) {
+                ingredients.add(ingredient);
+            }
+        }
+
+        initialiseIngredientTypeMap();
+        mapIngredientToTypes(ingredients);
+        ingredientTypeHeaders = new ArrayList<>();
+        for (String type : dataChildPerIngredientType.keySet()) {
+            ingredientTypeHeaders.add(type);
+        }
+
+        joinEqualLines(dataChildPerIngredientType);
+
+        mIngredientTypeGroceriesAdapter = new GroceriesAdapter(this.getContext(), ingredientTypeHeaders, dataChildPerIngredientType);
+        mGroceriesElv.setAdapter(mIngredientTypeGroceriesAdapter);
+
+    }
+
+    private void joinEqualLines(HashMap<String, List<String>> mapWithIngredients) {
+        ArrayList<String> ingredients = new ArrayList<>();
+        for (String key : mapWithIngredients.keySet()) {
+            switch (key) {
+                case "Dairy":
+                    HashMap<String, List<String>> ingredientToAmount = new HashMap<>();
+                    for (String ingredient : mapWithIngredients.get(key)) {
+                        String[] ingredientSplit = ingredient.split(" ");
+                        String amount = ingredientSplit[0] + " " + ingredientSplit[1];
+                        String name = ingredient.substring(amount.length() + 1);
+                        if (name.contains("cheese")) {
+                            name = "cheese";
+                        }
+                        if (ingredientToAmount.get(name) != null) {
+                            ingredientToAmount.get(name).add(amount);
+                        } else {
+                            ArrayList<String> amounts = new ArrayList<>();
+                            amounts.add(amount);
+                            ingredientToAmount.put(name, amounts);
+                        }
+                    }
+                    for (String ingredientName : ingredientToAmount.keySet()) {
+                        String finalAmount = "";
+                        for (String amount : ingredientToAmount.get(ingredientName)) {
+                            finalAmount += amount + " ";
+                        }
+                        ingredients.add("(" + finalAmount + ") " + ingredientName);
+                    }
+                    mapWithIngredients.put(key, ingredients);
+            }
+        }
+
+    }
+
+    private void mapIngredientToTypes(List<String> ingredients) {
+        dataChildPerIngredientType = new HashMap<>();
+        String lastAddedIngredient = "";
+
+        for (String ingredient : ingredients) {
+            for (String type : ingredientTypes.keySet()) {
+                for (String ingredientInType : ingredientTypes.get(type)) {
+                    if (!lastAddedIngredient.equals(ingredient) && ingredient.contains(ingredientInType)) {
+                        if (dataChildPerIngredientType.get(type) != null) {
+                            dataChildPerIngredientType.get(type).add(ingredient);
+                            lastAddedIngredient = ingredient;
+                        } else {
+                            ArrayList<String> ingredientsOfType = new ArrayList<>();
+                            ingredientsOfType.add(ingredient);
+                            dataChildPerIngredientType.put(type, ingredientsOfType);
+                            lastAddedIngredient = ingredient;
+                        }
+                    }
+                }
+
+            }
+        }
     }
 
     /**
@@ -93,15 +214,13 @@ public class GroceryListFragment extends Fragment {
      */
     private void initDataset(String searchId) {
         List<LocalRecipe> recipes = LocalRecipe.find(LocalRecipe.class, "search_id = ?", searchId);
-        headers = new ArrayList<>();
-        dataChild = new HashMap<>();
+        recipeHeaders = new ArrayList<>();
+        dataChildPerRecipe = new HashMap<>();
         Type type = new TypeToken<List<String>>() {
         }.getType();
 
-
-
         for (LocalRecipe r : recipes) {
-            headers.add(r.getRecipeName());
+            recipeHeaders.add(r.getRecipeName());
             ArrayList<String> ingredientLines = new Gson().fromJson(r.getIngredientLines(), type);
             ArrayList<String> ingredients = new Gson().fromJson(r.getIngredients(), type);
             HashMap<String, List<String>> ingredientToAmounts = new HashMap<>();
@@ -132,7 +251,7 @@ public class GroceryListFragment extends Fragment {
                     ingredientToAmounts.put(ingredientName, amountsOfIngredient);
                 }
             }
-            dataChild.put(r.getRecipeName(), condenseIngredientAmounts(ingredientToAmounts));
+            dataChildPerRecipe.put(r.getRecipeName(), condenseIndividualIngredientAmounts(ingredientToAmounts));
         }
     }
 
@@ -246,7 +365,7 @@ public class GroceryListFragment extends Fragment {
      * @param recipeHashMap the ingredient to amount hashmap
      * @return A list of strings in the format : {amount + " " + ingredient}
      */
-    private List<String> condenseIngredientAmounts(HashMap<String, List<String>> recipeHashMap) {
+    private List<String> condenseIndividualIngredientAmounts(HashMap<String, List<String>> recipeHashMap) {
 
         ArrayList<String> finalIngredientAmounts = new ArrayList<>();
 
@@ -313,6 +432,32 @@ public class GroceryListFragment extends Fragment {
         } else {
             return null;
         }
+    }
+
+    public void initialiseIngredientTypeMap() {
+        ingredientTypes = new HashMap<>();
+
+        String[] baking = {"flour", "sugar", "balsamic vinegar", "olive oil", "balsamic reduction"};
+        String[] bakery = {"gluten-free breadcrumb", "burger buns", "thin pizza crust", "sesame seed buns"};
+        String[] condiments = {"sauce", "ketchup", "yellow mustard", "pasta sauce"};
+        String[] cannedGoods = {"black beans"};
+        String[] produce = {"shallots", "portobello mushroom", "spinach", "lettuce", "lettuce leave", "purple onion"};
+        String[] dairy = {"butter", "cheese", "parmesan cheese", "heavy cream", "mozzarella", "fresh mozarella", "shredded cheese", "grated parmesan cheese"};
+        String[] spices = {"salt", "pepper", "garlic", "parsley", "onion powder", "basil"};
+        String[] pastaOrRice = {"pasta", "rice", "fettucine pasta", "quinoa", "instant oats", "whole wheat pasta"};
+
+        ingredientTypes.put("Baking", Arrays.asList(baking));
+        ingredientTypes.put("Bakery", Arrays.asList(bakery));
+        ingredientTypes.put("Condiments", Arrays.asList(condiments));
+        ingredientTypes.put("Canned Goods", Arrays.asList(cannedGoods));
+        ingredientTypes.put("Produce", Arrays.asList(produce));
+        ingredientTypes.put("Dairy", Arrays.asList(dairy));
+        ingredientTypes.put("Spices", Arrays.asList(spices));
+        ingredientTypes.put("Pasta and Rice", Arrays.asList(pastaOrRice));
+    }
+
+    public enum SortingStyle {
+        RECIPE, INGREDIENT_TYPE
     }
 }
 
