@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,14 +19,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
 import com.mad.cipelist.main.MainActivity;
-import com.mad.cipelist.services.yummly.model.LocalRecipe;
-import com.mad.cipelist.services.yummly.model.LocalSearch;
+import com.mad.cipelist.services.model.LocalRecipe;
+import com.mad.cipelist.services.model.LocalSearch;
 import com.mad.cipelist.swiper.SearchFilterActivity;
 import com.wang.avi.AVLoadingIndicatorView;
 
 /**
  * Defines the base activity which extends certain activities in the application.
- * TODO: Add more base activities, like loader, animations, menu things? Settings?
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -35,16 +35,17 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected FirebaseAuth mAuth;
     protected Toolbar toolbar;
     protected TextView mDrawerHeaderTv;
-    DrawerLayout drawerLayout;
+    protected DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base_activity_drawer);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         mAuth = FirebaseAuth.getInstance();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -52,7 +53,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
-
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -103,9 +103,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             finish();
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -117,7 +116,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (user != null) {
             return user.getUid();
         } else {
-            return "Default";
+            return getString(R.string.default_user);
         }
     }
 
@@ -126,12 +125,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (user != null) {
             return user.getEmail();
         } else {
-            return "Anonymous";
+            return getString(R.string.anon);
         }
     }
 
     public void deleteSearch(String searchId) {
-        LocalSearch.deleteAll(LocalSearch.class, "search_id = ?", searchId);
-        LocalRecipe.deleteAll(LocalRecipe.class, "search_id = ?", searchId);
+        LocalSearch.deleteAll(LocalSearch.class, getString(R.string.query_search_id), searchId);
+        LocalRecipe.deleteAll(LocalRecipe.class, getString(R.string.query_search_id), searchId);
     }
 }

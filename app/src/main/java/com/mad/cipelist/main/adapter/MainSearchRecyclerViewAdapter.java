@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.Utils;
-import com.mad.cipelist.services.yummly.model.LocalSearch;
+import com.mad.cipelist.services.model.LocalSearch;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,18 +34,22 @@ public class MainSearchRecyclerViewAdapter extends RecyclerView
 
     private List<LocalSearch> mDataset;
     private int mPosition;
+    private Context mContext;
 
     /**
      * Constructor that sets the context and data to be displayed
+     *
      * @param context
      * @param dataset
      */
     public MainSearchRecyclerViewAdapter(Context context, List<LocalSearch> dataset, String id, String email) {
         mDataset = dataset;
+        mContext = context;
     }
 
     /**
      * Binds a click listener to the adapter.
+     *
      * @param myClickListener
      */
     public void setOnItemClickListener(MyClickListener myClickListener) {
@@ -61,10 +65,10 @@ public class MainSearchRecyclerViewAdapter extends RecyclerView
 
     @Override
     public void onBindViewHolder(final SearchHolder holder, int position) {
-        String viewTitle = (mDataset.get(position).title != null) ? mDataset.get(position).title : "Search " + (position + 1);
-        String nOfRecipes = "No. Recipes: " + mDataset.get(position).getRecipes().size();
-        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat formatter = new SimpleDateFormat("MMMM d", Locale.US);
+        String viewTitle = (mDataset.get(position).title != null) ? mDataset.get(position).title : mContext.getString(R.string.search) + (position + 1);
+        String nOfRecipes = mContext.getString(R.string.number_of_recipes_main) + mDataset.get(position).getRecipes().size();
+        SimpleDateFormat date = new SimpleDateFormat(mContext.getString(R.string.date_format_one));
+        SimpleDateFormat formatter = new SimpleDateFormat(mContext.getString(R.string.date_format_two), Locale.US);
         try {
             Date converted = date.parse(mDataset.get(position).searchTimeStamp);
             holder.date.setText(formatter.format(converted));

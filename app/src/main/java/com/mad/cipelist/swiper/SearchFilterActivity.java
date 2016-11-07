@@ -84,7 +84,7 @@ public class SearchFilterActivity extends BaseActivity {
     public void queryClick() {
         queryEt.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
         queryContainer.setAlpha(1);
     }
 
@@ -92,6 +92,7 @@ public class SearchFilterActivity extends BaseActivity {
     public void dietClick() {
         dietSpinner.performClick();
         dietContainer.setAlpha(1);
+
     }
 
     @OnClick(R.id.sf_cuisine_container)
@@ -117,9 +118,21 @@ public class SearchFilterActivity extends BaseActivity {
         cookingTimeContainer.setAlpha(1);
     }
 
+    @OnTouch(R.id.sf_cooking_time_bar)
+    public boolean cookingTimeSeekBarTouch() {
+        cookingTimeContainer.setAlpha(1);
+        return false;
+    }
+
     @OnClick(R.id.sf_recipe_amount_container)
     public void recipeAmountClick() {
         recipeAmountContainer.setAlpha(1);
+    }
+
+    @OnTouch(R.id.sf_recipe_amount_bar)
+    public boolean recipeAmountSeekBarTouch() {
+        cookingTimeContainer.setAlpha(1);
+        return false;
     }
 
     @OnClick(R.id.sf_start_search_btn)
@@ -140,10 +153,10 @@ public class SearchFilterActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         // Load spinners with items
-        loadSpinner(dietSpinner, R.array.diet_items, "Select Diet", dietContainer);
-        loadSpinner(cuisineSpinner, R.array.cuisine_items, "Select Cuisine", cuisineContainer);
-        loadSpinner(allergiesSpinner, R.array.allergy_items, "Select Allergies", allergiesContainer);
-        loadSpinner(courseSpinner, R.array.course_items, "Select Courses", courseContainer);
+        loadSpinner(dietSpinner, R.array.diet_items, getString(R.string.sel_diet), dietContainer);
+        loadSpinner(cuisineSpinner, R.array.cuisine_items, getString(R.string.sel_cuisine), cuisineContainer);
+        loadSpinner(allergiesSpinner, R.array.allergy_items, getString(R.string.sel_allergies), allergiesContainer);
+        loadSpinner(courseSpinner, R.array.course_items, getString(R.string.sel_courses), courseContainer);
 
         cookingTimeSeekBar.setProgress(2);
         cookingTimeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -152,19 +165,19 @@ public class SearchFilterActivity extends BaseActivity {
                 String maxTime = "";
                 switch (i) {
                     case 0:
-                        maxTime = "15 min";
+                        maxTime = getString(R.string._15_min);
                         break;
                     case 1:
-                        maxTime = "30 min";
+                        maxTime = getString(R.string._30_min);
                         break;
                     case 2:
-                        maxTime = "1 hour";
+                        maxTime = getString(R.string._1_hour);
                         break;
                     case 3:
-                        maxTime = "2 hours";
+                        maxTime = getString(R.string._2_hours);
                         break;
                     case 4:
-                        maxTime = "Unlimited";
+                        maxTime = getString(R.string.unlimited);
                         break;
                 }
                 cookingTimeTv.setText(maxTime);
@@ -185,7 +198,7 @@ public class SearchFilterActivity extends BaseActivity {
         recipeAmountSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                String amount = i + " recipes";
+                String amount = i + getString(R.string._recipes);
                 recipeAmountTv.setText(amount);
             }
 
@@ -207,11 +220,11 @@ public class SearchFilterActivity extends BaseActivity {
      *
      * @param spinner spinner object
      * @param arrayId the identifier for the spinners items
-     * @param title the name of the attribute
+     * @param title   the name of the attribute
      */
     public void loadSpinner(MultiSelectionSpinner spinner, int arrayId, String title, final RelativeLayout container) {
         spinner.setItems(getResources().getStringArray(arrayId));
-        spinner.setDefaultText("None Selected");
+        spinner.setDefaultText(getString(R.string.none_selected));
         spinner.setTitle(title);
         spinner.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -255,19 +268,19 @@ public class SearchFilterActivity extends BaseActivity {
         for (String s : rawDiets) {
             switch (s) {
                 case "Lacto Vegetarian":
-                    formattedDiet.add("388^" + s);
+                    formattedDiet.add(getString(R.string._388) + s);
                     break;
                 case "Ovo Vegetarian":
-                    formattedDiet.add("389^" + s);
+                    formattedDiet.add(getString(R.string._389) + s);
                     break;
                 case "Pescetarian":
-                    formattedDiet.add("390^" + s);
+                    formattedDiet.add(getString(R.string._390) + s);
                     break;
                 case "Vegan":
-                    formattedDiet.add("386^" + s);
+                    formattedDiet.add(getString(R.string._386) + s);
                     break;
                 case "Vegetarian":
-                    formattedDiet.add("387^Lacto-ovo vegetarian");
+                    formattedDiet.add(getString(R.string._387));
                     break;
             }
         }
@@ -277,10 +290,10 @@ public class SearchFilterActivity extends BaseActivity {
     public ArrayList<String> formatCoursesForHttp(List<String> rawCourses) {
         ArrayList<String> formattedCourses = new ArrayList<>();
         if (rawCourses.isEmpty()) {
-            formattedCourses.add("course^course-Main Dishes");
+            formattedCourses.add(getString(R.string.course_main_dish));
         } else {
             for (String s : rawCourses) {
-                formattedCourses.add("course^course-" + s);
+                formattedCourses.add(getString(R.string.course_course) + s);
             }
         }
         return formattedCourses;
@@ -289,10 +302,10 @@ public class SearchFilterActivity extends BaseActivity {
     public ArrayList<String> formatCuisinesForHttp(List<String> rawCuisines) {
         ArrayList<String> formattedCuisines = new ArrayList<>();
         for (String s : rawCuisines) {
-            if (s.contains("&amp;")) {
+            if (s.contains(getString(R.string.ampersand))) {
                 s = s.substring(0, s.indexOf(" "));
             }
-            formattedCuisines.add("cuisine^cuisine-" + s.toLowerCase());
+            formattedCuisines.add(getString(R.string.cuisine_cuisine) + s.toLowerCase());
         }
         return formattedCuisines;
     }
@@ -303,34 +316,34 @@ public class SearchFilterActivity extends BaseActivity {
         for (String s : rawAllergies) {
             switch (s) {
                 case "Dairy":
-                    formattedAllergies.add("396^" + s + "-Free");
+                    formattedAllergies.add(getString(R.string._396) + s + getString(R.string._free));
                     break;
                 case "Egg":
-                    formattedAllergies.add("397^" + s + "-Free");
+                    formattedAllergies.add(getString(R.string._397) + s + getString(R.string._free));
                     break;
                 case "Gluten":
-                    formattedAllergies.add("393^" + s + "-Free");
+                    formattedAllergies.add(getString(R.string._393) + s + getString(R.string._free));
                     break;
                 case "Peanut":
-                    formattedAllergies.add("394^" + s + "-Free");
+                    formattedAllergies.add(getString(R.string._394) + s + getString(R.string._free));
                     break;
                 case "Seafood":
-                    formattedAllergies.add("398^" + s + "-Free");
+                    formattedAllergies.add(getString(R.string._398) + s + getString(R.string._free));
                     break;
                 case "Sesame":
-                    formattedAllergies.add("399^" + s + "-Free");
+                    formattedAllergies.add(getString(R.string._399) + s + getString(R.string._free));
                     break;
                 case "Soy":
-                    formattedAllergies.add("400^" + s + "-Free");
+                    formattedAllergies.add(getString(R.string._400) + s + getString(R.string._free));
                     break;
                 case "Sulfite":
-                    formattedAllergies.add("401^" + s + "-Free");
+                    formattedAllergies.add(getString(R.string._401) + s + getString(R.string._free));
                     break;
                 case "Tree Nut":
-                    formattedAllergies.add("395^" + s + "-Free");
+                    formattedAllergies.add(getString(R.string._395) + s + getString(R.string._free));
                     break;
                 case "Wheat":
-                    formattedAllergies.add("392^" + s + "-Free");
+                    formattedAllergies.add(getString(R.string._392) + s + getString(R.string._free));
                     break;
             }
         }

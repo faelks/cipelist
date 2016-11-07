@@ -76,7 +76,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".result.ResultActivity"
+            android:name=".search_result.SearchResultActivity"
             android:label="Search Results"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -85,13 +85,13 @@
                 android:value=".main.MainActivity" />
         </activity>
         <activity
-            android:name=".result.RecipeDetail"
+            android:name=".detail.RecipeDetail"
             android:label="Recipe"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".result.ResultActivity" />
+                android:value=".search_result.SearchResultActivity" />
         </activity>
 
     </application>

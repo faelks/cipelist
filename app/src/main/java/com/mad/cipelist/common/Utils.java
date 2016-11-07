@@ -63,4 +63,9 @@ public class Utils {
         return url;
     }
 
+    public static String secondsToMinutes(int seconds) {
+        int minutes = seconds / 60;
+        return minutes + " min";
+    }
+
 }

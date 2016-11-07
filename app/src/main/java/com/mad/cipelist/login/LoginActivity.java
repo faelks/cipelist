@@ -22,6 +22,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mad.cipelist.R;
+import com.mad.cipelist.common.Utils;
 import com.mad.cipelist.main.MainActivity;
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -62,7 +63,8 @@ public class LoginActivity extends Activity {
 
     @OnClick(R.id.login_anonymously_tv)
     public void loginAnonymously() {
-        startLoadAnim("Logging in");
+        startLoadAnim(getString(R.string.logging_in));
+        Utils.hideSoftKeyboard(this);
         mAuth.signInAnonymously()
                 .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -82,11 +84,13 @@ public class LoginActivity extends Activity {
 
     @OnClick(R.id.btn_login)
     public void login() {
+        Utils.hideSoftKeyboard(this);
         signIn(inputEmailEt.getText().toString(), inputPassordEt.getText().toString());
     }
 
     @OnClick(R.id.btn_signup)
     public void signup() {
+        Utils.hideSoftKeyboard(this);
         createUser(inputEmailEt.getText().toString(), inputPassordEt.getText().toString());
     }
 
@@ -105,8 +109,8 @@ public class LoginActivity extends Activity {
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    String username = (user.getEmail() == null) ? "Anonymous" : user.getEmail();
-                    Toast.makeText(LoginActivity.this, "Signed in as: " + username, Toast.LENGTH_SHORT).show();
+                    String username = (user.getEmail() == null) ? getString(R.string.anon) : user.getEmail();
+                    //Toast.makeText(LoginActivity.this, getString(R.string.signed_in_as) + username, Toast.LENGTH_SHORT).show();
 
                     // Start the main activity and end the current login activity
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -144,7 +148,7 @@ public class LoginActivity extends Activity {
         }
 
         loginBtn.setEnabled(false);
-        startLoadAnim("Logging in");
+        startLoadAnim(getString(R.string.logging_in));
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -157,7 +161,7 @@ public class LoginActivity extends Activity {
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication Failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, R.string.auth_failed, Toast.LENGTH_SHORT).show();
                             stopLoadAnim();
                             loginBtn.setEnabled(true);
                         }
@@ -173,7 +177,7 @@ public class LoginActivity extends Activity {
         }
 
         signupBtn.setEnabled(false);
-        startLoadAnim("Registering User");
+        startLoadAnim(getString(R.string.registering_user));
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -184,7 +188,7 @@ public class LoginActivity extends Activity {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, "Registration Failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, R.string.registration_failed, Toast.LENGTH_SHORT).show();
                             signupBtn.setEnabled(true);
                             stopLoadAnim();
                         }
@@ -203,7 +207,7 @@ public class LoginActivity extends Activity {
         String email = inputEmailEt.getText().toString();
         if (TextUtils.isEmpty(email)) {
             inputEmailLayout.setErrorEnabled(true);
-            inputEmailLayout.setError("You need to enter an email");
+            inputEmailLayout.setError(getString(R.string.need_email));
             valid = false;
         } else {
             inputEmailLayout.setError(null);
@@ -213,7 +217,7 @@ public class LoginActivity extends Activity {
         String password = inputPassordEt.getText().toString();
         if (TextUtils.isEmpty(password)) {
             inputPasswordLayout.setErrorEnabled(true);
-            inputPasswordLayout.setError("You need to enter a password");
+            inputPasswordLayout.setError(getString(R.string.need_password));
             valid = false;
         } else {
             inputPasswordLayout.setError(null);
@@ -244,6 +248,7 @@ public class LoginActivity extends Activity {
 
     /**
      * Initiates a loading animation with a custom text and hides the content views
+     *
      * @param msg custom text
      */
     public void startLoadAnim(String msg) {

@@ -7,7 +7,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mad.cipelist.R;
-import com.mad.cipelist.services.yummly.model.LocalRecipe;
+import com.mad.cipelist.common.Utils;
+import com.mad.cipelist.services.model.LocalRecipe;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
@@ -43,40 +44,38 @@ public class RecipeCard {
     }
 
     @Resolve
-    private void onResolved(){
-        String url = mRecipe.getImageUrl();
-        // Removes the last four characters since they restrict the image size of the url (=90s)
-        url = url.substring(0, url.length()-4);
+    private void onResolved() {
+        String url = Utils.removeUrlImageSize(mRecipe.getImageUrl());
         Glide.with(mContext).load(url).into(recipeImageView);
 
-        // Need additional Customization here
+        // TODO: Need additional Customization here
         recipeNameTxt.setText(mRecipe.getRecipeName());
         timeAndRatingTxt.setText((Integer.parseInt(mRecipe.getCookingTime()) / 60) + " min       Rating: " + mRecipe.getRating() + "/5");
     }
 
     @SwipeOut
-    private void onSwipedOut(){
+    private void onSwipedOut() {
         mSwipeHandler.onSwipedOut();
         //Log.d(EVENT_LOGTAG, "onSwipedOut");
     }
 
     @SwipeCancelState
-    private void onSwipeCancelState(){
+    private void onSwipeCancelState() {
         //Log.d(EVENT_LOGTAG, "onSwipeCancelState");
     }
 
     @SwipeIn
-    private void onSwipeIn(){
+    private void onSwipeIn() {
         mSwipeHandler.onSwipeIn();
     }
 
     @SwipeInState
-    private void onSwipeInState(){
+    private void onSwipeInState() {
         //Log.d(EVENT_LOGTAG, "onSwipeInState");
     }
 
     @SwipeOutState
-    private void onSwipeOutState(){
+    private void onSwipeOutState() {
         //Log.d(EVENT_LOGTAG, "onSwipeOutState");
     }
 

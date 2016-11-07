@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,8 +21,8 @@ import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.login.LoginActivity;
 import com.mad.cipelist.main.adapter.MainSearchRecyclerViewAdapter;
-import com.mad.cipelist.result.ResultActivity;
-import com.mad.cipelist.services.yummly.model.LocalSearch;
+import com.mad.cipelist.search_result.SearchResultActivity;
+import com.mad.cipelist.services.model.LocalSearch;
 import com.mad.cipelist.settings.SettingsActivity;
 import com.mad.cipelist.swiper.SearchFilterActivity;
 import com.mad.cipelist.swiper.SwiperActivity;
@@ -66,14 +64,14 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.content_main, contentFrameLayout);
-        ButterKnife.bind(this);
+        ButterKnife.bind(this, contentFrameLayout);
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user!= null) {
+                if (user != null) {
                     // User is signed in
                     Log.d(LOG_TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
@@ -84,7 +82,7 @@ public class MainActivity extends BaseActivity {
         };
 
         // Set the current user id
-        mCurrentUserId = (mAuth.getCurrentUser() != null) ? mAuth.getCurrentUser().getUid() : "Anonymous";
+        mCurrentUserId = (mAuth.getCurrentUser() != null) ? mAuth.getCurrentUser().getUid() : getString(R.string.anon);
 
         // Initialise the layout manager and adapter for the main recycler view
         if (searchRecyclerView != null) {
@@ -146,7 +144,7 @@ public class MainActivity extends BaseActivity {
      * Returns the email of the current user
      */
     public String getUserEmail() {
-        return (mAuth.getCurrentUser() != null) ? mAuth.getCurrentUser().getEmail() : "Not Available";
+        return (mAuth.getCurrentUser() != null) ? mAuth.getCurrentUser().getEmail() : getString(R.string.n_a);
     }
 
     /**
@@ -155,7 +153,7 @@ public class MainActivity extends BaseActivity {
      * @param searchId The unique search id
      */
     public void startNewResultActivity(String searchId) {
-        Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
+        Intent shoppingListIntent = new Intent(getApplicationContext(), SearchResultActivity.class);
         shoppingListIntent.putExtra(SwiperActivity.SEARCH_ID, searchId);
         startActivity(shoppingListIntent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -168,7 +166,7 @@ public class MainActivity extends BaseActivity {
      * @return relevant searches
      */
     public List<LocalSearch> getLocalSearches(String id) {
-        return LocalSearch.find(LocalSearch.class, "user_id = ?", id);
+        return LocalSearch.find(LocalSearch.class, getString(R.string.query_user_id), id);
     }
 
     @Override
@@ -180,14 +178,8 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        // Close the navigation drawer if it is open when back is pressed
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            // Disable going back since this is the main activity
-            moveTaskToBack(true);
-        }
+        moveTaskToBack(true);
+        super.onBackPressed();
     }
 
     @Override
@@ -201,7 +193,7 @@ public class MainActivity extends BaseActivity {
                 return true;
             case R.id.action_about:
                 // TODO: Add an instructions page on click
-                showToast("About Selected");
+                showToast(getString(R.string.about_selected));
                 return true;
             case R.id.action_logout:
                 mAuth.signOut();

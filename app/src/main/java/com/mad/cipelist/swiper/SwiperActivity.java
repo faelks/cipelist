@@ -14,12 +14,12 @@ import android.widget.TextView;
 import com.mad.cipelist.R;
 import com.mad.cipelist.common.BaseActivity;
 import com.mad.cipelist.common.Utils;
-import com.mad.cipelist.result.ResultActivity;
-import com.mad.cipelist.services.yummly.ApiRecipeLoader;
-import com.mad.cipelist.services.yummly.MockRecipeLoader;
-import com.mad.cipelist.services.yummly.RecipeLoader;
-import com.mad.cipelist.services.yummly.model.LocalRecipe;
-import com.mad.cipelist.services.yummly.model.LocalSearch;
+import com.mad.cipelist.search_result.SearchResultActivity;
+import com.mad.cipelist.services.ApiRecipeLoader;
+import com.mad.cipelist.services.MockRecipeLoader;
+import com.mad.cipelist.services.RecipeLoader;
+import com.mad.cipelist.services.model.LocalRecipe;
+import com.mad.cipelist.services.model.LocalSearch;
 import com.mad.cipelist.swiper.model.SearchFilter;
 import com.mad.cipelist.swiper.widget.RecipeCard;
 import com.mindorks.placeholderview.SwipeDecor;
@@ -119,6 +119,7 @@ public class SwiperActivity extends BaseActivity {
 
     /**
      * Creates a filter object that uses the values passed from the search filter activity.
+     *
      * @return a search filter
      */
     public SearchFilter createSearchFilter() {
@@ -152,7 +153,7 @@ public class SwiperActivity extends BaseActivity {
         search.searchTimeStamp = Utils.getCurrentDate();
         search.title = getSearchTitle();
         search.save();
-        startLoadAnim(avi, loadText, "Saving Recipes");
+        startLoadAnim(avi, loadText, getString(R.string.saving_recipes));
         new AsyncRecipeUpdate(mSelectedRecipes).execute();
 
     }
@@ -176,7 +177,7 @@ public class SwiperActivity extends BaseActivity {
      * Start the result activity with an animation and passes a search id.
      */
     public void startResultActivity() {
-        Intent shoppingListIntent = new Intent(getApplicationContext(), ResultActivity.class);
+        Intent shoppingListIntent = new Intent(getApplicationContext(), SearchResultActivity.class);
         shoppingListIntent.putExtra(SEARCH_ID, mFilter.getSearchId());
         startActivity(shoppingListIntent);
         finish();
@@ -251,7 +252,7 @@ public class SwiperActivity extends BaseActivity {
             new AsyncRecipeLoader(mFilter).execute();
         }
         if (mSwipeCount >= mRecipeLoadCount) {
-            startLoadAnim(avi, loadText, "Loading more recipes");
+            startLoadAnim(avi, loadText, getString(R.string.loading_more_recipes));
         }
     }
 
@@ -270,14 +271,14 @@ public class SwiperActivity extends BaseActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             if (mRecipeLoadCount == 0) {
-                startLoadAnim(avi, loadText, "Loading Recipes");
+                startLoadAnim(avi, loadText, getString(R.string.loading_recipes));
             }
         }
 
         @Override
         protected List<LocalRecipe> doInBackground(String... strings) {
             // MockLoader that retrieves recipes from a locally saved search in case it matches the criteria
-            if (mQueries != null && mQueries.size() >= 3 && mQueries.get(0).equals("pasta") && mQueries.get(1).equals("pizza") && mQueries.get(2).equals("burger")) {
+            if (mQueries != null && mQueries.size() >= 3 && mQueries.get(0).equals(getString(R.string.pasta)) && mQueries.get(1).equals(getString(R.string.pizza)) && mQueries.get(2).equals(getString(R.string.burger))) {
                 RecipeLoader loader = new MockRecipeLoader(getApplicationContext());
                 try {
                     Thread.sleep(1000);
@@ -289,7 +290,7 @@ public class SwiperActivity extends BaseActivity {
 
 
             List<LocalRecipe> response = new ArrayList<>();
-            RecipeLoader mLoader = new ApiRecipeLoader(mFilter, mRecipeLoadCount);
+            RecipeLoader mLoader = new ApiRecipeLoader(mContext, mFilter, mRecipeLoadCount);
             if (mQueries != null && !mQueries.isEmpty()) {
                 for (String query : mQueries) {
                     response.addAll(mLoader.getRecipes(query));
@@ -325,12 +326,12 @@ public class SwiperActivity extends BaseActivity {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            RecipeLoader loader = new ApiRecipeLoader();
+            RecipeLoader loader = new ApiRecipeLoader(mContext);
 
             for (LocalRecipe r : recipes) {
                 try {
                     // Check if the file exists in the assets folder already
-                    if (Arrays.asList(mContext.getResources().getAssets().list("")).contains(r.getmId() + ".json")) {
+                    if (Arrays.asList(mContext.getResources().getAssets().list("")).contains(r.getmId() + getString(R.string._json))) {
                         loader = new MockRecipeLoader(mContext);
                         loader.updateRecipe(r);
                     } else {
