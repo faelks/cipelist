@@ -1,9 +1,16 @@
 # README CIPELIST #
 
-An app that helps you generate a great grocery list on the fly for awesome recipes
-
-Version 0.1
-
+Univerity of Technology Sydney
+Felix Gudéhn
 felix.gudehn@gmail.com
 
-Developed as a project in Mobile Applications Development at University of Technology Sydney
+########################
+
+CIPELIST
+Version 1.0
+
+An android application that helps you generate a great grocery list on the fly for awesome recipes.
+Currently uses the API services provided by yummly to retrieve recipes.
+
+Clone and use in Android Studio if you're keen!
+
