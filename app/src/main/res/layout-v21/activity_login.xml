@@ -36,6 +36,7 @@
                 android:id="@+id/input_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/white" />
@@ -56,6 +57,7 @@
                 android:id="@+id/input_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:textColor="@color/white" />
@@ -114,6 +116,7 @@
             android:visibility="invisible"
             app:indicatorColor="@color/colorAccent"
             app:indicatorName="BallPulseIndicator" />
+
         <TextView
             android:id="@+id/login_load_text"
             android:layout_width="wrap_content"

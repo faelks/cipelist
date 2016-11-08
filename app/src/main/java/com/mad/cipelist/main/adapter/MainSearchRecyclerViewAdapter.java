@@ -28,9 +28,7 @@ import java.util.Locale;
 public class MainSearchRecyclerViewAdapter extends RecyclerView
         .Adapter<MainSearchRecyclerViewAdapter.SearchHolder> {
 
-    private static String LOG_TAG = "MainSearchRecyclerViewAdapter";
-
-    private static MyClickListener myClickListener;
+    private static SearchClickListener searchClickListener;
 
     private List<LocalSearch> mDataset;
     private int mPosition;
@@ -39,8 +37,8 @@ public class MainSearchRecyclerViewAdapter extends RecyclerView
     /**
      * Constructor that sets the context and data to be displayed
      *
-     * @param context
-     * @param dataset
+     * @param context application context
+     * @param dataset The searches to be displayed in the rv
      */
     public MainSearchRecyclerViewAdapter(Context context, List<LocalSearch> dataset, String id, String email) {
         mDataset = dataset;
@@ -50,10 +48,10 @@ public class MainSearchRecyclerViewAdapter extends RecyclerView
     /**
      * Binds a click listener to the adapter.
      *
-     * @param myClickListener
+     * @param searchClickListener custom click listener
      */
-    public void setOnItemClickListener(MyClickListener myClickListener) {
-        MainSearchRecyclerViewAdapter.myClickListener = myClickListener;
+    public void setOnItemClickListener(SearchClickListener searchClickListener) {
+        MainSearchRecyclerViewAdapter.searchClickListener = searchClickListener;
     }
 
     @Override
@@ -67,6 +65,8 @@ public class MainSearchRecyclerViewAdapter extends RecyclerView
     public void onBindViewHolder(final SearchHolder holder, int position) {
         String viewTitle = (mDataset.get(position).title != null) ? mDataset.get(position).title : mContext.getString(R.string.search) + (position + 1);
         String nOfRecipes = mContext.getString(R.string.number_of_recipes_main) + mDataset.get(position).getRecipes().size();
+
+        // Reformat the date to be more readable
         SimpleDateFormat date = new SimpleDateFormat(mContext.getString(R.string.date_format_one));
         SimpleDateFormat formatter = new SimpleDateFormat(mContext.getString(R.string.date_format_two), Locale.US);
         try {
@@ -87,6 +87,7 @@ public class MainSearchRecyclerViewAdapter extends RecyclerView
             Glide.with(holder.itemView.getContext()).load(url).into(holder.image);
         }
 
+        // Display a context menu on long click
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -96,11 +97,11 @@ public class MainSearchRecyclerViewAdapter extends RecyclerView
         });
     }
 
-    public void addItem(LocalSearch dataObj, int index) {
-        mDataset.add(index, dataObj);
-        notifyItemInserted(index);
-    }
-
+    /**
+     * Remove an item from the current dataset
+     *
+     * @param index postition of item
+     */
     public void deleteItem(int index) {
         mDataset.remove(index);
         notifyItemRemoved(index);
@@ -115,14 +116,25 @@ public class MainSearchRecyclerViewAdapter extends RecyclerView
         }
     }
 
+    /**
+     * @return position
+     */
     public int getPosition() {
         return mPosition;
     }
 
-    public void setPosition(int position) {
+    /**
+     * @param position Position to be set
+     */
+    private void setPosition(int position) {
         this.mPosition = position;
     }
 
+    /**
+     * retrieves the unique search id from the defined search
+     * @param position index of search
+     * @return String search id
+     */
     public String getSearchId(int position) {
         return mDataset.get(position).searchId;
     }
@@ -137,12 +149,12 @@ public class MainSearchRecyclerViewAdapter extends RecyclerView
     /**
      * Interface for the click listener
      */
-    public interface MyClickListener {
+    public interface SearchClickListener {
         void onItemClick(int position, View v);
     }
 
     /**
-     * Creats view holders for the recycler view.
+     * Creates view holders for the recycler view.
      * Rows are created and populated with data from
      * the model
      */
@@ -156,7 +168,6 @@ public class MainSearchRecyclerViewAdapter extends RecyclerView
 
         /**
          * Constructor for new view holders.
-         *
          * @param view the search square view
          */
         SearchHolder(View view) {
@@ -171,7 +182,7 @@ public class MainSearchRecyclerViewAdapter extends RecyclerView
 
         @Override
         public void onClick(View v) {
-            myClickListener.onItemClick(getAdapterPosition(), v);
+            searchClickListener.onItemClick(getAdapterPosition(), v);
         }
 
         @Override

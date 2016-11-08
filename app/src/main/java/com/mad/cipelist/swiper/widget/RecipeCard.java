@@ -18,10 +18,11 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeInState;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutState;
 
+/**
+ * A widget that defines the layout for the swiper cards when searching for recipes.
+ */
 @Layout(R.layout.swiper_card_view)
 public class RecipeCard {
-
-    //public static final String EVENT_LOGTAG = "Event";
 
     @View(R.id.recipe_iv)
     private ImageView recipeImageView;
@@ -36,7 +37,13 @@ public class RecipeCard {
     private LocalRecipe mRecipe;
     private SwipeHandler mSwipeHandler;
 
-
+    /**
+     * Default constructor that creates a new swipe card instance
+     *
+     * @param context application context
+     * @param recipe  recipe to bind to card
+     * @param handler handler that responds to swipes
+     */
     public RecipeCard(Context context, LocalRecipe recipe, @NonNull SwipeHandler handler) {
         mContext = context;
         mRecipe = recipe;
@@ -48,9 +55,8 @@ public class RecipeCard {
         String url = Utils.removeUrlImageSize(mRecipe.getImageUrl());
         Glide.with(mContext).load(url).into(recipeImageView);
 
-        // TODO: Need additional Customization here
         recipeNameTxt.setText(mRecipe.getRecipeName());
-        timeAndRatingTxt.setText((Integer.parseInt(mRecipe.getCookingTime()) / 60) + " min       Rating: " + mRecipe.getRating() + "/5");
+        timeAndRatingTxt.setText((Integer.parseInt(mRecipe.getCookingTime()) / 60) + " min        Rating: " + mRecipe.getRating() + "/5");
     }
 
     @SwipeOut
@@ -79,9 +85,11 @@ public class RecipeCard {
         //Log.d(EVENT_LOGTAG, "onSwipeOutState");
     }
 
+    /**
+     * Interface for a swipe handler so that events can be processed in the parent activity
+     */
     public interface SwipeHandler {
         void onSwipeIn();
-
         void onSwipedOut();
     }
 }

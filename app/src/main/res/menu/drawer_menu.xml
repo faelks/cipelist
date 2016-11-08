@@ -7,25 +7,29 @@
             android:icon="@drawable/ic_drawer_home"
             android:title="@string/home" />
         <item
-            android:id="@+id/nav_swiper"
+            android:id="@+id/nav_search"
             android:icon="@drawable/ic_menu_search"
             android:title="@string/new_search" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_settings"
             android:title="@string/settings" />
+        <item
+            android:id="@+id/nav_nearby_grocery_stores"
+            android:icon="@drawable/ic_nearby_grocery_stores"
+            android:title="@string/grocery_stores" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/communicate">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="@string/share" />
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="@string/send" />
         </menu>
     </item>
 

@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Generates a grocerylist for the user based on the selected recipes.
+ * Displays the ingredients loaded from recipes. The expandable list can be toggled between
+ * ingredient type and recipe sorting modes.
+ *
  */
 public class GroceriesAdapter implements android.widget.ExpandableListAdapter {
 
@@ -27,7 +29,7 @@ public class GroceriesAdapter implements android.widget.ExpandableListAdapter {
     private HashMap<String, List<String>> data;
     private Context context;
 
-    public GroceriesAdapter(Context context, List<String> headers, HashMap<String, List<String>> data, Set<Pair<Long, Long>> checkedItems) {
+    public GroceriesAdapter(Context context, List<String> headers, HashMap<String, List<String>> data) {
         this.context = context;
         this.headers = headers;
         this.data = data;
@@ -52,6 +54,11 @@ public class GroceriesAdapter implements android.widget.ExpandableListAdapter {
         return convertView;
     }
 
+    /**
+     * Get the set of values that define the status of check boxes in the grocery list.
+     *
+     * @return set
+     */
     public Set<Pair<Long, Long>> getCheckedItems() {
         return mCheckedItems;
     }
@@ -69,7 +76,7 @@ public class GroceriesAdapter implements android.widget.ExpandableListAdapter {
         final String childText = (String) getChild(groupPosition, childPosition);
         final CheckBox childCb = (CheckBox) convertView.findViewById(R.id.item_acquired_checkbox);
         // add tag to remember groupId/childId
-        final Pair<Long, Long> tag = new Pair<Long, Long>(
+        final Pair<Long, Long> tag = new Pair<>(
                 getGroupId(groupPosition),
                 getChildId(groupPosition, childPosition));
         childCb.setTag(tag);
@@ -96,12 +103,10 @@ public class GroceriesAdapter implements android.widget.ExpandableListAdapter {
 
     @Override
     public void registerDataSetObserver(DataSetObserver dataSetObserver) {
-
     }
 
     @Override
     public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {
-
     }
 
     @Override
@@ -157,12 +162,10 @@ public class GroceriesAdapter implements android.widget.ExpandableListAdapter {
 
     @Override
     public void onGroupExpanded(int i) {
-
     }
 
     @Override
     public void onGroupCollapsed(int i) {
-
     }
 
     @Override

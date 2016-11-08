@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * Displays the liked recipes in a recycler view
- * and allows the user to acces the recipe detail mPage
+ * and allows the user to access the recipe detail mPage
  */
 
 public class RecipeListFragment extends Fragment {
@@ -32,42 +32,40 @@ public class RecipeListFragment extends Fragment {
     protected RecyclerView.LayoutManager mLayoutManager;
     protected List<LocalRecipe> mDataset;
 
-
-    // newInstance constructor for creating fragment with arguments
+    /**
+     * Creates a new instance of the fragment with parameters
+     *
+     * @param title    title of fragment
+     * @param searchId unique search id
+     * @param context  application context
+     * @return fragment
+     */
     public static RecipeListFragment newInstance(String title, String searchId, Context context) {
         RecipeListFragment recipeListFragment = new RecipeListFragment();
-
         Bundle args = new Bundle();
         args.putString(context.getString(R.string.title), title);
         args.putString(context.getString(R.string.search_id), searchId);
         recipeListFragment.setArguments(args);
-
         return recipeListFragment;
-
     }
 
-    // Store instance variables based on arguments passed
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         String mSearchId = getArguments().getString(getString(R.string.search_id));
-
         if (mSearchId == null) {
             mSearchId = getString(R.string.default_value);
         }
-
-        Log.d(TAG, "OnCreate called, initiating dataset...");
+        //Log.d(TAG, "OnCreate called, initiating dataset...");
         mDataset = getRecipesWithSearchId(mSearchId);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated called");
+        //Log.d(TAG, "onActivityCreated called");
     }
 
-    // Inflate the view for the fragment based on layout XML
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -88,11 +86,14 @@ public class RecipeListFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        Log.d(TAG, "onCreateView called");
-
+        //Log.d(TAG, "onCreateView called");
         return view;
     }
 
+    /**
+     * Start a new recipe detail activity with information about a single recipe
+     * @param recipe recipe to be used
+     */
     public void loadRecipeDetailActivity(LocalRecipe recipe) {
         Intent recipeDetailIntent = new Intent(getActivity(), RecipeDetail.class);
         recipeDetailIntent.putExtra(getString(R.string.recipe_id), recipe.getmId());
@@ -105,14 +106,16 @@ public class RecipeListFragment extends Fragment {
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    /**
+     * Retrieve all recipes matching the search id
+     * @param searchId unique identifier
+     * @return list of matching recipes
+     */
     public List<LocalRecipe> getRecipesWithSearchId(String searchId) {
-
         List<LocalRecipe> recipes = LocalRecipe.find(LocalRecipe.class, getString(R.string.query_search_id), searchId);
-
         if (recipes == null) {
             Log.d(TAG, "Dataset null after querying with " + searchId);
         }
-
         return recipes;
     }
 

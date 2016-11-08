@@ -4,7 +4,8 @@ import com.mindorks.placeholderview.annotations.NonReusable;
 import com.orm.SugarRecord;
 
 /**
- * Stores the necessary data from the Recipe response.
+ * Stores the necessary data from the Recipe response in a local response that can be
+ * stored in the local ORM database.
  */
 @NonReusable
 public class LocalRecipe extends SugarRecord {
@@ -13,14 +14,15 @@ public class LocalRecipe extends SugarRecord {
     private String recipeName;
     private String rating;
     private String cookingTime;
+    private String preparationTime;
     private String imageUrl;
     private String searchId;
-    private String sourceUrl;
     private String sourceDisplayName;
     private String recipeUrl;
     private int prepTime;
     private int numberOfServings;
     private String ingredientLines;
+    private int cookTime;
 
     public LocalRecipe() {
     }
@@ -37,36 +39,16 @@ public class LocalRecipe extends SugarRecord {
 
     }
 
-    public String getSourceUrl() {
-        return sourceUrl;
-    }
-
-    public void setSourceUrl(String sourceUrl) {
-        this.sourceUrl = sourceUrl;
-    }
-
     public String getRecipeName() {
         return recipeName;
-    }
-
-    public void setRecipeName(String recipeName) {
-        this.recipeName = recipeName;
     }
 
     public String getImageUrl() {
         return imageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
     public String getIngredients() {
         return ingredients;
-    }
-
-    public void setIngredients(String ingredients) {
-        this.ingredients = ingredients;
     }
 
     public String getCookingTime() {
@@ -95,10 +77,6 @@ public class LocalRecipe extends SugarRecord {
 
     public String getmId() {
         return mId;
-    }
-
-    public void setmId(String mId) {
-        this.mId = mId;
     }
 
     public String getRecipeUrl() {
@@ -141,4 +119,19 @@ public class LocalRecipe extends SugarRecord {
         this.numberOfServings = numberOfServings;
     }
 
+    public int getCookTime() {
+        return cookTime;
+    }
+
+    public void setCookTime(int cookTime) {
+        this.cookTime = cookTime;
+    }
+
+    public String getPreparationTime() {
+        return preparationTime;
+    }
+
+    public void setPreparationTime(String preparationTime) {
+        this.preparationTime = preparationTime;
+    }
 }

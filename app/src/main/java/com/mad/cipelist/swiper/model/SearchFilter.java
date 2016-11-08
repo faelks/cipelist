@@ -3,7 +3,8 @@ package com.mad.cipelist.swiper.model;
 import java.util.List;
 
 /**
- * Stores relevant search filter parameters for recipe searches.
+ * Stores relevant search filter parameters for recipe searches. Values are allowed to be
+ * null since only stored values are passed to the api service.
  */
 
 public class SearchFilter {

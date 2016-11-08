@@ -35,15 +35,15 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
- * Displays a swiper that the used can use to select recipes they like
- * Searches should only be saved if the swiping session completes
+ * Displays a swiper that the used can use to select recipes they like.
+ * Searches are only saved if the swiping session completes.
  */
 public class SwiperActivity extends BaseActivity {
 
     public static final String SWIPER_LOGTAG = "Swiper";
-    public static final String RECIPE_AMOUNT = "recipeAmount";
     public static final String SEARCH_ID = "searchId";
 
     @BindView(R.id.swiper_avi)
@@ -56,7 +56,8 @@ public class SwiperActivity extends BaseActivity {
     LinearLayout swipeButtonHolder;
     @BindView(R.id.swiper_progress_bar)
     ProgressBar swipeProgressBar;
-
+    @BindView(R.id.swiper_error)
+    TextView errorText;
     private int mRecipeAmount;
     private int mRecipeLoadCount;
     private int mSwipeCount;
@@ -65,6 +66,14 @@ public class SwiperActivity extends BaseActivity {
     private SearchFilter mFilter;
     private ArrayList<String> mQueries;
     private int mQueriesAmount;
+
+    @OnClick(R.id.swiper_error)
+    public void onClick() {
+        Intent intent = new Intent(this, SearchFilterActivity.class);
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +167,11 @@ public class SwiperActivity extends BaseActivity {
 
     }
 
+    /**
+     * Define the title for the search based on search parameters
+     *
+     * @return title
+     */
     private String getSearchTitle() {
         String title = "";
         if (mQueries != null && !mQueries.isEmpty()) {
@@ -184,24 +198,6 @@ public class SwiperActivity extends BaseActivity {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //Log.d(SWIPER_LOGTAG, "onResume()");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //Log.d(SWIPER_LOGTAG, "onPause()");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //Log.d(SWIPER_LOGTAG, "onDestroy()");
-    }
-
     /**
      * Adds cards from the global variable mRecipes to the SwipeView.
      */
@@ -210,7 +206,6 @@ public class SwiperActivity extends BaseActivity {
         mRecipeLoadCount += 10;
 
         try {
-
             for (final LocalRecipe recipe : recipes) {
                 swipeView.addView(new RecipeCard(mContext, recipe, new RecipeCard.SwipeHandler() {
                     @Override
@@ -224,8 +219,6 @@ public class SwiperActivity extends BaseActivity {
 
                         handleSwipeCount();
                         Log.d("EVENT", "onSwipedIn");
-
-
                     }
 
                     @Override
@@ -233,8 +226,6 @@ public class SwiperActivity extends BaseActivity {
                         mSwipeCount++;
                         handleSwipeCount();
                     }
-
-
                 }));
             }
         } catch (NullPointerException n) {
@@ -278,17 +269,17 @@ public class SwiperActivity extends BaseActivity {
         @Override
         protected List<LocalRecipe> doInBackground(String... strings) {
             // MockLoader that retrieves recipes from a locally saved search in case it matches the criteria
+            // If recipes are processed and stored locally this could reduce network usage and speed up searchess
             if (mQueries != null && mQueries.size() >= 3 && mQueries.get(0).equals(getString(R.string.pasta)) && mQueries.get(1).equals(getString(R.string.pizza)) && mQueries.get(2).equals(getString(R.string.burger))) {
                 RecipeLoader loader = new MockRecipeLoader(getApplicationContext());
                 try {
+                    // Sleep so that animation is shown and views flow better
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 return loader.getRecipes(null);
             }
-
-
             List<LocalRecipe> response = new ArrayList<>();
             RecipeLoader mLoader = new ApiRecipeLoader(mContext, mFilter, mRecipeLoadCount);
             if (mQueries != null && !mQueries.isEmpty()) {
@@ -296,7 +287,6 @@ public class SwiperActivity extends BaseActivity {
                     response.addAll(mLoader.getRecipes(query));
                 }
             }
-
             List<LocalRecipe> filler = mLoader.getRecipes(null);
             if (filler != null) {
                 response.addAll(filler);
@@ -310,15 +300,28 @@ public class SwiperActivity extends BaseActivity {
             super.onPostExecute(localRecipes);
             // Stop the loading animation
             // Add the loaded cards to the SwiperView in the Main Thread.
+            if (localRecipes.size() == 0) {
+                errorText.setVisibility(View.VISIBLE);
+                errorText.setClickable(true);
+            }
             addCards(localRecipes);
             stopLoadAnim(avi, loadText);
         }
     }
 
+    /**
+     * Asynchronous call to update the selected recipes with information from the api.
+     * The GET requests provide more information about the recipes which is necessary for the next
+     * step in the application
+     */
     public class AsyncRecipeUpdate extends AsyncTask<Void, Void, Void> {
 
         private final List<LocalRecipe> recipes;
 
+        /**
+         * Default constructor that can store the selected recipes
+         * @param recipes selected recipes
+         */
         AsyncRecipeUpdate(List<LocalRecipe> recipes) {
             this.recipes = recipes;
         }

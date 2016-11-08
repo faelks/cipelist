@@ -26,9 +26,9 @@ import butterknife.OnClick;
 import butterknife.OnTouch;
 
 /**
- * Displays search filter options to the user.
+ * Displays search filter options to the user and allows for customisation. Container
+ * view are lit up when pressed to indicate to the user that something is happening/active.
  */
-
 public class SearchFilterActivity extends BaseActivity {
 
     final static String DIET = "diet";
@@ -147,7 +147,6 @@ public class SearchFilterActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.content_search_filter, contentFrameLayout);
         ButterKnife.bind(this);
@@ -194,6 +193,7 @@ public class SearchFilterActivity extends BaseActivity {
             }
         });
 
+        // 7 is the default value since the main idea of the application is to generate recipes for e.g. a week
         recipeAmountSeekBar.setProgress(7);
         recipeAmountSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -263,6 +263,12 @@ public class SearchFilterActivity extends BaseActivity {
 
     }
 
+    /**
+     * Formats the diet strings so they can be passed as queries
+     *
+     * @param rawDiets intial diet strings
+     * @return final diet strings
+     */
     public ArrayList<String> formatDietsForHttp(List<String> rawDiets) {
         ArrayList<String> formattedDiet = new ArrayList<>();
         for (String s : rawDiets) {
@@ -287,6 +293,11 @@ public class SearchFilterActivity extends BaseActivity {
         return formattedDiet;
     }
 
+    /**
+     * Format courses for the http call
+     * @param rawCourses intial course strings
+     * @return final strings
+     */
     public ArrayList<String> formatCoursesForHttp(List<String> rawCourses) {
         ArrayList<String> formattedCourses = new ArrayList<>();
         if (rawCourses.isEmpty()) {
@@ -299,6 +310,11 @@ public class SearchFilterActivity extends BaseActivity {
         return formattedCourses;
     }
 
+    /**
+     * Format cuisines for the http call
+     * @param rawCuisines intial cuisines
+     * @return final strings
+     */
     public ArrayList<String> formatCuisinesForHttp(List<String> rawCuisines) {
         ArrayList<String> formattedCuisines = new ArrayList<>();
         for (String s : rawCuisines) {
@@ -310,6 +326,11 @@ public class SearchFilterActivity extends BaseActivity {
         return formattedCuisines;
     }
 
+    /**
+     * Formats the allergy strings to they will work in the api call
+     * @param rawAllergies intial allergy strings
+     * @return final strings
+     */
     public ArrayList<String> formatAllergiesForHttp(List<String> rawAllergies) {
         ArrayList<String> formattedAllergies = new ArrayList<>();
 
@@ -351,6 +372,11 @@ public class SearchFilterActivity extends BaseActivity {
         return formattedAllergies;
     }
 
+    /**
+     * Format the time so that it is valid in the query format, it has to be in seconds
+     * @param time amount of time a recipe can take
+     * @return formattted time
+     */
     public int formatMaxTimeForHttp(int time) {
         switch (time) {
             case 0:
@@ -367,6 +393,11 @@ public class SearchFilterActivity extends BaseActivity {
         return -1;
     }
 
+    /**
+     * Formats the words passed in the query edittext and separates them by ','
+     * @param query unaltered query string
+     * @return formatted and divided string
+     */
     public ArrayList<String> formatQueryString(String query) {
         ArrayList<String> queries = new ArrayList<>();
         if (!query.isEmpty() && query.contains(",")) {
@@ -384,6 +415,5 @@ public class SearchFilterActivity extends BaseActivity {
         }
         return queries;
     }
-
 }
 

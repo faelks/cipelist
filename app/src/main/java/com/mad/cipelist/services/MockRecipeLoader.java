@@ -18,7 +18,6 @@ import java.util.List;
 /**
  * Retrieves data from a locally stored api response and injects the data into local classes.
  */
-
 public class MockRecipeLoader implements RecipeLoader {
 
     private Context mContext;
@@ -68,15 +67,25 @@ public class MockRecipeLoader implements RecipeLoader {
         }
     }
 
+    /**
+     * Update a recipe with new data that has been retrieved from a GET call to the api.
+     *
+     * @param recipe   initial recipe
+     * @param response data to update recipe with
+     */
     private void update(LocalRecipe recipe, IndividualRecipe response) {
-        recipe.setSourceUrl(response.getSource().getSourceSiteUrl());
         recipe.setSourceDisplayName(response.getSource().getSourceDisplayName());
         recipe.setRecipeUrl(response.getSource().getSourceRecipeUrl());
-        recipe.setPrepTime(response.getPrepTimeInSeconds());
-        recipe.setCookingTime(response.getCookTime());
+        if (response.getPrepTimeInSeconds() != null) {
+            recipe.setPreparationTime(response.getPrepTime());
+        }
+        if (response.getCookTimeInSeconds() != null) {
+            recipe.setCookingTime(response.getCookTime());
+        }
         recipe.setNumberOfServings(response.getNumberOfServings());
         List<String> ingredientLines = response.getIngredientLines();
         recipe.setIngredientLines(new Gson().toJson(ingredientLines));
+        recipe.setNumberOfServings(response.getNumberOfServings());
     }
 
 

@@ -33,6 +33,7 @@ import butterknife.OnClick;
 
 /**
  * Allows the user to login with prerecorded or new details and also provides an anonymous option.
+ * Password visibility can be toggled on and off.
  */
 
 public class LoginActivity extends Activity {
@@ -64,13 +65,13 @@ public class LoginActivity extends Activity {
     @OnClick(R.id.login_anonymously_tv)
     public void loginAnonymously() {
         startLoadAnim(getString(R.string.logging_in));
+        // Explicitly hide the keyboard
         Utils.hideSoftKeyboard(this);
         mAuth.signInAnonymously()
                 .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -100,6 +101,7 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
+        // Get the firebase instance so that users can sign in
         mAuth = FirebaseAuth.getInstance();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -109,9 +111,6 @@ public class LoginActivity extends Activity {
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    String username = (user.getEmail() == null) ? getString(R.string.anon) : user.getEmail();
-                    //Toast.makeText(LoginActivity.this, getString(R.string.signed_in_as) + username, Toast.LENGTH_SHORT).show();
-
                     // Start the main activity and end the current login activity
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
@@ -124,6 +123,7 @@ public class LoginActivity extends Activity {
             }
         };
 
+        // Press the enter button on the keyboard and the login function is automatically called
         inputPassordEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -134,15 +134,14 @@ public class LoginActivity extends Activity {
                 return false;
             }
         });
-
-
     }
 
     /**
-     * Called when the login button is pressed. Needs to talk to the firebase setup
+     * Called when the login button is pressed
      */
     public void signIn(String email, String password) {
 
+        // Validate the form, make sure that fields are filled in
         if (!validateForm()) {
             return;
         }
@@ -170,6 +169,12 @@ public class LoginActivity extends Activity {
                 });
     }
 
+    /**
+     * Signup a user with provided email and password
+     *
+     * @param email    user email
+     * @param password user password
+     */
     public void createUser(String email, String password) {
 
         if (!validateForm()) {
@@ -183,7 +188,6 @@ public class LoginActivity extends Activity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.

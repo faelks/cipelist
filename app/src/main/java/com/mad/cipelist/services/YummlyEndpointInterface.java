@@ -19,6 +19,7 @@ interface YummlyEndpointInterface {
 
     // Request method and URL specified in the annotation
     // The get request takes a hash map as a parameter that includes all the specified search filters.
+    // The annotations include the id and key required to access the api
 
     @GET("recipes?_app_id=772a7337&_app_key=c302ed36e3515ca025686c8c070b3739&requirePictures=true")
     Call<SearchResult> getSearch(

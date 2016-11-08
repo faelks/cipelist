@@ -64,9 +64,20 @@
 
         <TextView
             android:id="@+id/swiper_load_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent" />
+
+        <TextView
+            android:id="@+id/swiper_error"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent" />
+            android:clickable="false"
+            android:text="@string/new_search_swiper"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:visibility="invisible" />
 
     </LinearLayout>
 

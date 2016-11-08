@@ -13,7 +13,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,15 +50,17 @@ public class MainActivity extends BaseActivity {
     RecyclerView searchRecyclerView;
     @BindView(R.id.add_recipe_fab)
     FloatingActionButton addRecipeFab;
+    @BindView(R.id.main_hint)
+    TextView mainHint;
     private MainSearchRecyclerViewAdapter mAdapter;
     private List<LocalSearch> mLocalSearches;
     private String mCurrentUserId;
-    // Used for user specific actions
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     @OnClick(R.id.add_recipe_fab)
     public void onFabClick() {
+        mainHint.setVisibility(View.INVISIBLE);
         startNewSearchActivity();
     }
 
@@ -93,6 +98,18 @@ public class MainActivity extends BaseActivity {
         // Register a context menu with the recycler view that is displayed on long clicks
         registerForContextMenu(searchRecyclerView);
 
+    }
+
+    /**
+     * Animation that displays a hint for the user after 5 seconds
+     */
+    private void runAnimation() {
+        mainHint.setVisibility(View.INVISIBLE);
+        Animation a = AnimationUtils.loadAnimation(this, R.anim.anim_hint);
+        a.reset();
+        a.setStartOffset(3000);
+        mainHint.clearAnimation();
+        mainHint.startAnimation(a);
     }
 
     @Override
@@ -192,7 +209,6 @@ public class MainActivity extends BaseActivity {
                 startActivity(settingsIntent);
                 return true;
             case R.id.action_about:
-                // TODO: Add an instructions page on click
                 showToast(getString(R.string.about_selected));
                 return true;
             case R.id.action_logout:
@@ -208,6 +224,7 @@ public class MainActivity extends BaseActivity {
                 }
                 mLocalSearches.clear();
                 createAdapter(MainActivity.this, null, mCurrentUserId, getUserEmail());
+                runAnimation();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -215,9 +232,8 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        mAdapter.setOnItemClickListener(new MainSearchRecyclerViewAdapter
-                .MyClickListener() {
+        mainHint.setVisibility(View.INVISIBLE);
+        mAdapter.setOnItemClickListener(new MainSearchRecyclerViewAdapter.SearchClickListener() {
             @Override
             public void onItemClick(int position, View v) {
                 startNewResultActivity(mAdapter.getSearchId(position));
@@ -234,9 +250,17 @@ public class MainActivity extends BaseActivity {
             e.printStackTrace();
         }
 
-        if (mLocalSearches != null) {
+        if (mLocalSearches != null && mLocalSearches.size() > 0) {
             createAdapter(MainActivity.this, mLocalSearches, mCurrentUserId, getUserEmail());
+        } else {
+            runAnimation();
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mainHint.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -249,6 +273,7 @@ public class MainActivity extends BaseActivity {
         super.onStart();
         // Add a listener that listens for logout events
         mAuth.addAuthStateListener(mAuthListener);
+        mainHint.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -257,6 +282,7 @@ public class MainActivity extends BaseActivity {
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+        mainHint.setVisibility(View.INVISIBLE);
     }
 
     @Override

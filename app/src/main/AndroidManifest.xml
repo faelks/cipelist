@@ -20,10 +20,10 @@
             android:value="search_data.db" />
         <meta-data
             android:name="VERSION"
-            android:value="4" />
+            android:value="5" />
         <meta-data
             android:name="DOMAIN_PACKAGE_NAME"
-            android:value="com.mad.cipelist.services.yummly.model" />
+            android:value="com.mad.cipelist.services.model" />
 
         <activity
             android:name=".main.SplashActivity"
@@ -60,7 +60,7 @@
             android:name=".settings.SettingsActivity"
             android:label="@string/settings"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.MainActivity" />

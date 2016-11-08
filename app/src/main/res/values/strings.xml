@@ -185,7 +185,7 @@
     <string name="date_format_two">MMMM d</string>
     <string name="query_user_id">user_id = ?</string>
     <string name="n_a">Not Available</string>
-    <string name="about_selected">About Selected</string>
+    <string name="about_selected">About Cipelist</string>
     <string name="_ingredients">" ingredients"</string>
     <string name="recipes">Recipes</string>
     <string name="groceries">Groceries</string>
@@ -241,6 +241,15 @@
     <string name="burger">burger</string>
     <string name="_json">.json</string>
     <string name="cook_time">"Cooking Time: "</string>
+    <string name="background_image">Background image</string>
+    <string name="grocery_stores">Grocery Stores</string>
+    <string name="communicate">Communicate</string>
+    <string name="share">Share</string>
+    <string name="send">Send</string>
+    <string name="hint_main">You don\'t seem to have any searches, \n press the button to start!</string>
+    <string name="new_search_swiper">Something went wrong, \n press here to try a new search</string>
+    <string name="number_of_servings">"Number of Servings: "</string>
+    <string name="recipe_source">"Recipe Source: "</string>
 
     <string-array name="diet_items">
         <item>Lacto Vegetarian</item>

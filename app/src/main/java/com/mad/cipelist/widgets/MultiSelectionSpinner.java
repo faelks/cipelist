@@ -15,6 +15,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * A multiselection spinner that allows a user to select multiple values from a list of items.
+ * Items are displayed in a dialog and maximum two items are shown after selection
+ * when the dialog is dismissed.
  */
 public class MultiSelectionSpinner extends Spinner implements
         OnMultiChoiceClickListener {
@@ -25,6 +28,11 @@ public class MultiSelectionSpinner extends Spinner implements
 
     ArrayAdapter<String> simple_adapter;
 
+    /**
+     * Default constructor
+     *
+     * @param context application context
+     */
     public MultiSelectionSpinner(Context context) {
         super(context);
 
@@ -33,6 +41,11 @@ public class MultiSelectionSpinner extends Spinner implements
         super.setAdapter(simple_adapter);
     }
 
+    /**
+     * Constructor with additional attributes
+     * @param context application context
+     * @param attrs attributes
+     */
     public MultiSelectionSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
 

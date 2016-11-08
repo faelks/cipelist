@@ -38,6 +38,11 @@ public class ApiRecipeLoader implements RecipeLoader {
     private YummlyEndpointInterface mInterface;
     private Context mContext;
 
+    /**
+     * Basic constructor without a filter, can be used for default calls
+     *
+     * @param context application context
+     */
     public ApiRecipeLoader(Context context) {
         mRetrofit = new Retrofit.Builder()
                 .baseUrl(context.getString(R.string.yummly_url))
@@ -47,6 +52,13 @@ public class ApiRecipeLoader implements RecipeLoader {
         mInterface = mRetrofit.create(YummlyEndpointInterface.class);
     }
 
+    /**
+     * Main constructor that uses the search filter in the parameter to retrieve specific recipes
+     * from the api
+     * @param context applicaiton context
+     * @param filter search filter
+     * @param loadCount number of recipe already loaded
+     */
     public ApiRecipeLoader(Context context, SearchFilter filter, int loadCount) {
         this.mFilter = filter;
         this.mLoadCount = loadCount;
@@ -80,12 +92,20 @@ public class ApiRecipeLoader implements RecipeLoader {
         }
     }
 
+    /**
+     * Use a recipe from the SEARCH call and updated it with information from the GET call to api.
+     * @param recipe initial recipe
+     * @param response data to update recipe with
+     */
     private void update(LocalRecipe recipe, IndividualRecipe response) {
-        recipe.setSourceUrl(response.getSource().getSourceSiteUrl());
         recipe.setSourceDisplayName(response.getSource().getSourceDisplayName());
         recipe.setRecipeUrl(response.getSource().getSourceRecipeUrl());
-        recipe.setPrepTime(response.getPrepTimeInSeconds());
-        recipe.setCookingTime(response.getCookTime());
+        if (response.getPrepTimeInSeconds() != null) {
+            recipe.setPreparationTime(response.getPrepTime());
+        }
+        if (response.getCookTimeInSeconds() != null) {
+            recipe.setCookingTime(response.getCookTime());
+        }
         recipe.setNumberOfServings(response.getNumberOfServings());
         List<String> ingredientLines = response.getIngredientLines();
         recipe.setIngredientLines(new Gson().toJson(ingredientLines));
@@ -108,7 +128,6 @@ public class ApiRecipeLoader implements RecipeLoader {
                     Log.d(API_TAG, "Something went wrong when loading recipe " + recipeId);
                 }
             }
-
             @Override
             public void onFailure(Call<IndividualRecipe> call, Throwable t) {
                 Log.d(API_TAG, "Something went wrong when loading recipe " + recipeId);
@@ -117,10 +136,15 @@ public class ApiRecipeLoader implements RecipeLoader {
         return result[0];
     }
 
+    /**
+     * Retrieve recipes from the yummly api using a defined search filter
+     * @param query specific words to filter on
+     * @return List of recipes
+     */
     public List<LocalRecipe> getRecipes(String query) {
 
         Map<String, String> queryMap = createQueryMap(mFilter, query);
-
+        // Create the call url by disassembling the search filter
         Call<SearchResult> call = mInterface.getSearch(mFilter.getDiets(), mFilter.getCourses(), mFilter.getAllergies(), mFilter.getCuisines(), queryMap);
 
         try {
@@ -141,6 +165,12 @@ public class ApiRecipeLoader implements RecipeLoader {
         return null;
     }
 
+    /**
+     * Create a query map that can be passed to the api interface calls
+     * @param filter search filter
+     * @param query specific words to search for
+     * @return query map for the api calls
+     */
     private Map<String, String> createQueryMap(SearchFilter filter, String query) {
         Map<String, String> data = new HashMap<>();
 
@@ -162,6 +192,11 @@ public class ApiRecipeLoader implements RecipeLoader {
         return data;
     }
 
+    /**
+     * Format a list of retrieved recipes into a list of local recipes that only contain relevant data
+     * @param resultRecipes recipes retrieved from the api
+     * @return a list of local recipes
+     */
     private ArrayList<LocalRecipe> formatRecipes(Recipe[] resultRecipes) {
         ArrayList<LocalRecipe> result = new ArrayList<>();
         LocalRecipe tempRecipe;

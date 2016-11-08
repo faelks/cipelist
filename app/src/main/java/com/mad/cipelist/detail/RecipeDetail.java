@@ -3,7 +3,6 @@ package com.mad.cipelist.detail;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -43,12 +42,14 @@ public class RecipeDetail extends BaseActivity {
     TextView sourceName;
     @BindView(R.id.recipe_detail_image)
     ImageView recipeIv;
-    @BindView(R.id.recipe_ingredient_lines)
-    RecyclerView ingredientLinesRv;
     @BindView(R.id.recipe_launch_source_btn)
     Button launchSourceBtn;
     private LocalRecipe mRecipe;
 
+
+    /**
+     * Sends out a request to view an uri link to the specified recipe
+     */
     @OnClick(R.id.recipe_launch_source_btn)
     public void launchSource() {
         String uri = mRecipe.getRecipeUrl();
@@ -61,7 +62,6 @@ public class RecipeDetail extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.content_recipe_detail, contentFrameLayout);
         ButterKnife.bind(this);
@@ -79,15 +79,14 @@ public class RecipeDetail extends BaseActivity {
         titleTv.setText(mRecipe.getRecipeName());
         int rating = Integer.parseInt(mRecipe.getRating());
         ratingBar.setRating(rating);
-        String cookString = getString(R.string.cook_time) + Utils.secondsToMinutes(Integer.parseInt(mRecipe.getCookingTime()));
+        String cookString = getString(R.string.cook_time) + mRecipe.getCookingTime();
         cookingTimeTv.setText(cookString);
-        String prepString = getString(R.string.prep_time) + Utils.secondsToMinutes(mRecipe.getPrepTime());
+        String prepString = getString(R.string.prep_time) + mRecipe.getPreparationTime();
         prepTimeTv.setText(prepString);
-        String numberOfServingsString = "Number of Servings: " + mRecipe.getNumberOfServings();
+        String numberOfServingsString = getString(R.string.number_of_servings) + mRecipe.getNumberOfServings();
         numberOfServings.setText(numberOfServingsString);
-        sourceName.setText(mRecipe.getSourceDisplayName());
-
-
+        String sourceNameString = getString(R.string.recipe_source) + mRecipe.getSourceDisplayName();
+        sourceName.setText(sourceNameString);
 
 
     }

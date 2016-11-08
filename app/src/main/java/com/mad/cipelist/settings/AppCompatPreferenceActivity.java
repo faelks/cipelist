@@ -15,19 +15,14 @@ import android.view.ViewGroup;
 /**
  * Preference activity that allows a user to change
  * settings for the app.
- * <p>
- * A {@link android.preference.PreferenceActivity} which implements and proxies the necessary calls
- * to be used with AppCompat.
  */
 public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
-    // wth is a delegate?
+
     private AppCompatDelegate mDelegate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // delegate used with factory and the saved instance state?
-        // Does this load things from a saved session etc?
         getDelegate().installViewFactory();
         getDelegate().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
@@ -39,7 +34,6 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         getDelegate().onPostCreate(savedInstanceState);
     }
 
-    // What is a support action bar?
     public ActionBar getSupportActionBar() {
         return getDelegate().getSupportActionBar();
     }
@@ -103,12 +97,10 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         getDelegate().onDestroy();
     }
 
-    // Removes the menu?
     public void invalidateOptionsMenu() {
         getDelegate().invalidateOptionsMenu();
     }
 
-    // What does this do
     private AppCompatDelegate getDelegate() {
         if (mDelegate == null) {
             mDelegate = AppCompatDelegate.create(this, null);

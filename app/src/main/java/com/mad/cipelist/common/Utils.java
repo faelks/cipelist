@@ -2,7 +2,6 @@ package com.mad.cipelist.common;
 
 import android.app.Activity;
 import android.content.Context;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.orm.SchemaGenerator;
@@ -18,7 +17,6 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 /**
  * Provides general utility functions that can be accessed from anywhere in the application.
  */
-
 public class Utils {
 
     /**
@@ -44,18 +42,20 @@ public class Utils {
     }
 
     /**
-     * Shows the soft keyboard
+     * Retrieve the current date in a set format
+     * @return date
      */
-    public static void showSoftKeyboard(View view, Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(INPUT_METHOD_SERVICE);
-        view.requestFocus();
-        inputMethodManager.showSoftInput(view, 0);
-    }
-
     public static String getCurrentDate() {
         return new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date());
     }
 
+    /**
+     * Since a lot of the image urls are appended by a size restricting parameter, this function was
+     * created to remove that.
+     *
+     * @param url original url
+     * @return formatted url
+     */
     public static String removeUrlImageSize(String url) {
         if (url.substring(url.length() - 4, url.length()).equals("=s90")) {
             url = url.substring(0, url.length() - 4);
@@ -63,6 +63,11 @@ public class Utils {
         return url;
     }
 
+    /**
+     * Converts an integer to a minute format
+     * @param seconds seconds to be converted
+     * @return final string
+     */
     public static String secondsToMinutes(int seconds) {
         int minutes = seconds / 60;
         return minutes + " min";

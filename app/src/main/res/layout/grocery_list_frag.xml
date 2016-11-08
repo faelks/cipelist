@@ -20,7 +20,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:clickable="true"
-        android:src="@drawable/ic_new_search" />
+        android:src="@drawable/ic_swap" />
 
     <ProgressBar
         android:id="@+id/grocery_list_progress_bar"
