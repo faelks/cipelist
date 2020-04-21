@@ -2,7 +2,7 @@
 
 An android application that helps you generate a great grocery list on the fly for awesome recipes. Currently uses the yummly API to retrieve recipes.
 
-![Cipelist Login Screen](cipelist-login-screen.jpg)
+<img src="cipelist-login-screen.jpg" width="300" />
 
 This was built as part of a Moblie Applications development class I took at University of Technology Sydney in 2016. So the Android code is pretty old and the API integrations will not work anymore.
 
